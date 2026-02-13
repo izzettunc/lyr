@@ -1,0 +1,35 @@
+package com.example.rule.lambda;
+
+import com.example.rule.RuleStrategy;
+import com.example.services.lambda.LambdaConnector;
+import com.example.rule.lambda.config.ValidateLambdaFunctionConcurrencyRuleConfig;
+import com.example.rule.outcome.Outcome;
+import com.example.rule.outcome.ValidationOutcome;
+import com.google.common.collect.ImmutableList;
+
+public class ValidateLambdaFunctionConcurrencyRuleImpl implements RuleStrategy<ValidateLambdaFunctionConcurrencyRuleConfig> {
+
+    @Override
+    public ImmutableList<Outcome> execute(ValidateLambdaFunctionConcurrencyRuleConfig parameters) {
+        return parameters
+                .getFunctionConcurrences()
+                .stream()
+                .map(functionConcurrency -> {
+                    var optLambdaFunction = LambdaConnector.getInstance().getLambdaFunction(functionConcurrency.functionName());
+
+                    if (optLambdaFunction.isEmpty()) {
+                        return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);
+                    }
+
+                    if (optLambdaFunction.get().concurrency().reservedConcurrentExecutions() !=
+                            functionConcurrency.reservedConcurrency()) {
+                        return ValidationOutcome.invalid(LambdaReason.FUNCTION_CONCURRENCY_MISMATCH);
+                    }
+
+                    return ValidationOutcome.valid();
+                })
+                .collect(ImmutableList.toImmutableList());
+
+    }
+}
+
