@@ -5,18 +5,14 @@ import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 
 
+@Getter
 public abstract class Rule {
-    @Getter
     protected final String name;
 
-    @Getter
     protected final RuleConfig parameters;
     protected final RuleStrategy strategy;
-
-    @Getter
     protected final RuleReport report;
 
-    @Getter
     protected ImmutableList<Outcome> outcome;
 
     Rule(String name, RuleConfig parameters, RuleStrategy strategy, RuleReport report) {

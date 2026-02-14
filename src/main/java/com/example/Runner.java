@@ -9,7 +9,7 @@ public class Runner {
     public static void main(String[] args) {
         Config.loadUserConfig("userConfig.yaml");
 
-        var rules = Config.CONFIG
+        var rules = Config.getConfig()
                 .getRuleConfig()
                 .keySet()
                 .stream()
