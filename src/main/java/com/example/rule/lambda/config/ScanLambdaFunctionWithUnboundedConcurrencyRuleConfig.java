@@ -9,9 +9,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements RuleConfig {
-    public static final String NAME = "scan.lambda.function.withUnboundedConcurrency";
 
-    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(Object config) {
+    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(Object ignore) {
         // No config available for this rule
         return null;
     }

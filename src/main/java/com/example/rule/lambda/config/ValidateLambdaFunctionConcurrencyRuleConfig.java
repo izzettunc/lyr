@@ -12,7 +12,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ValidateLambdaFunctionConcurrencyRuleConfig implements RuleConfig {
-    public static final String NAME = "validate.lambda.function.concurrency";
 
     public record LambdaFunctionConcurrency(String functionName, int reservedConcurrency) {
     }

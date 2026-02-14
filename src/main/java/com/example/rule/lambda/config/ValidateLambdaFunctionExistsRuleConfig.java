@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class ValidateLambdaFunctionExistsRuleConfig implements RuleConfig {
-    public static final String NAME = "validate.lambda.function.exists";
 
     private List<String> functionNames;
 

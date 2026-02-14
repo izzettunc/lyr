@@ -9,21 +9,24 @@ import com.example.rule.lambda.config.ValidateLambdaFunctionTriggerStateRuleConf
 import com.example.rule.ssm.config.ValidateSsmParameterExistsRuleConfig;
 import com.example.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 
+import static com.example.rule.Constants.*;
+
 public class RuleConfigFactory {
     private RuleConfigFactory() {
     }
 
     public static RuleConfig createRuleConfig(String ruleName, Object config) {
         return switch (ruleName) {
-            case ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.NAME ->
+            case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
                     ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);
-            case ValidateLambdaFunctionExistsRuleConfig.NAME -> ValidateLambdaFunctionExistsRuleConfig.parse(config);
-            case ValidateLambdaFunctionConcurrencyRuleConfig.NAME -> ValidateLambdaFunctionConcurrencyRuleConfig.parse(config);
-            case ValidateLambdaFunctionTriggerStateRuleConfig.NAME -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(config);
-            case ScanDynamodbTableIdleRuleConfig.NAME -> ScanDynamodbTableIdleRuleConfig.parse(config);
-            case ValidateSsmParameterExistsRuleConfig.NAME -> ValidateSsmParameterExistsRuleConfig.parse(config);
-            case ValidateSsmParameterValueRuleConfig.NAME ->  ValidateSsmParameterValueRuleConfig.parse(config);
-            case ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.NAME -> ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(config);
+            case SCAN_DYNAMODB_TABLE_IDLE -> ScanDynamodbTableIdleRuleConfig.parse(config);
+            case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
+                    ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(config);
+            case VALIDATE_LAMBDA_FUNCTION_EXISTS -> ValidateLambdaFunctionExistsRuleConfig.parse(config);
+            case VALIDATE_LAMBDA_FUNCTION_CONCURRENCY -> ValidateLambdaFunctionConcurrencyRuleConfig.parse(config);
+            case VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(config);
+            case VALIDATE_SSM_PARAMETER_EXISTS -> ValidateSsmParameterExistsRuleConfig.parse(config);
+            case VALIDATE_SSM_PARAMETER_VALUE -> ValidateSsmParameterValueRuleConfig.parse(config);
             default -> throw new IllegalArgumentException("Unknown rule name: " + ruleName);
         };
     }

@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleConfig {
-    public static final String NAME = "scan.glue.session.activeWithLongIdleTimeout";
+
     @NonNull
     private final Integer maxIdleTimeoutInMinutes;
 

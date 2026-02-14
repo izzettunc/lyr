@@ -12,7 +12,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ValidateLambdaFunctionTriggerStateRuleConfig implements RuleConfig {
-    public static final String NAME = "validate.lambda.function.trigger.state";
 
     public record LambdaFunctionTriggerState(String functionName, boolean enabled) {
     }

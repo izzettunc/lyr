@@ -12,7 +12,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
-    public static final String NAME = "scan.dynamodb.table.idle";
 
     @NonNull
     private final Integer maxIdlePeriodInDays;

@@ -7,6 +7,8 @@ import com.example.rule.outcome.ValidationOutcome;
 import com.example.rule.lambda.LambdaReason;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
+
 public class ValidateLambdaConcurrencyRuleReport implements RuleReport<ValidateLambdaFunctionConcurrencyRuleConfig> {
 
     @Override
@@ -15,7 +17,7 @@ public class ValidateLambdaConcurrencyRuleReport implements RuleReport<ValidateL
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ValidateLambdaFunctionConcurrencyRuleConfig.NAME);
+        reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY);
         reportBuilder.append(String.format("%n========================"));
 
         for (int i = 0; i < outcomes.size(); i++) {

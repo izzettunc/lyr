@@ -7,6 +7,8 @@ import com.example.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 import com.example.rule.ssm.SsmReason;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
+
 public class ValidateSsmParameterValueRuleReport implements RuleReport<ValidateSsmParameterValueRuleConfig> {
 
     @Override
@@ -15,7 +17,7 @@ public class ValidateSsmParameterValueRuleReport implements RuleReport<ValidateS
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ValidateSsmParameterValueRuleConfig.NAME);
+        reportBuilder.append(VALIDATE_SSM_PARAMETER_VALUE);
         reportBuilder.append(String.format("%n========================"));
 
         for (int i = 0; i < outcomes.size(); i++) {

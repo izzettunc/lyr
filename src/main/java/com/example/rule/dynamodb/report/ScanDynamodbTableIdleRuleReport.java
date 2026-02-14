@@ -6,6 +6,8 @@ import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ScanOutcome;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.SCAN_DYNAMODB_TABLE_IDLE;
+
 public class ScanDynamodbTableIdleRuleReport
         implements RuleReport<ScanDynamodbTableIdleRuleConfig> {
 
@@ -16,7 +18,7 @@ public class ScanDynamodbTableIdleRuleReport
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ScanDynamodbTableIdleRuleConfig.NAME);
+        reportBuilder.append(SCAN_DYNAMODB_TABLE_IDLE);
         reportBuilder.append(String.format("%n========================"));
 
         if (outcomes.isEmpty()) {
