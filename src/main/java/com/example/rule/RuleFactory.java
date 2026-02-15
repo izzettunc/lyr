@@ -19,12 +19,20 @@ import com.example.rule.ssm.ValidateSsmParameterValueRuleImpl;
 import com.example.rule.ssm.report.ValidateSsmParameterExistsRuleReport;
 import com.example.rule.ssm.report.ValidateSsmParameterValueRuleReport;
 import com.example.rule.ssm.SsmReason;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-import static com.example.rule.Constants.*;
+import static com.example.rule.Constants.SCAN_DYNAMODB_TABLE_IDLE;
+import static com.example.rule.Constants.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.example.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RuleFactory {
-    private RuleFactory() {
-    }
 
     public static Rule createRule(String ruleName) {
         var parameters = Config.getConfig().getRuleConfig().get(ruleName);

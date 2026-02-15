@@ -1,6 +1,11 @@
 package com.example.rule;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
+
     public static final String SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT = "scan.glue.session.activeWithLongIdleTimeout";
 
     public static final String SCAN_DYNAMODB_TABLE_IDLE = "scan.dynamodb.table.idle";
