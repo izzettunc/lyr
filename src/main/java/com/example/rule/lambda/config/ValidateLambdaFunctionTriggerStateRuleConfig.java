@@ -27,11 +27,19 @@ public class ValidateLambdaFunctionTriggerStateRuleConfig implements RuleConfig 
                 .entrySet()
                 .stream()
                 .map(entry ->
-                        new LambdaFunctionTriggerState(entry.getKey(), entry.getValue().equalsIgnoreCase("enabled")))
+                        new LambdaFunctionTriggerState(entry.getKey(), parseStateToBoolean(entry.getValue())))
                 .toList();
 
         return ValidateLambdaFunctionTriggerStateRuleConfig.builder()
                 .functionTriggerStates(lambdaFunctionTriggerStates)
                 .build();
+    }
+
+    private static boolean parseStateToBoolean(String state){
+        if (!state.equalsIgnoreCase("enabled") && !state.equalsIgnoreCase("disabled")) {
+            throw new IllegalArgumentException("Invalid state for the function");
+        }
+
+        return state.equalsIgnoreCase("enabled");
     }
 }

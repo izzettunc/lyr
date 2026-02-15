@@ -15,6 +15,7 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
 
     @NonNull
     private final Integer maxIdlePeriodInDays;
+
     @NonNull
     private final Boolean excludeEmptyTables;
 
@@ -26,8 +27,8 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
         var configMap = (Map<String, Object>) config;
 
         return ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays((Integer) configMap.get("maxIdlePeriodInDays"))
-                .excludeEmptyTables((Boolean) configMap.get("excludeEmptyTables"))
+                .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
+                .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
                 .build();
 
     }
