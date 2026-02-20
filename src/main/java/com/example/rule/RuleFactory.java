@@ -9,7 +9,7 @@ import com.example.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleImp
 import com.example.rule.lambda.ValidateLambdaFunctionConcurrencyRuleImpl;
 import com.example.rule.lambda.ValidateLambdaFunctionTriggerStateRuleImpl;
 import com.example.rule.lambda.report.ScanLambdaFunctionWithUnboundedConcurrencyRuleReport;
-import com.example.rule.lambda.report.ValidateLambdaConcurrencyRuleReport;
+import com.example.rule.lambda.report.ValidateLambdaFunctionConcurrencyRuleReport;
 import com.example.rule.lambda.report.ValidateLambdaFunctionExistsRuleReport;
 import com.example.rule.lambda.report.ValidateLambdaFunctionTriggerStateRuleReport;
 import com.example.rule.lambda.LambdaReason;
@@ -51,7 +51,7 @@ public class RuleFactory {
                             new ValidateLambdaFunctionExistsRuleReport());
             case VALIDATE_LAMBDA_FUNCTION_CONCURRENCY ->
                     new ValidationRule<LambdaReason>(ruleName, parameters, new ValidateLambdaFunctionConcurrencyRuleImpl(),
-                            new ValidateLambdaConcurrencyRuleReport());
+                            new ValidateLambdaFunctionConcurrencyRuleReport());
             case VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE ->
                     new ValidationRule<LambdaReason>(ruleName, parameters, new ValidateLambdaFunctionTriggerStateRuleImpl(),
                             new ValidateLambdaFunctionTriggerStateRuleReport());

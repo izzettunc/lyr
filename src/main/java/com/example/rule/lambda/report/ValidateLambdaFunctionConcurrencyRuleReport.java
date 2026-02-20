@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
 
-public class ValidateLambdaConcurrencyRuleReport implements RuleReport<ValidateLambdaFunctionConcurrencyRuleConfig> {
+public class ValidateLambdaFunctionConcurrencyRuleReport implements RuleReport<ValidateLambdaFunctionConcurrencyRuleConfig> {
 
     @Override
     public String report(ValidateLambdaFunctionConcurrencyRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {

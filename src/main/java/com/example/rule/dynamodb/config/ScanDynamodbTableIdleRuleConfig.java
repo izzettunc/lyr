@@ -17,7 +17,8 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
     private final Integer maxIdlePeriodInDays;
 
     @NonNull
-    private final Boolean excludeEmptyTables;
+    @Builder.Default
+    private final Boolean excludeEmptyTables = Boolean.FALSE;
 
     public static ScanDynamodbTableIdleRuleConfig parse(Object config) {
         if (!(config instanceof Map)) {

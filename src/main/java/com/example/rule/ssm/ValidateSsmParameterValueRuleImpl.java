@@ -11,7 +11,9 @@ public class ValidateSsmParameterValueRuleImpl implements RuleStrategy<ValidateS
 
     @Override
     public ImmutableList<Outcome> execute(ValidateSsmParameterValueRuleConfig parameters) {
-        return parameters.getParameterValues().stream()
+        return parameters
+                .getParameterValues()
+                .stream()
                 .map(parameterValue -> {
                     var optSsmParameter = SsmConnector.getInstance().getParameter(parameterValue.parameterName());
 

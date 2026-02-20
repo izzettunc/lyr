@@ -45,12 +45,8 @@ public class ScanDynamodbTableIdleRuleImpl implements RuleStrategy<ScanDynamodbT
                     return totalConsumedReadCapacity == 0 && totalConsumedWriteCapacity == 0;
                 })
                 .filter(tableName -> {
-                    if (!parameters.getExcludeEmptyTables()){
-                        return true;
-                    }
-
                     var optTable = DynamoDbConnector.getInstance().getTable(tableName);
-                    return optTable.isPresent() && optTable.get().table().tableSizeBytes() != 0;
+                    return optTable.isPresent() && (!parameters.getExcludeEmptyTables() || optTable.get().table().tableSizeBytes() != 0);
                 })
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());
