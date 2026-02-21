@@ -7,6 +7,8 @@ import com.example.rule.ssm.config.ValidateSsmParameterExistsRuleConfig;
 import com.example.rule.ssm.SsmReason;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
+
 public class ValidateSsmParameterExistsRuleReport implements RuleReport<ValidateSsmParameterExistsRuleConfig> {
 
     @Override
@@ -15,7 +17,7 @@ public class ValidateSsmParameterExistsRuleReport implements RuleReport<Validate
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ValidateSsmParameterExistsRuleConfig.NAME);
+        reportBuilder.append(VALIDATE_SSM_PARAMETER_EXISTS);
         reportBuilder.append(String.format("%n========================"));
 
         for (int i = 0; i < outcomes.size(); i++) {

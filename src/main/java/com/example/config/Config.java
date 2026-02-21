@@ -12,9 +12,9 @@ import java.util.Map;
 
 @Getter
 public class Config {
-    public static final String DEFAULT_CONFIG_PATH = "defaultConfig.yaml";
-    public static final Config DEFAULT_CONFIG = new Config(DEFAULT_CONFIG_PATH, true);
-    public static final Config CONFIG = new Config();
+    private static final String DEFAULT_CONFIG_PATH = "defaultConfig.yaml";
+    private static final Config DEFAULT_CONFIG = new Config(DEFAULT_CONFIG_PATH, true);
+    private static final Config CONFIG = new Config();
 
     private Map<String, RuleConfig> ruleConfig = new HashMap<>();
     private ReportType reportType = ReportType.CONSOLE;
@@ -67,6 +67,10 @@ public class Config {
     public static void loadUserConfig(String path) {
         CONFIG.path = path;
         CONFIG.load();
+    }
+
+    public static Config getConfig() {
+        return CONFIG;
     }
 }
 

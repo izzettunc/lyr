@@ -23,34 +23,33 @@ public class ScanDynamodbTableIdleRuleImpl implements RuleStrategy<ScanDynamodbT
             throw new IllegalArgumentException("Period must be longer than a day");
         }
 
+        var dynamoDbConnector = DynamoDbConnector.create();
+        var cloudWatchConnector = CloudWatchConnector.create();
+
         var now = Instant.now();
         var then = now.minus(Period.ofDays(parameters.getMaxIdlePeriodInDays()));
 
         var appropriateTimeWindow = CloudWatchUtil.getAppropriateTimeWindowForPeriod(parameters.getMaxIdlePeriodInDays());
         var periodInSeconds = (int) Duration.ofDays(appropriateTimeWindow).getSeconds();
 
-        return DynamoDbConnector.getInstance()
+        return dynamoDbConnector
                 .listTables()
                 .stream()
                 .map(ListTablesResponse::tableNames)
                 .flatMap(List::stream)
                 .filter(tableName -> {
-                    var totalConsumedReadCapacity = CloudWatchConnector.getInstance()
+                    var totalConsumedReadCapacity = cloudWatchConnector
                             .getTotalConsumedReadCapacityOfADynamoDbTable(
                                     tableName, then, now, periodInSeconds);
-                    var totalConsumedWriteCapacity = CloudWatchConnector.getInstance()
+                    var totalConsumedWriteCapacity = cloudWatchConnector
                             .getTotalConsumedWriteCapacityOfADynamoDbTable(
                                     tableName, then, now, periodInSeconds);
 
                     return totalConsumedReadCapacity == 0 && totalConsumedWriteCapacity == 0;
                 })
                 .filter(tableName -> {
-                    if (!parameters.getExcludeEmptyTables()){
-                        return true;
-                    }
-
-                    var optTable = DynamoDbConnector.getInstance().getTable(tableName);
-                    return optTable.isPresent() && optTable.get().table().tableSizeBytes() != 0;
+                    var optTable = dynamoDbConnector.getTable(tableName);
+                    return optTable.isPresent() && (!parameters.getExcludeEmptyTables() || optTable.get().table().tableSizeBytes() != 0);
                 })
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());

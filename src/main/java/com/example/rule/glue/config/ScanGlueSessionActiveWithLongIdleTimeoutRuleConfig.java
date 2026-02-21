@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleConfig {
-    public static final String NAME = "scan.glue.session.activeWithLongIdleTimeout";
+
     @NonNull
     private final Integer maxIdleTimeoutInMinutes;
 
@@ -21,11 +21,10 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
             throw new IllegalArgumentException(config.getClass().getSimpleName() + " is not a Map");
         }
 
-        var configMap = (Map<String, Object>) config;
+        var configMap = (Map<String, Integer>) config;
 
         return ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                .maxIdleTimeoutInMinutes((Integer) configMap.get("maxIdleTimeoutInMinutes"))
+                .maxIdleTimeoutInMinutes(RuleConfig.getMandatoryAttribute("maxIdleTimeoutInMinutes", configMap))
                 .build();
-
     }
 }

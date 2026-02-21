@@ -14,14 +14,16 @@ import java.util.List;
 
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl implements RuleStrategy<ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig> {
 
+    private static final List<SessionStatus> invalidStatuses = ImmutableList.of(SessionStatus.PROVISIONING, SessionStatus.READY);
+
     @Override
     public ImmutableList<Outcome> execute(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parameters) {
-        return GlueConnector.getInstance()
+        return GlueConnector.create()
                 .getSessionHistory()
                 .stream()
                 .map(ListSessionsResponse::sessions)
                 .flatMap(List::stream)
-                .filter(session -> session.status() == SessionStatus.READY &&
+                .filter(session -> invalidStatuses.contains(session.status()) &&
                         session.idleTimeout() > parameters.getMaxIdleTimeoutInMinutes())
                 .map(Session::id)
                 .map(ScanOutcome::new)

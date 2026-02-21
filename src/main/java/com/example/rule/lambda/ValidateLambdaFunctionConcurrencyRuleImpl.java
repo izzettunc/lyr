@@ -15,7 +15,7 @@ public class ValidateLambdaFunctionConcurrencyRuleImpl implements RuleStrategy<V
                 .getFunctionConcurrences()
                 .stream()
                 .map(functionConcurrency -> {
-                    var optLambdaFunction = LambdaConnector.getInstance().getLambdaFunction(functionConcurrency.functionName());
+                    var optLambdaFunction = LambdaConnector.create().getLambdaFunction(functionConcurrency.functionName());
 
                     if (optLambdaFunction.isEmpty()) {
                         return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);

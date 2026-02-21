@@ -6,6 +6,8 @@ import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ScanOutcome;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
         implements RuleReport<ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig> {
 
@@ -16,7 +18,7 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.NAME);
+        reportBuilder.append(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
         reportBuilder.append(String.format("%n========================"));
 
         if (outcomes.isEmpty()) {

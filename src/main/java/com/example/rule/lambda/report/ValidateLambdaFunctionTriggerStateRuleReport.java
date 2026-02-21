@@ -7,6 +7,8 @@ import com.example.rule.outcome.ValidationOutcome;
 import com.example.rule.lambda.LambdaReason;
 import com.google.common.collect.ImmutableList;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
+
 public class ValidateLambdaFunctionTriggerStateRuleReport implements RuleReport<ValidateLambdaFunctionTriggerStateRuleConfig> {
 
     @Override
@@ -15,7 +17,7 @@ public class ValidateLambdaFunctionTriggerStateRuleReport implements RuleReport<
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(ValidateLambdaFunctionTriggerStateRuleConfig.NAME);
+        reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
         reportBuilder.append(String.format("%n========================"));
 
 

@@ -16,13 +16,13 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleImpl
 
     @Override
     public ImmutableList<Outcome> execute(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored) {
-        return LambdaConnector.getInstance()
+        return LambdaConnector.create()
                 .listLambdaFunctions()
                 .stream()
                 .map(ListFunctionsResponse::functions)
                 .flatMap(List::stream)
                 .map(FunctionConfiguration::functionName)
-                .map(functionName -> LambdaConnector.getInstance().getLambdaFunction(functionName))
+                .map(functionName -> LambdaConnector.create().getLambdaFunction(functionName))
                 .filter(optLambdaFunction -> optLambdaFunction.isPresent() &&
                         optLambdaFunction.get().concurrency() == null)
                 .map(optLambdaFunction -> optLambdaFunction.get().configuration().functionName())

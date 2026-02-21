@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class ValidateSsmParameterExistsRuleConfig implements RuleConfig {
-    public static final String NAME = "validate.ssm.parameter.exists";
 
     private List<String> parameterNames;
 

@@ -1,7 +1,6 @@
 package com.example.rule.ssm.config;
 
 import com.example.rule.RuleConfig;
-import com.example.rule.lambda.config.ValidateLambdaFunctionConcurrencyRuleConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ValidateSsmParameterValueRuleConfig implements RuleConfig {
-    public static final String NAME = "validate.ssm.parameter.value";
 
     public record SsmParameterValue(String parameterName, String value) {
     }

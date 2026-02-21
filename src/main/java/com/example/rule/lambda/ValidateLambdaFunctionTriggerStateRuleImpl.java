@@ -15,13 +15,14 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl implements RuleStrategy<
 
         return parameters.getFunctionTriggerStates().stream()
                 .map(lambdaFunctionTriggerState -> {
-                    var optLambdaFunction = LambdaConnector.getInstance().getLambdaFunction(lambdaFunctionTriggerState.functionName());
+                    var lambdaConnector = LambdaConnector.create();
+                    var optLambdaFunction = lambdaConnector.getLambdaFunction(lambdaFunctionTriggerState.functionName());
 
                     if (optLambdaFunction.isEmpty()) {
                         return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);
                     }
 
-                    var optEventMappings = LambdaConnector.getInstance().listEventSourceMappings(lambdaFunctionTriggerState.functionName());
+                    var optEventMappings = lambdaConnector.listEventSourceMappings(lambdaFunctionTriggerState.functionName());
 
                     if (optEventMappings.isEmpty() && lambdaFunctionTriggerState.enabled()) {
                         return ValidationOutcome.invalid(LambdaReason.NO_EVENT_SOURCE_MAPPINGS);
@@ -31,17 +32,28 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl implements RuleStrategy<
 
                     var allDisabled = optEventMappings.get().eventSourceMappings().stream()
                             .noneMatch(mapping -> mapping.state().equalsIgnoreCase(ENABLED));
+                    var allEnabled = optEventMappings.get().eventSourceMappings().stream()
+                            .allMatch(mapping -> mapping.state().equalsIgnoreCase(ENABLED));
 
-                    if (allDisabled && lambdaFunctionTriggerState.enabled()) {
-                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_ENABLED);
-                    } else if (allDisabled) {
-                        return ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_ENABLED);
-                    } else if (!lambdaFunctionTriggerState.enabled()) {
-                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_DISABLED);
-                    } else {
+                    if (allEnabled && lambdaFunctionTriggerState.enabled()) {
+                        // Wanted to be enabled and all enabled
                         return ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_ENABLED);
+                    } else if (allEnabled) {
+                        // Wanted to be disabled but all enabled
+                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_ENABLED);
+                    } else if (allDisabled && !lambdaFunctionTriggerState.enabled()) {
+                        // Wanted to be disabled and all disabled
+                        return ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_DISABLED);
+                    } else if (allDisabled) {
+                        // Wanted to be enabled but all disabled
+                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_DISABLED);
+                    } else if (lambdaFunctionTriggerState.enabled()) {
+                        // Wanted to be enabled but mixed outcome
+                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_ENABLED);
+                    } else {
+                        // Wanted to be disabled but mixed outcome
+                        return ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_DISABLED);
                     }
-
                 })
                 .collect(ImmutableList.toImmutableList());
 

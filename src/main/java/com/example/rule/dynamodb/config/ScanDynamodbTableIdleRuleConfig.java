@@ -12,12 +12,13 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
-    public static final String NAME = "scan.dynamodb.table.idle";
 
     @NonNull
     private final Integer maxIdlePeriodInDays;
+
     @NonNull
-    private final Boolean excludeEmptyTables;
+    @Builder.Default
+    private final Boolean excludeEmptyTables = Boolean.FALSE;
 
     public static ScanDynamodbTableIdleRuleConfig parse(Object config) {
         if (!(config instanceof Map)) {
@@ -27,8 +28,8 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
         var configMap = (Map<String, Object>) config;
 
         return ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays((Integer) configMap.get("maxIdlePeriodInDays"))
-                .excludeEmptyTables((Boolean) configMap.get("excludeEmptyTables"))
+                .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
+                .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
                 .build();
 
     }
