@@ -26,6 +26,9 @@
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <jacoco-maven-plguin.version>0.8.14</jacoco-maven-plguin.version>
         <mockito.version>5.21.0</mockito.version>
+        <!-- Code formatter/styler -->
+        <spotless.version>3.2.1</spotless.version>
+        <palantir-java-format>2.88.0</palantir-java-format>
         <!-- Other -->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     </properties>
@@ -158,6 +161,27 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat>
+                            <version>${palantir-java-format}</version>
+                            <style>PALANTIR</style>
+                            <formatJavadoc>false</formatJavadoc>
+                        </palantirJavaFormat>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

@@ -1,6 +1,15 @@
 package com.example.services.glue;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+
 import com.example.services.ServiceProvider;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,16 +19,6 @@ import software.amazon.awssdk.services.glue.model.ListSessionsRequest;
 import software.amazon.awssdk.services.glue.model.ListSessionsResponse;
 import software.amazon.awssdk.services.glue.model.Session;
 import software.amazon.awssdk.services.glue.paginators.ListSessionsIterable;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 class GlueConnectorTest {
 
@@ -60,13 +59,13 @@ class GlueConnectorTest {
                         .sessions(
                                 Session.builder().id("56").build(),
                                 Session.builder().id("78").build())
-                        .build()
-        );
+                        .build());
         var mockedListSessionsIterable = mock(ListSessionsIterable.class);
 
         // When
         when(mockedListSessionsIterable.stream()).thenReturn(listOfListSessionsResponse.stream());
-        when(mockedGlueClient.listSessionsPaginator(any(ListSessionsRequest.class))).thenReturn(mockedListSessionsIterable);
+        when(mockedGlueClient.listSessionsPaginator(any(ListSessionsRequest.class)))
+                .thenReturn(mockedListSessionsIterable);
 
         var actualResult = testObject.getSessionHistory();
 
@@ -76,5 +75,4 @@ class GlueConnectorTest {
                 .ignoringCollectionOrder()
                 .isEqualTo(listOfListSessionsResponse);
     }
-
 }

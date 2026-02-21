@@ -1,18 +1,19 @@
 package com.example.rule.lambda.report;
 
+import static com.example.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
+
 import com.example.rule.RuleReport;
 import com.example.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ScanOutcome;
 import com.google.common.collect.ImmutableList;
 
-import static com.example.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
-
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleReport
         implements RuleReport<ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig> {
 
     @Override
-    public String report(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored, ImmutableList<? extends Outcome> outcomes) {
+    public String report(
+            ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored, ImmutableList<? extends Outcome> outcomes) {
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
         reportBuilder.append(String.format("%nValidation Report for "));
@@ -27,7 +28,8 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleReport
         for (int i = 0; i < outcomes.size(); i++) {
             var outcome = (ScanOutcome) outcomes.get(i);
 
-            reportBuilder.append(String.format("%n- [❌] Lambda function '%s' has unbounded concurrency.", outcome.result()));
+            reportBuilder.append(
+                    String.format("%n- [❌] Lambda function '%s' has unbounded concurrency.", outcome.result()));
         }
 
         return reportBuilder.toString();

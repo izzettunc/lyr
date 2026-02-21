@@ -1,13 +1,12 @@
 package com.example.rule.ssm.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateSsmParameterValueRuleConfigTest {
 
@@ -17,11 +16,9 @@ class ValidateSsmParameterValueRuleConfigTest {
         Map<String, String> config = Map.of("parameter1", "value1", "parameter2", "value2");
         var listOfSsmParameterValue = List.of(
                 new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter1", "value1"),
-                new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter2", "value2")
-        );
+                new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter2", "value2"));
 
-        RuleConfig expectedRuleConfig = ValidateSsmParameterValueRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ValidateSsmParameterValueRuleConfig.builder()
                 .parameterValues(listOfSsmParameterValue)
                 .build();
 

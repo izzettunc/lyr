@@ -1,13 +1,12 @@
 package com.example.rule.lambda.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateLambdaFunctionExistsRuleConfigTest {
 
@@ -15,8 +14,7 @@ class ValidateLambdaFunctionExistsRuleConfigTest {
     void testThatValidateLambdaFunctionExistsRuleConfigIsParsedCorrectly() {
         // Given
         List<String> config = List.of("lambdaFunction1", "lambdaFunction2");
-        RuleConfig expectedRuleConfig = ValidateLambdaFunctionExistsRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ValidateLambdaFunctionExistsRuleConfig.builder()
                 .functionNames(config)
                 .build();
 
@@ -39,5 +37,4 @@ class ValidateLambdaFunctionExistsRuleConfigTest {
         assertThatThrownBy(() -> ValidateLambdaFunctionExistsRuleConfig.parse(invalidConfig))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
 }

@@ -1,13 +1,12 @@
 package com.example.services.cloudwatch;
 
 import com.example.services.ServiceProvider;
+import java.time.Instant;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.Statistic;
-
-import java.time.Instant;
 
 public class CloudWatchConnector {
     private static final String AWS_DYNAMO_DB = "AWS/DynamoDB";
@@ -29,24 +28,27 @@ public class CloudWatchConnector {
         return new CloudWatchConnector(client);
     }
 
-    public double getTotalConsumedReadCapacityOfADynamoDbTable(String tableName, Instant from, Instant to, int periodInSeconds) {
+    public double getTotalConsumedReadCapacityOfADynamoDbTable(
+            String tableName, Instant from, Instant to, int periodInSeconds) {
         var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
-                        .metricName(CONSUMED_READ_CAPACITY_UNITS)
-                        .startTime(from)
-                        .endTime(to)
-                        .period(periodInSeconds)
-                        .namespace(AWS_DYNAMO_DB)
-                        .statistics(Statistic.SUM)
-                        .dimensions(Dimension.builder()
-                                .name(TABLE_NAME)
-                                .value(tableName)
-                                .build())
+                .metricName(CONSUMED_READ_CAPACITY_UNITS)
+                .startTime(from)
+                .endTime(to)
+                .period(periodInSeconds)
+                .namespace(AWS_DYNAMO_DB)
+                .statistics(Statistic.SUM)
+                .dimensions(
+                        Dimension.builder().name(TABLE_NAME).value(tableName).build())
                 .build());
 
-        return statistics.datapoints().stream().map(Datapoint::sum).reduce(Double::sum).orElse(0d);
+        return statistics.datapoints().stream()
+                .map(Datapoint::sum)
+                .reduce(Double::sum)
+                .orElse(0d);
     }
 
-     public double getTotalConsumedWriteCapacityOfADynamoDbTable(String tableName, Instant from, Instant to, int periodInSeconds) {
+    public double getTotalConsumedWriteCapacityOfADynamoDbTable(
+            String tableName, Instant from, Instant to, int periodInSeconds) {
         var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
                 .metricName(CONSUMED_WRITE_CAPACITY_UNITS)
                 .startTime(from)
@@ -54,12 +56,13 @@ public class CloudWatchConnector {
                 .period(periodInSeconds)
                 .namespace(AWS_DYNAMO_DB)
                 .statistics(Statistic.SUM)
-                .dimensions(Dimension.builder()
-                        .name(TABLE_NAME)
-                        .value(tableName)
-                        .build())
+                .dimensions(
+                        Dimension.builder().name(TABLE_NAME).value(tableName).build())
                 .build());
 
-         return statistics.datapoints().stream().map(Datapoint::sum).reduce(Double::sum).orElse(0d);
+        return statistics.datapoints().stream()
+                .map(Datapoint::sum)
+                .reduce(Double::sum)
+                .orElse(0d);
     }
 }

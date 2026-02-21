@@ -1,13 +1,12 @@
 package com.example.rule.lambda.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateLambdaFunctionConcurrencyRuleConfigTest {
 
@@ -17,11 +16,9 @@ class ValidateLambdaFunctionConcurrencyRuleConfigTest {
         Map<String, Integer> config = Map.of("lambda1", 1, "lambda2", 2);
         var listOfLambdaFunctionConcurrency = List.of(
                 new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("lambda1", 1),
-                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("lambda2", 2)
-        );
+                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("lambda2", 2));
 
-        RuleConfig expectedRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(listOfLambdaFunctionConcurrency)
                 .build();
 
@@ -37,7 +34,8 @@ class ValidateLambdaFunctionConcurrencyRuleConfigTest {
     }
 
     @Test
-    void testThatValidateLambdaFunctionConcurrencyRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+    void
+            testThatValidateLambdaFunctionConcurrencyRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         List<String> invalidConfig = List.of("lambda1", "lambda2");
 

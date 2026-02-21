@@ -12,7 +12,8 @@ public class ValidationRule<T extends Enum<T>> extends Rule {
     @Override
     public String report() {
         if (outcome == null) {
-            throw new IllegalStateException("Rule outcome is not evaluated yet. Please call evaluate() before report().");
+            throw new IllegalStateException(
+                    "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
         return report.report(parameters, outcome);

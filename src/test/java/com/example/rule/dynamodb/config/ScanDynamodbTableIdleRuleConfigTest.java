@@ -1,13 +1,12 @@
 package com.example.rule.dynamodb.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 public class ScanDynamodbTableIdleRuleConfigTest {
 
@@ -16,9 +15,9 @@ public class ScanDynamodbTableIdleRuleConfigTest {
         // Given
         int maxIdlePeriodInDays = 180;
         boolean excludeEmptyTables = true;
-        Map<String, Object> config = Map.of("maxIdlePeriodInDays", maxIdlePeriodInDays, "excludeEmptyTables", excludeEmptyTables);
-        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig
-                .builder()
+        Map<String, Object> config =
+                Map.of("maxIdlePeriodInDays", maxIdlePeriodInDays, "excludeEmptyTables", excludeEmptyTables);
+        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays(maxIdlePeriodInDays)
                 .excludeEmptyTables(excludeEmptyTables)
                 .build();
@@ -58,8 +57,7 @@ public class ScanDynamodbTableIdleRuleConfigTest {
         // Given
         int maxIdlePeriodInDays = 180;
         Map<String, Object> configWithOnlyMandatoryAttributes = Map.of("maxIdlePeriodInDays", maxIdlePeriodInDays);
-        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays(maxIdlePeriodInDays)
                 .excludeEmptyTables(false)
                 .build();

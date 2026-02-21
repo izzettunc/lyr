@@ -1,20 +1,18 @@
 package com.example.rule.lambda.config;
 
 import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
 @Getter
 public class ValidateLambdaFunctionConcurrencyRuleConfig implements RuleConfig {
 
-    public record LambdaFunctionConcurrency(String functionName, int reservedConcurrency) {
-    }
+    public record LambdaFunctionConcurrency(String functionName, int reservedConcurrency) {}
 
     private List<LambdaFunctionConcurrency> functionConcurrences;
 
@@ -24,11 +22,9 @@ public class ValidateLambdaFunctionConcurrencyRuleConfig implements RuleConfig {
         }
 
         var lambdaFunctionConcurrences = ((Map<String, Integer>) config)
-                .entrySet()
-                .stream()
-                .map(entry ->
-                        new LambdaFunctionConcurrency(entry.getKey(), entry.getValue()))
-                .toList();
+                .entrySet().stream()
+                        .map(entry -> new LambdaFunctionConcurrency(entry.getKey(), entry.getValue()))
+                        .toList();
 
         return ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(lambdaFunctionConcurrences)

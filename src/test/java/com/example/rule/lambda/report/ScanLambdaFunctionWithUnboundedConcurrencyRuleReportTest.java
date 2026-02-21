@@ -1,13 +1,12 @@
 package com.example.rule.lambda.report;
 
+import static com.example.TestUtil.createImmutableListOfScanOutcome;
+import static com.example.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.example.TestUtil.createImmutableListOfScanOutcome;
-import static com.example.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ScanLambdaFunctionWithUnboundedConcurrencyRuleReportTest {
 
@@ -15,13 +14,14 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleReportTest {
 
     @BeforeEach
     public void beforeEach() {
-        testObject = new ScanLambdaFunctionWithUnboundedConcurrencyRuleReport ();
+        testObject = new ScanLambdaFunctionWithUnboundedConcurrencyRuleReport();
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+        var config =
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
 
         var outcome = createImmutableListOfScanOutcome("outcome1", "outcome2");
 
@@ -35,9 +35,10 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleReportTest {
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+        var config =
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
 
         var outcome = createImmutableListOfScanOutcome();
 
@@ -45,7 +46,6 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleReportTest {
         var actualResult = testObject.report(config, outcome);
 
         // Then
-        assertThat(actualResult)
-                .contains(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY);
+        assertThat(actualResult).contains(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY);
     }
 }

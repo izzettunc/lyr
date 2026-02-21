@@ -13,8 +13,8 @@ public class CloudWatchUtil {
 
     public static int getAppropriateTimeWindowForPeriod(int periodInDays) {
         if (periodInDays < DAY_IN_DAYS) {
-            throw new IllegalArgumentException("Period in days must be greater than or equal to "
-                    + DAY_IN_DAYS + ". periodInDays: " + periodInDays);
+            throw new IllegalArgumentException("Period in days must be greater than or equal to " + DAY_IN_DAYS
+                    + ". periodInDays: " + periodInDays);
         }
 
         if (periodInDays <= 2 * WEEK_IN_DAYS) {

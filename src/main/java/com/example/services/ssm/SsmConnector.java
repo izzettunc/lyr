@@ -2,12 +2,11 @@ package com.example.services.ssm;
 
 import com.example.services.ServiceProvider;
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Optional;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
-
-import java.util.Optional;
 
 public class SsmConnector {
 
@@ -28,12 +27,11 @@ public class SsmConnector {
 
     public Optional<Parameter> getParameter(String name) {
         try {
-            return Optional.of(client.getParameter(GetParameterRequest.builder()
-                    .name(name)
-                    .build()).parameter());
+            return Optional.of(
+                    client.getParameter(GetParameterRequest.builder().name(name).build())
+                            .parameter());
         } catch (ParameterNotFoundException parameterNotFoundException) {
             return Optional.empty();
         }
     }
-
 }

@@ -4,7 +4,6 @@ import com.example.rule.outcome.Outcome;
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 
-
 @Getter
 public abstract class Rule {
     protected final String name;
@@ -31,5 +30,4 @@ public abstract class Rule {
     public static <I, O> ImmutableList<O> recastOutcomeList(ImmutableList<I> outcomes) {
         return outcomes.stream().map(outcome -> (O) outcome).collect(ImmutableList.toImmutableList());
     }
-
 }

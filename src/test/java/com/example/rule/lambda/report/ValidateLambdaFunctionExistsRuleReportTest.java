@@ -1,18 +1,16 @@
 package com.example.rule.lambda.report;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionExistsRuleConfig;
 import com.example.rule.outcome.ValidationOutcome;
 import com.example.rule.ssm.SsmReason;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ValidateLambdaFunctionExistsRuleReportTest {
 
@@ -24,18 +22,16 @@ class ValidateLambdaFunctionExistsRuleReportTest {
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateLambdaFunctionExistsRuleConfig
-                .builder()
+        var config = ValidateLambdaFunctionExistsRuleConfig.builder()
                 .functionNames(List.of("function1", "function2", "function3"))
                 .build();
 
         var outcome = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(null),
-                ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND)
-        );
+                ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND));
 
         // When
         var actualResult = testObject.report(config, outcome);
@@ -48,10 +44,9 @@ class ValidateLambdaFunctionExistsRuleReportTest {
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateLambdaFunctionExistsRuleConfig
-                .builder()
+        var config = ValidateLambdaFunctionExistsRuleConfig.builder()
                 .functionNames(List.of())
                 .build();
 
@@ -61,7 +56,6 @@ class ValidateLambdaFunctionExistsRuleReportTest {
         var actualResult = testObject.report(config, outcome);
 
         // Then
-        assertThat(actualResult)
-                .contains(VALIDATE_LAMBDA_FUNCTION_EXISTS);
+        assertThat(actualResult).contains(VALIDATE_LAMBDA_FUNCTION_EXISTS);
     }
 }

@@ -1,10 +1,10 @@
 package com.example.services.glue;
 
 import com.example.services.ServiceProvider;
+import java.util.List;
 import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.glue.model.ListSessionsRequest;
 import software.amazon.awssdk.services.glue.model.ListSessionsResponse;
-import java.util.List;
 
 public class GlueConnector {
     private final GlueClient client;
@@ -21,7 +21,8 @@ public class GlueConnector {
         return new GlueConnector(client);
     }
 
-    public List<ListSessionsResponse> getSessionHistory(){
-        return client.listSessionsPaginator(ListSessionsRequest.builder().build()).stream().toList();
+    public List<ListSessionsResponse> getSessionHistory() {
+        return client.listSessionsPaginator(ListSessionsRequest.builder().build()).stream()
+                .toList();
     }
 }

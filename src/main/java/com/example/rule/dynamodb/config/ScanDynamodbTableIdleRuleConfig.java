@@ -1,12 +1,11 @@
 package com.example.rule.dynamodb.config;
 
 import com.example.rule.RuleConfig;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -31,6 +30,5 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
                 .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
                 .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
                 .build();
-
     }
 }

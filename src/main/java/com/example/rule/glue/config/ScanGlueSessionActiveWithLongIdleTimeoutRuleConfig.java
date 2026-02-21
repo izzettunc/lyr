@@ -1,12 +1,11 @@
 package com.example.rule.glue.config;
 
 import com.example.rule.RuleConfig;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor

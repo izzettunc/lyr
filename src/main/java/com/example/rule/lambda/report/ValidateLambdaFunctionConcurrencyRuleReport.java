@@ -1,18 +1,20 @@
 package com.example.rule.lambda.report;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
+
 import com.example.rule.RuleReport;
+import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionConcurrencyRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.example.rule.lambda.LambdaReason;
 import com.google.common.collect.ImmutableList;
 
-import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
-
-public class ValidateLambdaFunctionConcurrencyRuleReport implements RuleReport<ValidateLambdaFunctionConcurrencyRuleConfig> {
+public class ValidateLambdaFunctionConcurrencyRuleReport
+        implements RuleReport<ValidateLambdaFunctionConcurrencyRuleConfig> {
 
     @Override
-    public String report(ValidateLambdaFunctionConcurrencyRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
+    public String report(
+            ValidateLambdaFunctionConcurrencyRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
 
         StringBuilder reportBuilder = new StringBuilder();
         reportBuilder.append(String.format("%n========================"));
@@ -24,10 +26,12 @@ public class ValidateLambdaFunctionConcurrencyRuleReport implements RuleReport<V
             var functionName = ruleConfig.getFunctionConcurrences().get(i).functionName();
             var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
 
-            if (outcome.success()){
-                reportBuilder.append(String.format("%n- [✅] Lambda function '%s' has expected concurrency.", functionName));
-            } else{
-                reportBuilder.append(String.format("%n- [❌] Lambda function '%s' validation failed: %s", functionName, outcome.reason()));
+            if (outcome.success()) {
+                reportBuilder.append(
+                        String.format("%n- [✅] Lambda function '%s' has expected concurrency.", functionName));
+            } else {
+                reportBuilder.append(String.format(
+                        "%n- [❌] Lambda function '%s' validation failed: %s", functionName, outcome.reason()));
             }
         }
 

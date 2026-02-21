@@ -1,12 +1,5 @@
 package com.example.rule;
 
-import com.example.rule.outcome.Outcome;
-import com.example.rule.outcome.ValidationOutcome;
-import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,9 +10,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.rule.outcome.Outcome;
+import com.example.rule.outcome.ValidationOutcome;
+import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 public class ValidationRuleTest {
     private enum TestEnum {
-        ONE, TWO, THREE
+        ONE,
+        TWO,
+        THREE
     }
 
     RuleStrategy ruleStrategy = mock(RuleStrategy.class);
@@ -40,7 +42,8 @@ public class ValidationRuleTest {
     @Test
     void testThatEvaluatingValidationRuleCachesAndReturnsTheOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
+        ImmutableList<Outcome> expectedOutcome =
+                ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         assertThat(testObject.outcome).isNull();
 
         // When
@@ -64,8 +67,10 @@ public class ValidationRuleTest {
     @Test
     void testThatEvaluatingValidationRuleMultipleTimeJustReturnsCachedOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
-        ImmutableList<Outcome> updatedOutcome = ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
+        ImmutableList<Outcome> expectedOutcome =
+                ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
+        ImmutableList<Outcome> updatedOutcome =
+                ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
         assertThat(testObject.outcome).isNull();
 
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
@@ -105,7 +110,8 @@ public class ValidationRuleTest {
     @Test
     void testThatReevaluateCachesAndReturnsTheOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
+        ImmutableList<Outcome> expectedOutcome =
+                ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         assertThat(testObject.outcome).isNull();
 
         // When
@@ -129,9 +135,12 @@ public class ValidationRuleTest {
     @Test
     void testThatReevaluatingValidationRuleMultipleTimeChangesOutcomeEachTime() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
-        ImmutableList<Outcome> expectedUpdatedOutcome = ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
-        ImmutableList<Outcome> expectedUpdatedOutcomeLast = ImmutableList.of(ValidationOutcome.valid(TestEnum.ONE), ValidationOutcome.invalid(TestEnum.THREE));
+        ImmutableList<Outcome> expectedOutcome =
+                ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
+        ImmutableList<Outcome> expectedUpdatedOutcome =
+                ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
+        ImmutableList<Outcome> expectedUpdatedOutcomeLast =
+                ImmutableList.of(ValidationOutcome.valid(TestEnum.ONE), ValidationOutcome.invalid(TestEnum.THREE));
         assertThat(testObject.outcome).isNull();
 
         // When
@@ -184,7 +193,8 @@ public class ValidationRuleTest {
     @Test
     void testThatReportReportsSuccessfullyWhenOutcomeIsAlreadyCalculated() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
+        ImmutableList<Outcome> expectedOutcome =
+                ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         var expectedReport = "dummyReport";
 
         assertThat(testObject.outcome).isNull();
@@ -198,8 +208,7 @@ public class ValidationRuleTest {
         var actualReport = testObject.report();
 
         // Then
-        assertThat(actualReport)
-                .isEqualTo(expectedReport);
+        assertThat(actualReport).isEqualTo(expectedReport);
 
         verify(ruleReport, times(1)).report(ruleConfig, expectedOutcome);
     }

@@ -1,13 +1,12 @@
 package com.example.rule.glue.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
 
@@ -16,8 +15,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
         // Given
         int maxIdleTimeoutInMinutes = 15;
         Map<String, Integer> config = Map.of("maxIdleTimeoutInMinutes", maxIdleTimeoutInMinutes);
-        RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
                 .build();
 
@@ -32,7 +30,8 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     }
 
     @Test
-    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+    void
+            testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         List<Integer> invalidConfig = List.of(15);
 
@@ -42,12 +41,14 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     }
 
     @Test
-    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenConfigHasMissingValues() {
+    void
+            testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenConfigHasMissingValues() {
         // Given
         Map<String, Integer> configWithoutMandatoryAttributes = Map.of();
 
         // When & Then
-        assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(configWithoutMandatoryAttributes))
+        assertThatThrownBy(() ->
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(configWithoutMandatoryAttributes))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

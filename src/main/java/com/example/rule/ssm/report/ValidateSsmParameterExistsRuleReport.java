@@ -1,13 +1,13 @@
 package com.example.rule.ssm.report;
 
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
+
 import com.example.rule.RuleReport;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.example.rule.ssm.config.ValidateSsmParameterExistsRuleConfig;
 import com.example.rule.ssm.SsmReason;
+import com.example.rule.ssm.config.ValidateSsmParameterExistsRuleConfig;
 import com.google.common.collect.ImmutableList;
-
-import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
 
 public class ValidateSsmParameterExistsRuleReport implements RuleReport<ValidateSsmParameterExistsRuleConfig> {
 
@@ -24,10 +24,11 @@ public class ValidateSsmParameterExistsRuleReport implements RuleReport<Validate
             var parameterName = ruleConfig.getParameterNames().get(i);
             var outcome = (ValidationOutcome<SsmReason>) outcomes.get(i);
 
-            if (outcome.success()){
+            if (outcome.success()) {
                 reportBuilder.append(String.format("%n- [✅] Ssm parameter '%s' exists.", parameterName));
             } else {
-                reportBuilder.append(String.format("%n- [❌] Ssm parameter '%s' validation failed: %s", parameterName, outcome.reason()));
+                reportBuilder.append(String.format(
+                        "%n- [❌] Ssm parameter '%s' validation failed: %s", parameterName, outcome.reason()));
             }
         }
 

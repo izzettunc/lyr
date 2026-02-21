@@ -1,7 +1,6 @@
 package com.example.report;
 
 import com.example.rule.Rule;
-
 import java.util.List;
 
 public class ConsoleReporter implements Reporter {

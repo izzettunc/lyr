@@ -1,12 +1,5 @@
 package com.example.rule;
 
-import com.example.rule.outcome.Outcome;
-import com.example.rule.outcome.ScanOutcome;
-import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,6 +9,13 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.example.rule.outcome.Outcome;
+import com.example.rule.outcome.ScanOutcome;
+import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ScanRuleTest {
 
@@ -62,7 +62,8 @@ public class ScanRuleTest {
     void testThatEvaluatingScanRuleMultipleTimeJustReturnsCachedOutcome() {
         // Given
         ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
-        ImmutableList<Outcome> updatedOutcome = ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
+        ImmutableList<Outcome> updatedOutcome =
+                ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
         assertThat(testObject.outcome).isNull();
 
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
@@ -127,8 +128,10 @@ public class ScanRuleTest {
     void testThatReevaluatingScanRuleMultipleTimeChangesOutcomeEachTime() {
         // Given
         ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
-        ImmutableList<Outcome> expectedUpdatedOutcome = ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
-        ImmutableList<Outcome> expectedUpdatedOutcomeLast = ImmutableList.of(new ScanOutcome("updatedTestLast"), new ScanOutcome("updatedTestLast"));
+        ImmutableList<Outcome> expectedUpdatedOutcome =
+                ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
+        ImmutableList<Outcome> expectedUpdatedOutcomeLast =
+                ImmutableList.of(new ScanOutcome("updatedTestLast"), new ScanOutcome("updatedTestLast"));
         assertThat(testObject.outcome).isNull();
 
         // When
@@ -195,8 +198,7 @@ public class ScanRuleTest {
         var actualReport = testObject.report();
 
         // Then
-        assertThat(actualReport)
-                .isEqualTo(expectedReport);
+        assertThat(actualReport).isEqualTo(expectedReport);
 
         verify(ruleReport, times(1)).report(ruleConfig, expectedOutcome);
     }

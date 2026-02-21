@@ -1,10 +1,10 @@
 package com.example.services;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class ServiceProviderTest {
 
@@ -52,11 +52,13 @@ class ServiceProviderTest {
     void testThatCloudWatchClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("dummy");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("dummy");
             serviceUtilMockedStatic.when(ServiceProvider::getAwsRegionFromEnv).thenReturn("dummy");
 
             // When
-            try(var ignored = ServiceProvider.buildCloudWatchClient()) {
+            try (var ignored = ServiceProvider.buildCloudWatchClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -68,10 +70,12 @@ class ServiceProviderTest {
     void testThatCloudWatchClientIsBuildWithProfile() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("");
 
             // When
-            try(var ignored = ServiceProvider.buildCloudWatchClient()) {
+            try (var ignored = ServiceProvider.buildCloudWatchClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -83,11 +87,13 @@ class ServiceProviderTest {
     void testThatDynamoDbClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("dummy");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("dummy");
             serviceUtilMockedStatic.when(ServiceProvider::getAwsRegionFromEnv).thenReturn("dummy");
 
             // When
-            try(var ignored = ServiceProvider.buildDynamoDbClient()) {
+            try (var ignored = ServiceProvider.buildDynamoDbClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -99,10 +105,12 @@ class ServiceProviderTest {
     void testThatDynamoDbClientIsBuildWithProfile() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("");
 
             // When
-            try(var ignored = ServiceProvider.buildDynamoDbClient()) {
+            try (var ignored = ServiceProvider.buildDynamoDbClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -114,11 +122,13 @@ class ServiceProviderTest {
     void testThatGlueClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("dummy");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("dummy");
             serviceUtilMockedStatic.when(ServiceProvider::getAwsRegionFromEnv).thenReturn("dummy");
 
             // When
-            try(var ignored = ServiceProvider.buildGlueClient()) {
+            try (var ignored = ServiceProvider.buildGlueClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -130,25 +140,30 @@ class ServiceProviderTest {
     void testThatGlueClientIsBuildWithProfile() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("");
 
             // When
-            try(var ignored = ServiceProvider.buildGlueClient()) {
+            try (var ignored = ServiceProvider.buildGlueClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
             }
         }
     }
+
     @Test
     void testThatLambdaClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("dummy");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("dummy");
             serviceUtilMockedStatic.when(ServiceProvider::getAwsRegionFromEnv).thenReturn("dummy");
 
             // When
-            try(var ignored = ServiceProvider.buildLambdaClient()) {
+            try (var ignored = ServiceProvider.buildLambdaClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -160,10 +175,12 @@ class ServiceProviderTest {
     void testThatLambdaClientIsBuildWithProfile() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("");
 
             // When
-            try(var ignored = ServiceProvider.buildLambdaClient()) {
+            try (var ignored = ServiceProvider.buildLambdaClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -175,11 +192,13 @@ class ServiceProviderTest {
     void testThatSsmClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("dummy");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("dummy");
             serviceUtilMockedStatic.when(ServiceProvider::getAwsRegionFromEnv).thenReturn("dummy");
 
             // When
-            try(var ignored = ServiceProvider.buildSsmClient()) {
+            try (var ignored = ServiceProvider.buildSsmClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -191,15 +210,16 @@ class ServiceProviderTest {
     void testThatSsmClientIsBuildWithProfile() {
         // Given
         try (var serviceUtilMockedStatic = Mockito.mockStatic(ServiceProvider.class, Mockito.CALLS_REAL_METHODS)) {
-            serviceUtilMockedStatic.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+            serviceUtilMockedStatic
+                    .when(ServiceProvider::getAwsAccessKeyIdFromEnv)
+                    .thenReturn("");
 
             // When
-            try(var ignored = ServiceProvider.buildSsmClient()) {
+            try (var ignored = ServiceProvider.buildSsmClient()) {
                 // Then
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
                 serviceUtilMockedStatic.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
             }
         }
     }
-
 }

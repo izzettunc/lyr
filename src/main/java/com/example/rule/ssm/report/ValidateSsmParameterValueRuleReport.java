@@ -1,13 +1,13 @@
 package com.example.rule.ssm.report;
 
+import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
+
 import com.example.rule.RuleReport;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.example.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 import com.example.rule.ssm.SsmReason;
+import com.example.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 import com.google.common.collect.ImmutableList;
-
-import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 
 public class ValidateSsmParameterValueRuleReport implements RuleReport<ValidateSsmParameterValueRuleConfig> {
 
@@ -24,10 +24,11 @@ public class ValidateSsmParameterValueRuleReport implements RuleReport<ValidateS
             var parameterName = ruleConfig.getParameterValues().get(i).parameterName();
             var outcome = (ValidationOutcome<SsmReason>) outcomes.get(i);
 
-            if (outcome.success()){
+            if (outcome.success()) {
                 reportBuilder.append(String.format("%n- [✅] Ssm parameter '%s' has expected value.", parameterName));
-            } else{
-                reportBuilder.append(String.format("%n- [❌] Ssm parameter '%s' validation failed: %s", parameterName, outcome.reason()));
+            } else {
+                reportBuilder.append(String.format(
+                        "%n- [❌] Ssm parameter '%s' validation failed: %s", parameterName, outcome.reason()));
             }
         }
 

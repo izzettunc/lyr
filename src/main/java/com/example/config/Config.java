@@ -3,12 +3,11 @@ package com.example.config;
 import com.example.report.ReportType;
 import com.example.rule.RuleConfig;
 import com.example.rule.RuleConfigFactory;
-import lombok.Getter;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import org.yaml.snakeyaml.Yaml;
 
 @Getter
 public class Config {
@@ -21,9 +20,7 @@ public class Config {
     private String path;
     private boolean isDefault = false;
 
-    private Config() {
-
-    }
+    private Config() {}
 
     public Config(String path) {
         this(path, false);
@@ -50,7 +47,7 @@ public class Config {
         for (Map.Entry<String, Object> entry : rawConfig.entrySet()) {
             if (entry.getValue() != null) {
                 ruleConfigMap.put(entry.getKey(), RuleConfigFactory.createRuleConfig(entry.getKey(), entry.getValue()));
-            } else if(isDefault) {
+            } else if (isDefault) {
                 ruleConfigMap.put(entry.getKey(), null);
             } else {
                 var defaultRuleConfig = DEFAULT_CONFIG.getRuleConfig().get(entry.getKey());
@@ -73,4 +70,3 @@ public class Config {
         return CONFIG;
     }
 }
-

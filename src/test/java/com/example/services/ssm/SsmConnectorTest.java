@@ -1,6 +1,14 @@
 package com.example.services.ssm;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+
 import com.example.services.ServiceProvider;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,15 +18,6 @@ import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
 import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 class SsmConnectorTest {
     SsmClient mockedSsmClient = Mockito.mock(SsmClient.class);
@@ -49,15 +48,15 @@ class SsmConnectorTest {
     void testThatGetParameterReturnsOptionalOfParameterWhenFound() {
         // Given
         var expectedParameter = Parameter.builder().name("dummy").value("dummy").build();
-        var getParameterResponse = GetParameterResponse.builder().parameter(expectedParameter).build();
+        var getParameterResponse =
+                GetParameterResponse.builder().parameter(expectedParameter).build();
 
         // When
         when(mockedSsmClient.getParameter(any(GetParameterRequest.class))).thenReturn(getParameterResponse);
         var actualResult = testObject.getParameter("dummy");
 
         // Then
-        assertThat(actualResult)
-                .isEqualTo(Optional.of(expectedParameter));
+        assertThat(actualResult).isEqualTo(Optional.of(expectedParameter));
     }
 
     @Test
@@ -68,8 +67,6 @@ class SsmConnectorTest {
         var actualResult = testObject.getParameter("dummy");
 
         // Then
-        assertThat(actualResult)
-                .isEqualTo(Optional.empty());
+        assertThat(actualResult).isEqualTo(Optional.empty());
     }
-
 }

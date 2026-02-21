@@ -1,13 +1,12 @@
 package com.example.rule.ssm.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateSsmParameterExistsRuleConfigTest {
 
@@ -15,8 +14,7 @@ class ValidateSsmParameterExistsRuleConfigTest {
     void testThatValidateSsmParameterExistsRuleConfigIsParsedCorrectly() {
         // Given
         List<String> config = List.of("ssmParam1", "ssmParam2");
-        RuleConfig expectedRuleConfig = ValidateSsmParameterExistsRuleConfig
-                .builder()
+        RuleConfig expectedRuleConfig = ValidateSsmParameterExistsRuleConfig.builder()
                 .parameterNames(config)
                 .build();
 

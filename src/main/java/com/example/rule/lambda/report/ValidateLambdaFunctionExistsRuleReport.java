@@ -1,13 +1,13 @@
 package com.example.rule.lambda.report;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
+
 import com.example.rule.RuleReport;
+import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionExistsRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.example.rule.lambda.LambdaReason;
 import com.google.common.collect.ImmutableList;
-
-import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
 
 public class ValidateLambdaFunctionExistsRuleReport implements RuleReport<ValidateLambdaFunctionExistsRuleConfig> {
 
@@ -24,10 +24,11 @@ public class ValidateLambdaFunctionExistsRuleReport implements RuleReport<Valida
             var functionName = ruleConfig.getFunctionNames().get(i);
             var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
 
-            if (outcome.success()){
+            if (outcome.success()) {
                 reportBuilder.append(String.format("%n- [✅] Lambda function '%s' exists.", functionName));
             } else {
-                reportBuilder.append(String.format("%n- [❌] Lambda function '%s' validation failed: %s", functionName, outcome.reason()));
+                reportBuilder.append(String.format(
+                        "%n- [❌] Lambda function '%s' validation failed: %s", functionName, outcome.reason()));
             }
         }
 

@@ -1,23 +1,5 @@
 package com.example.services.lambda;
 
-import com.example.services.ServiceProvider;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
-import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
-import software.amazon.awssdk.services.lambda.model.ResourceNotFoundException;
-import software.amazon.awssdk.services.lambda.LambdaClient;
-import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
-import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
-import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
-import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
-import software.amazon.awssdk.services.lambda.paginators.ListFunctionsIterable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -25,6 +7,23 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+
+import com.example.services.ServiceProvider;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
+import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
+import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
+import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
+import software.amazon.awssdk.services.lambda.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.lambda.paginators.ListFunctionsIterable;
 
 class LambdaConnectorTest {
 
@@ -58,15 +57,22 @@ class LambdaConnectorTest {
         var listOfLisFunctionsResponse = List.of(
                 ListFunctionsResponse.builder()
                         .functions(
-                                FunctionConfiguration.builder().functionName("function1").build(),
-                                FunctionConfiguration.builder().functionName("function2").build())
+                                FunctionConfiguration.builder()
+                                        .functionName("function1")
+                                        .build(),
+                                FunctionConfiguration.builder()
+                                        .functionName("function2")
+                                        .build())
                         .build(),
                 ListFunctionsResponse.builder()
                         .functions(
-                                FunctionConfiguration.builder().functionName("function3").build(),
-                                FunctionConfiguration.builder().functionName("function4").build())
-                        .build()
-        );
+                                FunctionConfiguration.builder()
+                                        .functionName("function3")
+                                        .build(),
+                                FunctionConfiguration.builder()
+                                        .functionName("function4")
+                                        .build())
+                        .build());
         var mockedListFunctionsIterable = mock(ListFunctionsIterable.class);
 
         // When
@@ -85,15 +91,19 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorListEventSourceMappingsReturnsOptionalListEventSourceMappingResponse() {
         // Given
-        var listEventSourceMappingsResponse =
-                ListEventSourceMappingsResponse.builder()
-                        .eventSourceMappings(
-                                EventSourceMappingConfiguration.builder().eventSourceArn("map1").build(),
-                                EventSourceMappingConfiguration.builder().eventSourceArn("map2").build())
-                        .build();
+        var listEventSourceMappingsResponse = ListEventSourceMappingsResponse.builder()
+                .eventSourceMappings(
+                        EventSourceMappingConfiguration.builder()
+                                .eventSourceArn("map1")
+                                .build(),
+                        EventSourceMappingConfiguration.builder()
+                                .eventSourceArn("map2")
+                                .build())
+                .build();
 
         // When
-        when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class))).thenReturn(listEventSourceMappingsResponse);
+        when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class)))
+                .thenReturn(listEventSourceMappingsResponse);
 
         var actualResult = testObject.listEventSourceMappings("dummy");
 
@@ -108,7 +118,8 @@ class LambdaConnectorTest {
     void testThatLambdaConnectorListEventSourceMappingsReturnsEmptyOptionalWhenFunctionDoesntExist() {
         // Given
         // When
-        when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class))).thenThrow(ResourceNotFoundException.class);
+        when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class)))
+                .thenThrow(ResourceNotFoundException.class);
 
         var actualResult = testObject.listEventSourceMappings("dummy");
 
@@ -122,11 +133,10 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorGetLambdaFunctionReturnsOptionalGetFunctionResponse() {
         // Given
-        var getFunctionResponse =
-                GetFunctionResponse.builder()
-                        .configuration(
-                                FunctionConfiguration.builder().functionName("lambda1").build())
-                        .build();
+        var getFunctionResponse = GetFunctionResponse.builder()
+                .configuration(
+                        FunctionConfiguration.builder().functionName("lambda1").build())
+                .build();
 
         // When
         when(mockedLambdaClient.getFunction(any(GetFunctionRequest.class))).thenReturn(getFunctionResponse);

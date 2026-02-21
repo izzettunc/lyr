@@ -1,12 +1,12 @@
 package com.example.rule.glue.report;
 
+import static com.example.TestUtil.createImmutableListOfScanOutcome;
+import static com.example.rule.Constants.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.example.rule.Constants.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
-import static com.example.TestUtil.createImmutableListOfScanOutcome;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleReportTest {
 
@@ -18,10 +18,9 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleReportTest {
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig
-                .builder()
+        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(5)
                 .build();
 
@@ -37,10 +36,9 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleReportTest {
     }
 
     @Test
-    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome(){
+    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig
-                .builder()
+        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(5)
                 .build();
 
@@ -50,7 +48,6 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleReportTest {
         var actualResult = testObject.report(config, outcome);
 
         // Then
-        assertThat(actualResult)
-                .contains(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
+        assertThat(actualResult).contains(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
     }
 }

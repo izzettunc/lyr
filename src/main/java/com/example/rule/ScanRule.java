@@ -11,14 +11,15 @@ public class ScanRule extends Rule {
     @Override
     public String report() {
         if (outcome == null) {
-            throw new IllegalStateException("Rule outcome is not evaluated yet. Please call evaluate() before report().");
+            throw new IllegalStateException(
+                    "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
         return report.report(parameters, outcome);
     }
 
     @Override
-    public ImmutableList<ScanOutcome> evaluate(){
+    public ImmutableList<ScanOutcome> evaluate() {
         if (outcome == null) {
             outcome = strategy.execute(parameters);
         }
@@ -30,5 +31,4 @@ public class ScanRule extends Rule {
         outcome = strategy.execute(parameters);
         return Rule.recastOutcomeList(outcome);
     }
-
 }
