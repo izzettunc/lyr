@@ -15,7 +15,7 @@ public class ValidateSsmParameterValueRuleImpl implements RuleStrategy<ValidateS
                 .getParameterValues()
                 .stream()
                 .map(parameterValue -> {
-                    var optSsmParameter = SsmConnector.getInstance().getParameter(parameterValue.parameterName());
+                    var optSsmParameter = SsmConnector.create().getParameter(parameterValue.parameterName());
 
                     if (optSsmParameter.isEmpty()) {
                         return ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND);

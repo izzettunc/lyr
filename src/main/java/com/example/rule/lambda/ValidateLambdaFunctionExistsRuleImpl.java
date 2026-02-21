@@ -13,7 +13,7 @@ public class ValidateLambdaFunctionExistsRuleImpl implements RuleStrategy<Valida
     public ImmutableList<Outcome> execute(ValidateLambdaFunctionExistsRuleConfig parameters) {
         return parameters.getFunctionNames().stream()
                 .map(lambdaFunctionName -> {
-                    var optLambdaFunction = LambdaConnector.getInstance().getLambdaFunction(lambdaFunctionName);
+                    var optLambdaFunction = LambdaConnector.create().getLambdaFunction(lambdaFunctionName);
 
                     if (optLambdaFunction.isEmpty()) {
                         return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);

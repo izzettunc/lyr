@@ -13,7 +13,7 @@ public class ValidateSsmParameterExistsRuleImpl implements RuleStrategy<Validate
     public ImmutableList<Outcome> execute(ValidateSsmParameterExistsRuleConfig parameters) {
         return parameters.getParameterNames().stream()
                 .map(parameterName -> {
-                    var optSsmParameter = SsmConnector.getInstance().getParameter(parameterName);
+                    var optSsmParameter = SsmConnector.create().getParameter(parameterName);
 
                     if (optSsmParameter.isEmpty()) {
                         return ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND);

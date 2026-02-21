@@ -39,8 +39,8 @@ public class ScanDynamodbTableIdleRuleImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        mockedDynamoDbConnector.when(DynamoDbConnector::getInstance).thenReturn(mockedDynamoDbConnectorInstance);
-        mockedCloudWatchConnector.when(CloudWatchConnector::getInstance).thenReturn(mockedCloudWatchConnectorInstance);
+        mockedDynamoDbConnector.when(DynamoDbConnector::create).thenReturn(mockedDynamoDbConnectorInstance);
+        mockedCloudWatchConnector.when(CloudWatchConnector::create).thenReturn(mockedCloudWatchConnectorInstance);
         testObject = new ScanDynamodbTableIdleRuleImpl();
     }
 

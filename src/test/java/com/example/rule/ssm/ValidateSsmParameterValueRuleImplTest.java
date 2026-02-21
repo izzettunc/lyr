@@ -30,7 +30,7 @@ class ValidateSsmParameterValueRuleImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        mockedSsmConnector.when(SsmConnector::getInstance).thenReturn(mockedSsmConnectorInstance);
+        mockedSsmConnector.when(SsmConnector::create).thenReturn(mockedSsmConnectorInstance);
         testObject = new ValidateSsmParameterValueRuleImpl();
     }
 

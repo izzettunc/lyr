@@ -31,7 +31,7 @@ class ValidateLambdaFunctionConcurrencyRuleImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        mockedLambdaConnector.when(LambdaConnector::getInstance).thenReturn(mockedLambdaConnectorInstance);
+        mockedLambdaConnector.when(LambdaConnector::create).thenReturn(mockedLambdaConnectorInstance);
         testObject = new ValidateLambdaFunctionConcurrencyRuleImpl();
     }
 

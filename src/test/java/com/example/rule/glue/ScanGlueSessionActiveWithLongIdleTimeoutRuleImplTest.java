@@ -29,7 +29,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
 
     @BeforeEach
     public void beforeEach() {
-        mockedGlueConnector.when(GlueConnector::getInstance).thenReturn(mockedGlueConnectorInstance);
+        mockedGlueConnector.when(GlueConnector::create).thenReturn(mockedGlueConnectorInstance);
         testObject = new ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl();
     }
 

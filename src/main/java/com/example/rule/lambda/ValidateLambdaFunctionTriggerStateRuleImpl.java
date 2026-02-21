@@ -15,13 +15,14 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl implements RuleStrategy<
 
         return parameters.getFunctionTriggerStates().stream()
                 .map(lambdaFunctionTriggerState -> {
-                    var optLambdaFunction = LambdaConnector.getInstance().getLambdaFunction(lambdaFunctionTriggerState.functionName());
+                    var lambdaConnector = LambdaConnector.create();
+                    var optLambdaFunction = lambdaConnector.getLambdaFunction(lambdaFunctionTriggerState.functionName());
 
                     if (optLambdaFunction.isEmpty()) {
                         return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);
                     }
 
-                    var optEventMappings = LambdaConnector.getInstance().listEventSourceMappings(lambdaFunctionTriggerState.functionName());
+                    var optEventMappings = lambdaConnector.listEventSourceMappings(lambdaFunctionTriggerState.functionName());
 
                     if (optEventMappings.isEmpty() && lambdaFunctionTriggerState.enabled()) {
                         return ValidationOutcome.invalid(LambdaReason.NO_EVENT_SOURCE_MAPPINGS);

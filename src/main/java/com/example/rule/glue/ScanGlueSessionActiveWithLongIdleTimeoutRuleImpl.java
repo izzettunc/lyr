@@ -18,7 +18,7 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl implements RuleStr
 
     @Override
     public ImmutableList<Outcome> execute(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parameters) {
-        return GlueConnector.getInstance()
+        return GlueConnector.create()
                 .getSessionHistory()
                 .stream()
                 .map(ListSessionsResponse::sessions)
