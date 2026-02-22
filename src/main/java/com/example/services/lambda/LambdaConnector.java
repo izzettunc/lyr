@@ -11,11 +11,11 @@ import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsRespo
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.ResourceNotFoundException;
 
-public class LambdaConnector {
+public final class LambdaConnector {
     private final LambdaClient client;
 
-    private LambdaConnector(LambdaClient client) {
-        this.client = client;
+    private LambdaConnector(final LambdaClient lambdaClient) {
+        this.client = lambdaClient;
     }
 
     public static LambdaConnector create() {
@@ -23,14 +23,14 @@ public class LambdaConnector {
     }
 
     @VisibleForTesting
-    static LambdaConnector create(LambdaClient client) {
-        return new LambdaConnector(client);
+    static LambdaConnector create(final LambdaClient lambdaClient) {
+        return new LambdaConnector(lambdaClient);
     }
 
-    public Optional<ListEventSourceMappingsResponse> listEventSourceMappings(String functionName) {
+    public Optional<ListEventSourceMappingsResponse> listEventSourceMappings(final String functionName) {
         try {
             return Optional.of(client.listEventSourceMappings(builder -> builder.functionName(functionName)));
-        } catch (ResourceNotFoundException resourceNotFoundException) {
+        } catch (final ResourceNotFoundException resourceNotFoundException) {
             return Optional.empty();
         }
     }
@@ -39,11 +39,11 @@ public class LambdaConnector {
         return client.listFunctionsPaginator().stream().toList();
     }
 
-    public Optional<GetFunctionResponse> getLambdaFunction(String functionName) {
+    public Optional<GetFunctionResponse> getLambdaFunction(final String functionName) {
         try {
             return Optional.of(client.getFunction(
                     GetFunctionRequest.builder().functionName(functionName).build()));
-        } catch (ResourceNotFoundException resourceNotFoundException) {
+        } catch (final ResourceNotFoundException resourceNotFoundException) {
             return Optional.empty();
         }
     }

@@ -8,17 +8,21 @@ import lombok.Getter;
 public abstract class Rule {
     protected final String name;
 
-    protected final RuleConfig parameters;
+    protected final RuleConfig config;
     protected final RuleStrategy strategy;
     protected final RuleReport report;
 
     protected ImmutableList<Outcome> outcome;
 
-    Rule(String name, RuleConfig parameters, RuleStrategy strategy, RuleReport report) {
-        this.name = name;
-        this.parameters = parameters;
-        this.strategy = strategy;
-        this.report = report;
+    Rule(
+            final String ruleName,
+            final RuleConfig ruleConfig,
+            final RuleStrategy ruleStrategy,
+            final RuleReport ruleReport) {
+        this.name = ruleName;
+        this.config = ruleConfig;
+        this.strategy = ruleStrategy;
+        this.report = ruleReport;
     }
 
     public abstract String report();
@@ -27,7 +31,7 @@ public abstract class Rule {
 
     public abstract ImmutableList<? extends Outcome> reevaluate();
 
-    public static <I, O> ImmutableList<O> recastOutcomeList(ImmutableList<I> outcomes) {
+    public static <I, O> ImmutableList<O> recastOutcomeList(final ImmutableList<I> outcomes) {
         return outcomes.stream().map(outcome -> (O) outcome).collect(ImmutableList.toImmutableList());
     }
 }

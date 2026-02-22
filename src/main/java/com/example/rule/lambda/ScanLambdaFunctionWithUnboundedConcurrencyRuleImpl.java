@@ -14,7 +14,7 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleImpl
         implements RuleStrategy<ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig> {
 
     @Override
-    public ImmutableList<Outcome> execute(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored) {
+    public ImmutableList<Outcome> execute(final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored) {
         return LambdaConnector.create().listLambdaFunctions().stream()
                 .map(ListFunctionsResponse::functions)
                 .flatMap(List::stream)

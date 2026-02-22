@@ -10,10 +10,10 @@ import com.google.common.collect.ImmutableList;
 public class ValidateSsmParameterExistsRuleImpl implements RuleStrategy<ValidateSsmParameterExistsRuleConfig> {
 
     @Override
-    public ImmutableList<Outcome> execute(ValidateSsmParameterExistsRuleConfig parameters) {
+    public ImmutableList<Outcome> execute(final ValidateSsmParameterExistsRuleConfig parameters) {
         return parameters.getParameterNames().stream()
                 .map(parameterName -> {
-                    var optSsmParameter = SsmConnector.create().getParameter(parameterName);
+                    final var optSsmParameter = SsmConnector.create().getParameter(parameterName);
 
                     if (optSsmParameter.isEmpty()) {
                         return ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND);

@@ -13,14 +13,14 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsParsedCorrectly() {
         // Given
-        int maxIdleTimeoutInMinutes = 15;
-        Map<String, Integer> config = Map.of("maxIdleTimeoutInMinutes", maxIdleTimeoutInMinutes);
-        RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+        final int maxIdleTimeoutInMinutes = 15;
+        final Map<String, Integer> config = Map.of("maxIdleTimeoutInMinutes", maxIdleTimeoutInMinutes);
+        final RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
                 .build();
 
         // When
-        var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);
+        final var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -33,7 +33,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     void
             testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        List<Integer> invalidConfig = List.of(15);
+        final List<Integer> invalidConfig = List.of(15);
 
         // When & Then
         assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(invalidConfig))
@@ -44,7 +44,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     void
             testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsIllegalArgumentExceptionWhenConfigHasMissingValues() {
         // Given
-        Map<String, Integer> configWithoutMandatoryAttributes = Map.of();
+        final Map<String, Integer> configWithoutMandatoryAttributes = Map.of();
 
         // When & Then
         assertThatThrownBy(() ->

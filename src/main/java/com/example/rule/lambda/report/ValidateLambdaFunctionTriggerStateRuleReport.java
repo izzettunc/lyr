@@ -14,18 +14,22 @@ public class ValidateLambdaFunctionTriggerStateRuleReport
 
     @Override
     public String report(
-            ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
+            final ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig,
+            final ImmutableList<? extends Outcome> outcomes) {
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var functionName = ruleConfig.getFunctionTriggerStates().get(i).functionName();
-            var expectedState = ruleConfig.getFunctionTriggerStates().get(i).enabled() ? "enabled" : "disabled";
-            var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
+            final var functionName =
+                    ruleConfig.getFunctionTriggerStates().get(i).functionName();
+            final var expectedState =
+                    ruleConfig.getFunctionTriggerStates().get(i).enabled() ? "enabled" : "disabled";
+            final var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
 
             if (outcome.success()) {
                 reportBuilder.append(String.format(

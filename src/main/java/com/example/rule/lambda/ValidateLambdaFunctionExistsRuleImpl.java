@@ -10,10 +10,10 @@ import com.google.common.collect.ImmutableList;
 public class ValidateLambdaFunctionExistsRuleImpl implements RuleStrategy<ValidateLambdaFunctionExistsRuleConfig> {
 
     @Override
-    public ImmutableList<Outcome> execute(ValidateLambdaFunctionExistsRuleConfig parameters) {
+    public ImmutableList<Outcome> execute(final ValidateLambdaFunctionExistsRuleConfig parameters) {
         return parameters.getFunctionNames().stream()
                 .map(lambdaFunctionName -> {
-                    var optLambdaFunction = LambdaConnector.create().getLambdaFunction(lambdaFunctionName);
+                    final var optLambdaFunction = LambdaConnector.create().getLambdaFunction(lambdaFunctionName);
 
                     if (optLambdaFunction.isEmpty()) {
                         return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);

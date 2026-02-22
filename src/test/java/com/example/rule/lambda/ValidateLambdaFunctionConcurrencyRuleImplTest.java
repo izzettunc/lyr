@@ -1,5 +1,9 @@
 package com.example.rule.lambda;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
+import static com.example.TestUtil.FUNCTION_3;
+import static com.example.TestUtil.FUNCTION_4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,22 +52,22 @@ class ValidateLambdaFunctionConcurrencyRuleImplTest {
     @Test
     void testThatValidateLambdaFunctionConcurrencyRuleExecutesSuccessfully() {
         // Given
-        var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
+        final var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(List.of(
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function1", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function2", 1)))
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_1, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_2, 1)))
                 .build();
 
-        var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
+        final var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
                 .concurrency(
                         Concurrency.builder().reservedConcurrentExecutions(1).build())
                 .build());
 
-        var expectedResult = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.valid());
+        final var expectedResult = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.valid());
 
         // When
         when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -75,32 +79,32 @@ class ValidateLambdaFunctionConcurrencyRuleImplTest {
     @Test
     void testThatValidateLambdaFunctionConcurrencyRuleReturnsInvalidWhenFunctionNotFoundWithCorrectReason() {
         // Given
-        var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
+        final var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(List.of(
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function1", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function2", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function3", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function4", 1)))
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_1, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_2, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_3, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_4, 1)))
                 .build();
 
-        var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
+        final var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
                 .concurrency(
                         Concurrency.builder().reservedConcurrentExecutions(1).build())
                 .build());
 
-        var expectedResult = ImmutableList.of(
+        final var expectedResult = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND),
                 ValidationOutcome.valid());
 
         // When
-        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq("function1"), eq("function4"))))
+        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq(FUNCTION_1), eq(FUNCTION_4))))
                 .thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq("function2"), eq("function3"))))
+        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq(FUNCTION_2), eq(FUNCTION_3))))
                 .thenReturn(Optional.empty());
 
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -112,37 +116,45 @@ class ValidateLambdaFunctionConcurrencyRuleImplTest {
     @Test
     void testThatValidateLambdaFunctionConcurrencyRuleReturnsInvalidWhenConcurrencyIsNotExpectedWithCorrectReason() {
         // Given
-        var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
+        final var expectedConcurrency = 1;
+        final var invalidConcurrency = 999;
+        final var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(List.of(
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function1", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function2", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function3", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function4", 1)))
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(
+                                FUNCTION_1, expectedConcurrency),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(
+                                FUNCTION_2, expectedConcurrency),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(
+                                FUNCTION_3, expectedConcurrency),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(
+                                FUNCTION_4, expectedConcurrency)))
                 .build();
 
-        var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
-                .concurrency(
-                        Concurrency.builder().reservedConcurrentExecutions(1).build())
+        final var optLambdaFunction = Optional.of(GetFunctionResponse.builder()
+                .concurrency(Concurrency.builder()
+                        .reservedConcurrentExecutions(expectedConcurrency)
+                        .build())
                 .build());
 
-        var optLambdaFunctionDifferentCur = Optional.of(GetFunctionResponse.builder()
-                .concurrency(
-                        Concurrency.builder().reservedConcurrentExecutions(999).build())
+        final var optLambdaFunctionDifferentCur = Optional.of(GetFunctionResponse.builder()
+                .concurrency(Concurrency.builder()
+                        .reservedConcurrentExecutions(invalidConcurrency)
+                        .build())
                 .build());
 
-        var expectedResult = ImmutableList.of(
+        final var expectedResult = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_CONCURRENCY_MISMATCH),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_CONCURRENCY_MISMATCH),
                 ValidationOutcome.valid());
 
         // When
-        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq("function1"), eq("function4"))))
+        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq(FUNCTION_1), eq(FUNCTION_4))))
                 .thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq("function2"), eq("function3"))))
+        when(mockedLambdaConnectorInstance.getLambdaFunction(or(eq(FUNCTION_2), eq(FUNCTION_3))))
                 .thenReturn(optLambdaFunctionDifferentCur);
 
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)

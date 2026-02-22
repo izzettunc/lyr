@@ -1,5 +1,12 @@
 package com.example.rule.glue;
 
+import static com.example.TestUtil.SESSION_1;
+import static com.example.TestUtil.SESSION_2;
+import static com.example.TestUtil.SESSION_3;
+import static com.example.TestUtil.SESSION_4;
+import static com.example.TestUtil.SESSION_LT_MAX_IDLE_TIMEOUT;
+import static com.example.TestUtil.SESSION_PROVISIONING;
+import static com.example.TestUtil.SESSION_READY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -46,44 +53,44 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleExecutesSuccessfully() {
         // Given
-        var maxIdleTimeout = 5;
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+        final var maxIdleTimeout = 5;
+        final var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeout)
                 .build();
-        var listOfListSessionsResponse = List.of(
+        final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder()
-                                        .id("session1")
+                                        .id(SESSION_1)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(maxIdleTimeout + maxIdleTimeout)
                                         .build(),
                                 Session.builder()
-                                        .id("session2")
+                                        .id(SESSION_2)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(maxIdleTimeout + maxIdleTimeout)
                                         .build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder()
-                                        .id("session3")
+                                        .id(SESSION_3)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(maxIdleTimeout + maxIdleTimeout)
                                         .build(),
                                 Session.builder()
-                                        .id("session4")
+                                        .id(SESSION_4)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(maxIdleTimeout + maxIdleTimeout)
                                         .build())
                         .build());
-        var expectedResult = Stream.of("session1", "session2", "session3", "session4")
+        final var expectedResult = Stream.of(SESSION_1, SESSION_2, SESSION_3, SESSION_4)
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());
 
         // When
         when(mockedGlueConnectorInstance.getSessionHistory()).thenReturn(listOfListSessionsResponse);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -95,16 +102,17 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleReturnsEmptyListWhenNoSessionFound() {
         // Given
-        var maxIdleTimeout = 5;
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+        final var maxIdleTimeout = 5;
+        final var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeout)
                 .build();
-        var listOfListSessionsResponse = List.of(ListSessionsResponse.builder().build());
-        var expectedResult = ImmutableList.of();
+        final var listOfListSessionsResponse =
+                List.of(ListSessionsResponse.builder().build());
+        final var expectedResult = ImmutableList.of();
 
         // When
         when(mockedGlueConnectorInstance.getSessionHistory()).thenReturn(listOfListSessionsResponse);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -116,27 +124,28 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleReturnsOnlyTheSessionsThatAreActive() {
         // Given
-        var maxIdleTimeout = 5;
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+        final var maxIdleTimeout = 5;
+        final var twiceMaxIdleTimeout = 2 * maxIdleTimeout;
+        final var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeout)
                 .build();
-        var listOfListSessionsResponse = List.of(
+        final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder()
-                                        .id("sessionReady")
+                                        .id(SESSION_READY)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build(),
                                 Session.builder()
                                         .id("sessionFailed")
                                         .status(SessionStatus.FAILED)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build(),
                                 Session.builder()
                                         .id("sessionTimeout")
                                         .status(SessionStatus.TIMEOUT)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build())
                         .build(),
                 ListSessionsResponse.builder()
@@ -144,28 +153,28 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
                                 Session.builder()
                                         .id("sessionStopped")
                                         .status(SessionStatus.STOPPED)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build(),
                                 Session.builder()
                                         .id("sessionStopping")
                                         .status(SessionStatus.STOPPING)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(Session.builder()
-                                .id("sessionProvisioning")
+                                .id(SESSION_PROVISIONING)
                                 .status(SessionStatus.PROVISIONING)
-                                .idleTimeout(maxIdleTimeout + 5)
+                                .idleTimeout(twiceMaxIdleTimeout)
                                 .build())
                         .build());
-        var expectedResult = Stream.of("sessionReady", "sessionProvisioning")
+        final var expectedResult = Stream.of(SESSION_READY, SESSION_PROVISIONING)
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());
 
         // When
         when(mockedGlueConnectorInstance.getSessionHistory()).thenReturn(listOfListSessionsResponse);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -177,58 +186,60 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
     @Test
     void
             testThatScanGlueSessionActiveWithLongIdleTimeoutRuleReturnsOnlyTheSessionsThatHaveIdleTimeoutLongerThanMaxIdleTimeout() {
-        var maxIdleTimeout = 5;
-        var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+        final var maxIdleTimeout = 5;
+        final var lessThanMaxIdleTimeout = maxIdleTimeout - 3;
+        final var twiceMaxIdleTimeout = 2 * maxIdleTimeout;
+        final var config = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeout)
                 .build();
-        var listOfListSessionsResponse = List.of(
+        final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder()
-                                        .id("session1")
+                                        .id(SESSION_1)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build(),
                                 Session.builder()
-                                        .id("sessionLTMaxIdleTimeout")
+                                        .id(SESSION_LT_MAX_IDLE_TIMEOUT)
                                         .status(SessionStatus.PROVISIONING)
-                                        .idleTimeout(maxIdleTimeout - 3)
+                                        .idleTimeout(lessThanMaxIdleTimeout)
                                         .build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder()
-                                        .id("sessionLTMaxIdleTimeout")
+                                        .id(SESSION_LT_MAX_IDLE_TIMEOUT)
                                         .status(SessionStatus.READY)
-                                        .idleTimeout(maxIdleTimeout - 3)
+                                        .idleTimeout(lessThanMaxIdleTimeout)
                                         .build(),
                                 Session.builder()
-                                        .id("session2")
+                                        .id(SESSION_2)
                                         .status(SessionStatus.PROVISIONING)
-                                        .idleTimeout(maxIdleTimeout + 5)
+                                        .idleTimeout(twiceMaxIdleTimeout)
                                         .build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(Session.builder()
-                                .id("session3")
+                                .id(SESSION_3)
                                 .status(SessionStatus.PROVISIONING)
-                                .idleTimeout(maxIdleTimeout + 5)
+                                .idleTimeout(twiceMaxIdleTimeout)
                                 .build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(Session.builder()
-                                .id("session4")
+                                .id(SESSION_4)
                                 .status(SessionStatus.READY)
-                                .idleTimeout(maxIdleTimeout + 5)
+                                .idleTimeout(twiceMaxIdleTimeout)
                                 .build())
                         .build());
-        var expectedResult = Stream.of("session1", "session2", "session3", "session4")
+        final var expectedResult = Stream.of(SESSION_1, SESSION_2, SESSION_3, SESSION_4)
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());
 
         // When
         when(mockedGlueConnectorInstance.getSessionHistory()).thenReturn(listOfListSessionsResponse);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)

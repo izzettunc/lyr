@@ -29,7 +29,7 @@ public class RuleConfigFactoryTest {
     @Test
     void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
         // Given
-        var unknownRuleName = "unknownRuleName";
+        final var unknownRuleName = "unknownRuleName";
 
         // When & Then
         assertThatThrownBy(() -> RuleConfigFactory.createRuleConfig(unknownRuleName, null))
@@ -116,27 +116,4 @@ public class RuleConfigFactoryTest {
             mockedStaticConfig.verify(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(any()), times(1));
         }
     }
-
-    //    public static Stream<Arguments> allRulesAndExceptedClasses() {
-    //        return Stream.of(
-    //                Arguments.of(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanRule.class,
-    // ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl.class,
-    // ScanGlueSessionActiveWithLongIdleTimeoutRuleReport.class),
-    //                Arguments.of(SCAN_DYNAMODB_TABLE_IDLE, ScanRule.class, ScanDynamodbTableIdleRuleImpl.class,
-    // ScanDynamodbTableIdleRuleReport.class),
-    //                Arguments.of(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY, ScanRule.class,
-    // ScanLambdaFunctionWithUnboundedConcurrencyRuleImpl.class,
-    // ScanLambdaFunctionWithUnboundedConcurrencyRuleReport.class),
-    //                Arguments.of(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY, ValidationRule.class,
-    // ValidateLambdaFunctionConcurrencyRuleImpl.class, ValidateLambdaConcurrencyRuleReport.class),
-    //                Arguments.of(VALIDATE_LAMBDA_FUNCTION_EXISTS, ValidationRule.class,
-    // ValidateLambdaFunctionExistsRuleImpl.class, ValidateLambdaFunctionExistsRuleReport.class),
-    //                Arguments.of(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE, ValidationRule.class,
-    // ValidateLambdaFunctionTriggerStateRuleImpl.class, ValidateLambdaFunctionTriggerStateRuleReport.class),
-    //                Arguments.of(VALIDATE_SSM_PARAMETER_EXISTS, ValidationRule.class,
-    // ValidateSsmParameterExistsRuleImpl.class, ValidateSsmParameterExistsRuleReport.class),
-    //                Arguments.of(VALIDATE_SSM_PARAMETER_VALUE, ValidationRule.class,
-    // ValidateSsmParameterValueRuleImpl.class, ValidateSsmParameterValueRuleReport.class)
-    //        );
-    //    }
 }

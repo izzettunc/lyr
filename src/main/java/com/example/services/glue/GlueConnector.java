@@ -6,19 +6,19 @@ import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.glue.model.ListSessionsRequest;
 import software.amazon.awssdk.services.glue.model.ListSessionsResponse;
 
-public class GlueConnector {
+public final class GlueConnector {
     private final GlueClient client;
 
-    private GlueConnector(GlueClient client) {
-        this.client = client;
+    private GlueConnector(final GlueClient glueClient) {
+        this.client = glueClient;
     }
 
     public static GlueConnector create() {
         return new GlueConnector(ServiceProvider.getOrBuildGlueClient());
     }
 
-    public static GlueConnector create(GlueClient client) {
-        return new GlueConnector(client);
+    public static GlueConnector create(final GlueClient glueClient) {
+        return new GlueConnector(glueClient);
     }
 
     public List<ListSessionsResponse> getSessionHistory() {

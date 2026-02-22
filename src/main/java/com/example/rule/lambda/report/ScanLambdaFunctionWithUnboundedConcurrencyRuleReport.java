@@ -13,12 +13,14 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleReport
 
     @Override
     public String report(
-            ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored, ImmutableList<? extends Outcome> outcomes) {
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+            final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored,
+            final ImmutableList<? extends Outcome> outcomes) {
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         if (outcomes.isEmpty()) {
             reportBuilder.append(String.format("%n- [✅] No lambda found with unbounded concurrency."));
@@ -26,7 +28,7 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleReport
         }
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var outcome = (ScanOutcome) outcomes.get(i);
+            final var outcome = (ScanOutcome) outcomes.get(i);
 
             reportBuilder.append(
                     String.format("%n- [❌] Lambda function '%s' has unbounded concurrency.", outcome.result()));

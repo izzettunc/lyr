@@ -1,5 +1,8 @@
 package com.example.rule.ssm.report;
 
+import static com.example.TestUtil.PARAMETER_1;
+import static com.example.TestUtil.PARAMETER_2;
+import static com.example.TestUtil.PARAMETER_3;
 import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,21 +26,21 @@ class ValidateSsmParameterExistsRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateSsmParameterExistsRuleConfig.builder()
-                .parameterNames(List.of("parameter1", "parameter2", "parameter3"))
+        final var config = ValidateSsmParameterExistsRuleConfig.builder()
+                .parameterNames(List.of(PARAMETER_1, PARAMETER_2, PARAMETER_3))
                 .build();
 
-        var outcome = ImmutableList.of(
+        final var outcome = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(null),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND));
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult)
-                .contains("parameter1", "parameter2", "parameter3")
+                .contains(PARAMETER_1, PARAMETER_2, PARAMETER_3)
                 .contains("null", "PARAMETER_NOT_FOUND")
                 .contains(VALIDATE_SSM_PARAMETER_EXISTS);
     }
@@ -45,14 +48,14 @@ class ValidateSsmParameterExistsRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateSsmParameterExistsRuleConfig.builder()
+        final var config = ValidateSsmParameterExistsRuleConfig.builder()
                 .parameterNames(List.of())
                 .build();
 
-        ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
+        final ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult).contains(VALIDATE_SSM_PARAMETER_EXISTS);

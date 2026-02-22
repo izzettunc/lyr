@@ -16,12 +16,12 @@ public class ValidateSsmParameterValueRuleConfig implements RuleConfig {
 
     private List<SsmParameterValue> parameterValues;
 
-    public static ValidateSsmParameterValueRuleConfig parse(Object config) {
+    public static ValidateSsmParameterValueRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new IllegalArgumentException("Invalid config type for ValidateSsmParameterValueRuleConfig");
         }
 
-        var ssmParameterValues = ((Map<String, String>) config)
+        final var ssmParameterValues = ((Map<String, String>) config)
                 .entrySet().stream()
                         .map(entry -> new SsmParameterValue(entry.getKey(), entry.getValue()))
                         .toList();

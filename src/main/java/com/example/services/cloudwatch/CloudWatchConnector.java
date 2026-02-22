@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.Statistic;
 
-public class CloudWatchConnector {
+public final class CloudWatchConnector {
     private static final String AWS_DYNAMO_DB = "AWS/DynamoDB";
     private static final String CONSUMED_READ_CAPACITY_UNITS = "ConsumedReadCapacityUnits";
     private static final String CONSUMED_WRITE_CAPACITY_UNITS = "ConsumedWriteCapacityUnits";
@@ -16,24 +16,24 @@ public class CloudWatchConnector {
 
     private final CloudWatchClient client;
 
-    private CloudWatchConnector(CloudWatchClient client) {
-        this.client = client;
+    private CloudWatchConnector(final CloudWatchClient cloudWatchClient) {
+        this.client = cloudWatchClient;
     }
 
     public static CloudWatchConnector create() {
         return new CloudWatchConnector(ServiceProvider.getOrBuildCloudWatchClient());
     }
 
-    static CloudWatchConnector create(CloudWatchClient client) {
-        return new CloudWatchConnector(client);
+    static CloudWatchConnector create(final CloudWatchClient cloudWatchClient) {
+        return new CloudWatchConnector(cloudWatchClient);
     }
 
     public double getTotalConsumedReadCapacityOfADynamoDbTable(
-            String tableName, Instant from, Instant to, int periodInSeconds) {
-        var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
+            final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
+        final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
                 .metricName(CONSUMED_READ_CAPACITY_UNITS)
-                .startTime(from)
-                .endTime(to)
+                .startTime(startTime)
+                .endTime(endTime)
                 .period(periodInSeconds)
                 .namespace(AWS_DYNAMO_DB)
                 .statistics(Statistic.SUM)
@@ -48,11 +48,11 @@ public class CloudWatchConnector {
     }
 
     public double getTotalConsumedWriteCapacityOfADynamoDbTable(
-            String tableName, Instant from, Instant to, int periodInSeconds) {
-        var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
+            final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
+        final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
                 .metricName(CONSUMED_WRITE_CAPACITY_UNITS)
-                .startTime(from)
-                .endTime(to)
+                .startTime(startTime)
+                .endTime(endTime)
                 .period(periodInSeconds)
                 .namespace(AWS_DYNAMO_DB)
                 .statistics(Statistic.SUM)

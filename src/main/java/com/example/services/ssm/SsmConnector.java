@@ -8,12 +8,12 @@ import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
-public class SsmConnector {
+public final class SsmConnector {
 
     private final SsmClient client;
 
-    private SsmConnector(SsmClient client) {
-        this.client = client;
+    private SsmConnector(final SsmClient ssmClient) {
+        this.client = ssmClient;
     }
 
     public static SsmConnector create() {
@@ -21,16 +21,16 @@ public class SsmConnector {
     }
 
     @VisibleForTesting
-    static SsmConnector create(SsmClient client) {
-        return new SsmConnector(client);
+    static SsmConnector create(final SsmClient ssmClient) {
+        return new SsmConnector(ssmClient);
     }
 
-    public Optional<Parameter> getParameter(String name) {
+    public Optional<Parameter> getParameter(final String name) {
         try {
             return Optional.of(
                     client.getParameter(GetParameterRequest.builder().name(name).build())
                             .parameter());
-        } catch (ParameterNotFoundException parameterNotFoundException) {
+        } catch (final ParameterNotFoundException parameterNotFoundException) {
             return Optional.empty();
         }
     }

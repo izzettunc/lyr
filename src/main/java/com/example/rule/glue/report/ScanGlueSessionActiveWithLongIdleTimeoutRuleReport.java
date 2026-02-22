@@ -13,14 +13,16 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
 
     @Override
     public String report(
-            ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
-        var maxIdleTimeoutInMinutes = ruleConfig.getMaxIdleTimeoutInMinutes();
+            final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig,
+            final ImmutableList<? extends Outcome> outcomes) {
+        final var maxIdleTimeoutInMinutes = ruleConfig.getMaxIdleTimeoutInMinutes();
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         if (outcomes.isEmpty()) {
             reportBuilder.append(String.format(
@@ -30,7 +32,7 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
         }
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var outcome = (ScanOutcome) outcomes.get(i);
+            final var outcome = (ScanOutcome) outcomes.get(i);
 
             reportBuilder.append(String.format(
                     "%n- [❌] Session '%s' has been active for more than idle timeout of %d minutes.",

@@ -1,5 +1,13 @@
 package com.example.rule.ssm.report;
 
+import static com.example.TestUtil.PARAMETER_1;
+import static com.example.TestUtil.PARAMETER_2;
+import static com.example.TestUtil.PARAMETER_3;
+import static com.example.TestUtil.PARAMETER_4;
+import static com.example.TestUtil.VALUE_1;
+import static com.example.TestUtil.VALUE_2;
+import static com.example.TestUtil.VALUE_3;
+import static com.example.TestUtil.VALUE_4;
 import static com.example.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,26 +31,26 @@ class ValidateSsmParameterValueRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateSsmParameterValueRuleConfig.builder()
+        final var config = ValidateSsmParameterValueRuleConfig.builder()
                 .parameterValues(List.of(
-                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter1", "value1"),
-                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter2", "value2"),
-                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter3", "value3"),
-                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter4", "value4")))
+                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_1, VALUE_1),
+                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_2, VALUE_2),
+                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_3, VALUE_3),
+                        new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_4, VALUE_4)))
                 .build();
 
-        var outcome = ImmutableList.of(
+        final var outcome = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(null),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_VALUE_MISMATCH));
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult)
-                .contains("parameter1", "parameter2", "parameter3", "parameter4")
+                .contains(PARAMETER_1, PARAMETER_2, PARAMETER_3, PARAMETER_4)
                 .contains("null", "PARAMETER_NOT_FOUND", "PARAMETER_VALUE_MISMATCH")
                 .contains(VALIDATE_SSM_PARAMETER_VALUE);
     }
@@ -50,14 +58,14 @@ class ValidateSsmParameterValueRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateSsmParameterValueRuleConfig.builder()
+        final var config = ValidateSsmParameterValueRuleConfig.builder()
                 .parameterValues(List.of())
                 .build();
 
-        ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
+        final ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult).contains(VALIDATE_SSM_PARAMETER_VALUE);

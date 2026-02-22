@@ -1,5 +1,8 @@
 package com.example.rule.lambda.report;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
+import static com.example.TestUtil.FUNCTION_3;
 import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,21 +27,21 @@ class ValidateLambdaFunctionExistsRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateLambdaFunctionExistsRuleConfig.builder()
-                .functionNames(List.of("function1", "function2", "function3"))
+        final var config = ValidateLambdaFunctionExistsRuleConfig.builder()
+                .functionNames(List.of(FUNCTION_1, FUNCTION_2, FUNCTION_3))
                 .build();
 
-        var outcome = ImmutableList.of(
+        final var outcome = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(null),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND));
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult)
-                .contains("function1", "function2", "function3")
+                .contains(FUNCTION_1, FUNCTION_2, FUNCTION_3)
                 .contains("null", "FUNCTION_NOT_FOUND")
                 .contains(VALIDATE_LAMBDA_FUNCTION_EXISTS);
     }
@@ -46,14 +49,14 @@ class ValidateLambdaFunctionExistsRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateLambdaFunctionExistsRuleConfig.builder()
+        final var config = ValidateLambdaFunctionExistsRuleConfig.builder()
                 .functionNames(List.of())
                 .build();
 
-        ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
+        final ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult).contains(VALIDATE_LAMBDA_FUNCTION_EXISTS);

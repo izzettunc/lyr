@@ -5,7 +5,8 @@ import com.google.common.collect.ImmutableList;
 
 public class ValidationRule<T extends Enum<T>> extends Rule {
 
-    ValidationRule(String name, RuleConfig parameters, RuleStrategy strategy, RuleReport report) {
+    ValidationRule(
+            final String name, final RuleConfig parameters, final RuleStrategy strategy, final RuleReport report) {
         super(name, parameters, strategy, report);
     }
 
@@ -16,13 +17,13 @@ public class ValidationRule<T extends Enum<T>> extends Rule {
                     "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
-        return report.report(parameters, outcome);
+        return report.report(config, outcome);
     }
 
     @Override
     public ImmutableList<ValidationOutcome<T>> evaluate() {
         if (outcome == null) {
-            outcome = strategy.execute(parameters);
+            outcome = strategy.execute(config);
         }
 
         return Rule.recastOutcomeList(outcome);
@@ -30,7 +31,7 @@ public class ValidationRule<T extends Enum<T>> extends Rule {
 
     @Override
     public ImmutableList<ValidationOutcome<T>> reevaluate() {
-        outcome = strategy.execute(parameters);
+        outcome = strategy.execute(config);
         return Rule.recastOutcomeList(outcome);
     }
 }

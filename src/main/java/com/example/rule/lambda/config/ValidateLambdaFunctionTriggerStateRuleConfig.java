@@ -12,16 +12,19 @@ import lombok.Getter;
 @Getter
 public class ValidateLambdaFunctionTriggerStateRuleConfig implements RuleConfig {
 
+    private static final String ENABLED = "enabled";
+    private static final String DISABLED = "disabled";
+
     public record LambdaFunctionTriggerState(String functionName, boolean enabled) {}
 
     private List<LambdaFunctionTriggerState> functionTriggerStates;
 
-    public static ValidateLambdaFunctionTriggerStateRuleConfig parse(Object config) {
+    public static ValidateLambdaFunctionTriggerStateRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new IllegalArgumentException("Invalid config type for ValidateLambdaFunctionTriggerStateConfig ");
         }
 
-        var lambdaFunctionTriggerStates = ((Map<String, String>) config)
+        final var lambdaFunctionTriggerStates = ((Map<String, String>) config)
                 .entrySet().stream()
                         .map(entry ->
                                 new LambdaFunctionTriggerState(entry.getKey(), parseStateToBoolean(entry.getValue())))
@@ -32,11 +35,11 @@ public class ValidateLambdaFunctionTriggerStateRuleConfig implements RuleConfig 
                 .build();
     }
 
-    private static boolean parseStateToBoolean(String state) {
-        if (!state.equalsIgnoreCase("enabled") && !state.equalsIgnoreCase("disabled")) {
+    private static boolean parseStateToBoolean(final String state) {
+        if (!ENABLED.equalsIgnoreCase(state) && !DISABLED.equalsIgnoreCase(state)) {
             throw new IllegalArgumentException("Invalid state for the function");
         }
 
-        return state.equalsIgnoreCase("enabled");
+        return ENABLED.equalsIgnoreCase(state);
     }
 }

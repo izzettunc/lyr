@@ -1,6 +1,8 @@
 package com.example.services;
 
 import com.google.common.annotations.VisibleForTesting;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -13,6 +15,7 @@ import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.ssm.SsmClient;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceProvider {
     private static volatile SsmClient ssmClient;
     private static volatile LambdaClient lambdaClient;

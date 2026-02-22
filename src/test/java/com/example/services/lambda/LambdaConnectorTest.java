@@ -8,6 +8,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.example.TestUtil;
 import com.example.services.ServiceProvider;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.lambda.paginators.ListFunctionsIterable;
 
 class LambdaConnectorTest {
 
-    LambdaClient mockedLambdaClient = mock(LambdaClient.class);
+    final LambdaClient mockedLambdaClient = mock(LambdaClient.class);
     LambdaConnector testObject;
 
     @BeforeEach
@@ -43,7 +44,7 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorGetsLambdaClientFromServiceProvider() {
         // Given
-        try (var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
+        try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
             LambdaConnector.create();
             // Then
@@ -54,7 +55,7 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorListLambdaFunctionsReturnsListOfListFunctionsResponse() {
         // Given
-        var listOfLisFunctionsResponse = List.of(
+        final var listOfLisFunctionsResponse = List.of(
                 ListFunctionsResponse.builder()
                         .functions(
                                 FunctionConfiguration.builder()
@@ -73,13 +74,13 @@ class LambdaConnectorTest {
                                         .functionName("function4")
                                         .build())
                         .build());
-        var mockedListFunctionsIterable = mock(ListFunctionsIterable.class);
+        final var mockedListFunctionsIterable = mock(ListFunctionsIterable.class);
 
         // When
         when(mockedListFunctionsIterable.stream()).thenReturn(listOfLisFunctionsResponse.stream());
         when(mockedLambdaClient.listFunctionsPaginator()).thenReturn(mockedListFunctionsIterable);
 
-        var actualResult = testObject.listLambdaFunctions();
+        final var actualResult = testObject.listLambdaFunctions();
 
         // Then
         assertThat(actualResult)
@@ -91,7 +92,7 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorListEventSourceMappingsReturnsOptionalListEventSourceMappingResponse() {
         // Given
-        var listEventSourceMappingsResponse = ListEventSourceMappingsResponse.builder()
+        final var listEventSourceMappingsResponse = ListEventSourceMappingsResponse.builder()
                 .eventSourceMappings(
                         EventSourceMappingConfiguration.builder()
                                 .eventSourceArn("map1")
@@ -105,7 +106,7 @@ class LambdaConnectorTest {
         when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class)))
                 .thenReturn(listEventSourceMappingsResponse);
 
-        var actualResult = testObject.listEventSourceMappings("dummy");
+        final var actualResult = testObject.listEventSourceMappings(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult)
@@ -121,7 +122,7 @@ class LambdaConnectorTest {
         when(mockedLambdaClient.listEventSourceMappings(any(Consumer.class)))
                 .thenThrow(ResourceNotFoundException.class);
 
-        var actualResult = testObject.listEventSourceMappings("dummy");
+        final var actualResult = testObject.listEventSourceMappings(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult)
@@ -133,7 +134,7 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorGetLambdaFunctionReturnsOptionalGetFunctionResponse() {
         // Given
-        var getFunctionResponse = GetFunctionResponse.builder()
+        final var getFunctionResponse = GetFunctionResponse.builder()
                 .configuration(
                         FunctionConfiguration.builder().functionName("lambda1").build())
                 .build();
@@ -141,7 +142,7 @@ class LambdaConnectorTest {
         // When
         when(mockedLambdaClient.getFunction(any(GetFunctionRequest.class))).thenReturn(getFunctionResponse);
 
-        var actualResult = testObject.getLambdaFunction("dummy");
+        final var actualResult = testObject.getLambdaFunction(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult)
@@ -156,7 +157,7 @@ class LambdaConnectorTest {
         // When
         when(mockedLambdaClient.getFunction(any(GetFunctionRequest.class))).thenThrow(ResourceNotFoundException.class);
 
-        var actualResult = testObject.getLambdaFunction("dummy");
+        final var actualResult = testObject.getLambdaFunction(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult)

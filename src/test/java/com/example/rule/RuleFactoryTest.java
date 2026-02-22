@@ -39,7 +39,7 @@ import org.mockito.Mockito;
 
 public class RuleFactoryTest {
 
-    Config mockedConfig = mock(Config.class);
+    final Config mockedConfig = mock(Config.class);
 
     @Test
     void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
@@ -47,7 +47,7 @@ public class RuleFactoryTest {
         try (MockedStatic<Config> configMockedStatic = Mockito.mockStatic(Config.class)) {
             configMockedStatic.when(Config::getConfig).thenReturn(mockedConfig);
 
-            var unknownRuleName = "unknownRuleName";
+            final var unknownRuleName = "unknownRuleName";
 
             // When & Then
             assertThatThrownBy(() -> RuleFactory.createRule(unknownRuleName))
@@ -58,17 +58,17 @@ public class RuleFactoryTest {
     @ParameterizedTest
     @MethodSource("allRulesAndExceptedClasses")
     void testThatRuleFactoryCreatesAllAvailableRules(
-            String ruleName,
-            Class<?> expectedTypeOfRule,
-            Class<?> expectedTypeOfRuleImpl,
-            Class<?> expectedTypeOfRuleReport) {
+            final String ruleName,
+            final Class<?> expectedTypeOfRule,
+            final Class<?> expectedTypeOfRuleImpl,
+            final Class<?> expectedTypeOfRuleReport) {
         // Given
         // rulename, expectedTypeOfRule, expectedTypeOfRuleImpl, expectedTypeOfRuleReport
         try (MockedStatic<Config> configMockedStatic = Mockito.mockStatic(Config.class)) {
             configMockedStatic.when(Config::getConfig).thenReturn(mockedConfig);
 
             // When
-            var rule = RuleFactory.createRule(ruleName);
+            final var rule = RuleFactory.createRule(ruleName);
 
             // Then
             assertThat(rule).isNotNull().isInstanceOf(expectedTypeOfRule);

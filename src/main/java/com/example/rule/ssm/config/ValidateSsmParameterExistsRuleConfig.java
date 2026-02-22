@@ -13,7 +13,7 @@ public class ValidateSsmParameterExistsRuleConfig implements RuleConfig {
 
     private List<String> parameterNames;
 
-    public static ValidateSsmParameterExistsRuleConfig parse(Object config) {
+    public static ValidateSsmParameterExistsRuleConfig parse(final Object config) {
         if (!(config instanceof List)) {
             throw new IllegalArgumentException("Invalid config type for ValidateSsmParameterExistsRuleConfig");
         }

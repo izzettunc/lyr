@@ -1,5 +1,9 @@
 package com.example.rule.ssm;
 
+import static com.example.TestUtil.PARAMETER_1;
+import static com.example.TestUtil.PARAMETER_2;
+import static com.example.TestUtil.PARAMETER_3;
+import static com.example.TestUtil.PARAMETER_4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,17 +51,17 @@ class ValidateSsmParameterExistsRuleImplTest {
     @Test
     void testThatValidateSsmParameterExistsRuleExecutesSuccessfully() {
         // Given
-        var config = ValidateSsmParameterExistsRuleConfig.builder()
-                .parameterNames(List.of("parameter1", "parameter2"))
+        final var config = ValidateSsmParameterExistsRuleConfig.builder()
+                .parameterNames(List.of(PARAMETER_1, PARAMETER_2))
                 .build();
 
-        var optSsmParameter = Optional.of(Parameter.builder().build());
+        final var optSsmParameter = Optional.of(Parameter.builder().build());
 
-        var expectedResult = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.valid());
+        final var expectedResult = ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.valid());
 
         // When
         when(mockedSsmConnectorInstance.getParameter(anyString())).thenReturn(optSsmParameter);
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)
@@ -69,25 +73,25 @@ class ValidateSsmParameterExistsRuleImplTest {
     @Test
     void testThatValidateSsmParameterExistsRuleReturnsInvalidWhenParameterNotFoundWithCorrectReason() {
         // Given
-        var config = ValidateSsmParameterExistsRuleConfig.builder()
-                .parameterNames(List.of("parameter1", "parameter2", "parameter3", "parameter4"))
+        final var config = ValidateSsmParameterExistsRuleConfig.builder()
+                .parameterNames(List.of(PARAMETER_1, PARAMETER_2, PARAMETER_3, PARAMETER_4))
                 .build();
 
-        var optSsmParameter = Optional.of(Parameter.builder().build());
+        final var optSsmParameter = Optional.of(Parameter.builder().build());
 
-        var expectedResult = ImmutableList.of(
+        final var expectedResult = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND),
                 ValidationOutcome.valid());
 
         // When
-        when(mockedSsmConnectorInstance.getParameter(or(eq("parameter1"), eq("parameter4"))))
+        when(mockedSsmConnectorInstance.getParameter(or(eq(PARAMETER_1), eq(PARAMETER_4))))
                 .thenReturn(optSsmParameter);
-        when(mockedSsmConnectorInstance.getParameter(or(eq("parameter2"), eq("parameter3"))))
+        when(mockedSsmConnectorInstance.getParameter(or(eq(PARAMETER_2), eq(PARAMETER_3))))
                 .thenReturn(Optional.empty());
 
-        var actualResult = testObject.execute(config);
+        final var actualResult = testObject.execute(config);
 
         // Then
         assertThat(actualResult)

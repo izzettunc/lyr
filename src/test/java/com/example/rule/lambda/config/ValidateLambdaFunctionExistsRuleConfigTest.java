@@ -1,5 +1,7 @@
 package com.example.rule.lambda.config;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,13 +15,13 @@ class ValidateLambdaFunctionExistsRuleConfigTest {
     @Test
     void testThatValidateLambdaFunctionExistsRuleConfigIsParsedCorrectly() {
         // Given
-        List<String> config = List.of("lambdaFunction1", "lambdaFunction2");
-        RuleConfig expectedRuleConfig = ValidateLambdaFunctionExistsRuleConfig.builder()
+        final List<String> config = List.of(FUNCTION_1, FUNCTION_2);
+        final RuleConfig expectedRuleConfig = ValidateLambdaFunctionExistsRuleConfig.builder()
                 .functionNames(config)
                 .build();
 
         // When
-        var actualRuleConfig = ValidateLambdaFunctionExistsRuleConfig.parse(config);
+        final var actualRuleConfig = ValidateLambdaFunctionExistsRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -31,7 +33,7 @@ class ValidateLambdaFunctionExistsRuleConfigTest {
     @Test
     void testThatValidateLambdaFunctionExistsRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        Map<String, String> invalidConfig = Map.of("abc", "def");
+        final Map<String, String> invalidConfig = Map.of("abc", "def");
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionExistsRuleConfig.parse(invalidConfig))

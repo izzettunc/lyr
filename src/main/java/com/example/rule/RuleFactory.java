@@ -34,56 +34,56 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RuleFactory {
 
-    public static Rule createRule(String ruleName) {
-        var parameters = Config.getConfig().getRuleConfig().get(ruleName);
+    public static Rule createRule(final String ruleName) {
+        final var ruleConfig = Config.getConfig().getRuleConfig().get(ruleName);
 
         return switch (ruleName) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
                 new ScanRule(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl(),
                         new ScanGlueSessionActiveWithLongIdleTimeoutRuleReport());
             case SCAN_DYNAMODB_TABLE_IDLE ->
                 new ScanRule(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ScanDynamodbTableIdleRuleImpl(),
                         new ScanDynamodbTableIdleRuleReport());
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                 new ScanRule(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ScanLambdaFunctionWithUnboundedConcurrencyRuleImpl(),
                         new ScanLambdaFunctionWithUnboundedConcurrencyRuleReport());
             case VALIDATE_LAMBDA_FUNCTION_EXISTS ->
                 new ValidationRule<LambdaReason>(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ValidateLambdaFunctionExistsRuleImpl(),
                         new ValidateLambdaFunctionExistsRuleReport());
             case VALIDATE_LAMBDA_FUNCTION_CONCURRENCY ->
                 new ValidationRule<LambdaReason>(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ValidateLambdaFunctionConcurrencyRuleImpl(),
                         new ValidateLambdaFunctionConcurrencyRuleReport());
             case VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE ->
                 new ValidationRule<LambdaReason>(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ValidateLambdaFunctionTriggerStateRuleImpl(),
                         new ValidateLambdaFunctionTriggerStateRuleReport());
             case VALIDATE_SSM_PARAMETER_EXISTS ->
                 new ValidationRule<SsmReason>(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ValidateSsmParameterExistsRuleImpl(),
                         new ValidateSsmParameterExistsRuleReport());
             case VALIDATE_SSM_PARAMETER_VALUE ->
                 new ValidationRule<SsmReason>(
                         ruleName,
-                        parameters,
+                        ruleConfig,
                         new ValidateSsmParameterValueRuleImpl(),
                         new ValidateSsmParameterValueRuleReport());
             default -> throw new IllegalArgumentException("Unknown rule name: " + ruleName);

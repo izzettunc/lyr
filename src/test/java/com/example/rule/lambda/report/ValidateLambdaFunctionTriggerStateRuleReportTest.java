@@ -1,5 +1,14 @@
 package com.example.rule.lambda.report;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
+import static com.example.TestUtil.FUNCTION_3;
+import static com.example.TestUtil.FUNCTION_4;
+import static com.example.TestUtil.FUNCTION_5;
+import static com.example.TestUtil.FUNCTION_6;
+import static com.example.TestUtil.FUNCTION_7;
+import static com.example.TestUtil.FUNCTION_8;
+import static com.example.TestUtil.FUNCTION_9;
 import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,21 +32,20 @@ class ValidateLambdaFunctionTriggerStateRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
+        final var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
                 .functionTriggerStates(List.of(
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function1", true),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function2", false),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function3", false),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function4", true),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function5", true),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function6", false),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function7", true),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("function8", false),
-                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(
-                                "function9", false)))
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_1, true),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_2, false),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_3, false),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_4, true),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_5, true),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_6, false),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_7, true),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_8, false),
+                        new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_9, false)))
                 .build();
 
-        var outcome = ImmutableList.of(
+        final var outcome = ImmutableList.of(
                 ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_ENABLED),
                 ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_ENABLED),
                 ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_DISABLED),
@@ -49,20 +57,20 @@ class ValidateLambdaFunctionTriggerStateRuleReportTest {
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND));
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult)
                 .contains(
-                        "function1",
-                        "function2",
-                        "function3",
-                        "function4",
-                        "function5",
-                        "function6",
-                        "function7",
-                        "function8",
-                        "function9")
+                        FUNCTION_1,
+                        FUNCTION_2,
+                        FUNCTION_3,
+                        FUNCTION_4,
+                        FUNCTION_5,
+                        FUNCTION_6,
+                        FUNCTION_7,
+                        FUNCTION_8,
+                        FUNCTION_9)
                 .contains("enabled", "disabled")
                 .contains(
                         "ALL_EVENT_MAPPINGS_ARE_ENABLED",
@@ -77,14 +85,14 @@ class ValidateLambdaFunctionTriggerStateRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
+        final var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
                 .functionTriggerStates(List.of())
                 .build();
 
-        ImmutableList<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
+        final ImmutableList<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult).contains(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);

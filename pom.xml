@@ -27,8 +27,10 @@
         <jacoco-maven-plguin.version>0.8.14</jacoco-maven-plguin.version>
         <mockito.version>5.21.0</mockito.version>
         <!-- Code formatter/styler -->
-        <spotless.version>3.2.1</spotless.version>
+        <spotless-maven-plugin.version>3.2.1</spotless-maven-plugin.version>
         <palantir-java-format>2.88.0</palantir-java-format>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>13.2.0</checkstyle.version>
         <!-- Other -->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     </properties>
@@ -162,9 +164,31 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>${spotless.version}</version>
+                <version>${spotless-maven-plugin.version}</version>
                 <configuration>
                     <java>
                         <palantirJavaFormat>

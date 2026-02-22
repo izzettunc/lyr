@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RuleConfigFactory {
 
-    public static RuleConfig createRuleConfig(String ruleName, Object config) {
+    public static RuleConfig createRuleConfig(final String ruleName, final Object config) {
         return switch (ruleName) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
                 ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);

@@ -12,17 +12,19 @@ import com.google.common.collect.ImmutableList;
 public class ValidateLambdaFunctionExistsRuleReport implements RuleReport<ValidateLambdaFunctionExistsRuleConfig> {
 
     @Override
-    public String report(ValidateLambdaFunctionExistsRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
+    public String report(
+            final ValidateLambdaFunctionExistsRuleConfig ruleConfig, final ImmutableList<? extends Outcome> outcomes) {
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_EXISTS);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var functionName = ruleConfig.getFunctionNames().get(i);
-            var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
+            final var functionName = ruleConfig.getFunctionNames().get(i);
+            final var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
 
             if (outcome.success()) {
                 reportBuilder.append(String.format("%n- [✅] Lambda function '%s' exists.", functionName));

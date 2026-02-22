@@ -12,17 +12,19 @@ import com.google.common.collect.ImmutableList;
 public class ValidateSsmParameterExistsRuleReport implements RuleReport<ValidateSsmParameterExistsRuleConfig> {
 
     @Override
-    public String report(ValidateSsmParameterExistsRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
+    public String report(
+            final ValidateSsmParameterExistsRuleConfig ruleConfig, final ImmutableList<? extends Outcome> outcomes) {
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(VALIDATE_SSM_PARAMETER_EXISTS);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var parameterName = ruleConfig.getParameterNames().get(i);
-            var outcome = (ValidationOutcome<SsmReason>) outcomes.get(i);
+            final var parameterName = ruleConfig.getParameterNames().get(i);
+            final var outcome = (ValidationOutcome<SsmReason>) outcomes.get(i);
 
             if (outcome.success()) {
                 reportBuilder.append(String.format("%n- [✅] Ssm parameter '%s' exists.", parameterName));

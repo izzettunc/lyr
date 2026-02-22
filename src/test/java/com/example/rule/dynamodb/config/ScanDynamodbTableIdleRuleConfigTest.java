@@ -10,20 +10,23 @@ import org.junit.jupiter.api.Test;
 
 public class ScanDynamodbTableIdleRuleConfigTest {
 
+    private static final String MAX_IDLE_PERIOD_IN_DAYS = "maxIdlePeriodInDays";
+    private static final String EXCLUDE_EMPTY_TABLES = "excludeEmptyTables";
+
     @Test
     void testThatScanDynamodbTableIdleRuleConfigIsParsedCorrectly() {
         // Given
-        int maxIdlePeriodInDays = 180;
-        boolean excludeEmptyTables = true;
-        Map<String, Object> config =
-                Map.of("maxIdlePeriodInDays", maxIdlePeriodInDays, "excludeEmptyTables", excludeEmptyTables);
-        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
+        final int maxIdlePeriodInDays = 180;
+        final boolean excludeEmptyTables = true;
+        final Map<String, Object> config =
+                Map.of(MAX_IDLE_PERIOD_IN_DAYS, maxIdlePeriodInDays, EXCLUDE_EMPTY_TABLES, excludeEmptyTables);
+        final RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays(maxIdlePeriodInDays)
                 .excludeEmptyTables(excludeEmptyTables)
                 .build();
 
         // When
-        var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(config);
+        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -35,7 +38,7 @@ public class ScanDynamodbTableIdleRuleConfigTest {
     @Test
     void testThatScanDynamodbTableIdleRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        List<Integer> invalidConfig = List.of(15);
+        final List<Integer> invalidConfig = List.of(15);
 
         // When & Then
         assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(invalidConfig))
@@ -45,7 +48,7 @@ public class ScanDynamodbTableIdleRuleConfigTest {
     @Test
     void testThatScanDynamodbTableIdleRuleConfigThrowsIllegalArgumentExceptionWhenConfigHasMissingValues() {
         // Given
-        Map<String, Object> configMissingMandatoryAttributes = Map.of();
+        final Map<String, Object> configMissingMandatoryAttributes = Map.of();
 
         // When & Then
         assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(configMissingMandatoryAttributes))
@@ -55,15 +58,16 @@ public class ScanDynamodbTableIdleRuleConfigTest {
     @Test
     void testThatScanDynamodbTableIdleRuleConfigIsParsedCorrectlyWithoutOptionalAttributes() {
         // Given
-        int maxIdlePeriodInDays = 180;
-        Map<String, Object> configWithOnlyMandatoryAttributes = Map.of("maxIdlePeriodInDays", maxIdlePeriodInDays);
-        RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
+        final int maxIdlePeriodInDays = 180;
+        final Map<String, Object> configWithOnlyMandatoryAttributes =
+                Map.of(MAX_IDLE_PERIOD_IN_DAYS, maxIdlePeriodInDays);
+        final RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays(maxIdlePeriodInDays)
                 .excludeEmptyTables(false)
                 .build();
 
         // When
-        var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(configWithOnlyMandatoryAttributes);
+        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(configWithOnlyMandatoryAttributes);
 
         // Then
         assertThat(actualRuleConfig)

@@ -16,41 +16,41 @@ public class Config {
     private static final Config CONFIG = new Config();
 
     private Map<String, RuleConfig> ruleConfig = new HashMap<>();
-    private ReportType reportType = ReportType.CONSOLE;
+    private final ReportType reportType = ReportType.CONSOLE;
     private String path;
-    private boolean isDefault = false;
+    private boolean isDefault;
 
     private Config() {}
 
-    public Config(String path) {
-        this(path, false);
+    public Config(final String configPath) {
+        this(configPath, false);
     }
 
-    private Config(String path, boolean isDefault) {
-        this.path = path;
-        this.isDefault = isDefault;
+    private Config(final String configPath, final boolean isDefaultConfig) {
+        this.path = configPath;
+        this.isDefault = isDefaultConfig;
         load();
     }
 
     public void load() {
-        Yaml yaml = new Yaml();
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream(path)) {
-            Map<String, Object> rawConfig = yaml.load(in);
+        final Yaml yaml = new Yaml();
+        try (InputStream configInputStream = getClass().getClassLoader().getResourceAsStream(path)) {
+            final Map<String, Object> rawConfig = yaml.load(configInputStream);
             ruleConfig = generateRuleConfigFromRawConfig(rawConfig);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load defaultConfig.yaml", e);
+        } catch (final Exception exception) {
+            throw new RuntimeException("Failed to load defaultConfig.yaml", exception);
         }
     }
 
-    private Map<String, RuleConfig> generateRuleConfigFromRawConfig(Map<String, Object> rawConfig) {
-        Map<String, RuleConfig> ruleConfigMap = new HashMap<>();
-        for (Map.Entry<String, Object> entry : rawConfig.entrySet()) {
+    private Map<String, RuleConfig> generateRuleConfigFromRawConfig(final Map<String, Object> rawConfig) {
+        final Map<String, RuleConfig> ruleConfigMap = new HashMap<>();
+        for (final Map.Entry<String, Object> entry : rawConfig.entrySet()) {
             if (entry.getValue() != null) {
                 ruleConfigMap.put(entry.getKey(), RuleConfigFactory.createRuleConfig(entry.getKey(), entry.getValue()));
             } else if (isDefault) {
                 ruleConfigMap.put(entry.getKey(), null);
             } else {
-                var defaultRuleConfig = DEFAULT_CONFIG.getRuleConfig().get(entry.getKey());
+                final var defaultRuleConfig = DEFAULT_CONFIG.getRuleConfig().get(entry.getKey());
                 if (defaultRuleConfig != null || DEFAULT_CONFIG.getRuleConfig().containsKey(entry.getKey())) {
                     ruleConfigMap.put(entry.getKey(), defaultRuleConfig);
                 } else {
@@ -61,7 +61,7 @@ public class Config {
         return ruleConfigMap;
     }
 
-    public static void loadUserConfig(String path) {
+    public static void loadUserConfig(final String path) {
         CONFIG.path = path;
         CONFIG.load();
     }

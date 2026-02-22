@@ -1,5 +1,7 @@
 package com.example.rule.lambda.config;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,17 +15,17 @@ class ValidateLambdaFunctionConcurrencyRuleConfigTest {
     @Test
     void testThatValidateLambdaFunctionConcurrencyRuleConfigIsParsedCorrectly() {
         // Given
-        Map<String, Integer> config = Map.of("lambda1", 1, "lambda2", 2);
-        var listOfLambdaFunctionConcurrency = List.of(
-                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("lambda1", 1),
-                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("lambda2", 2));
+        final Map<String, Integer> config = Map.of(FUNCTION_1, 1, FUNCTION_2, 2);
+        final var listOfLambdaFunctionConcurrency = List.of(
+                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_1, 1),
+                new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_2, 2));
 
-        RuleConfig expectedRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
+        final RuleConfig expectedRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(listOfLambdaFunctionConcurrency)
                 .build();
 
         // When
-        var actualRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig.parse(config);
+        final var actualRuleConfig = ValidateLambdaFunctionConcurrencyRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -37,7 +39,7 @@ class ValidateLambdaFunctionConcurrencyRuleConfigTest {
     void
             testThatValidateLambdaFunctionConcurrencyRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        List<String> invalidConfig = List.of("lambda1", "lambda2");
+        final List<String> invalidConfig = List.of(FUNCTION_1, FUNCTION_2);
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionConcurrencyRuleConfig.parse(invalidConfig))

@@ -11,14 +11,16 @@ import com.google.common.collect.ImmutableList;
 public class ScanDynamodbTableIdleRuleReport implements RuleReport<ScanDynamodbTableIdleRuleConfig> {
 
     @Override
-    public String report(ScanDynamodbTableIdleRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
-        var maxIdlePeriodInDays = (int) ruleConfig.getMaxIdlePeriodInDays();
+    public String report(
+            final ScanDynamodbTableIdleRuleConfig ruleConfig, final ImmutableList<? extends Outcome> outcomes) {
+        final var maxIdlePeriodInDays = (int) ruleConfig.getMaxIdlePeriodInDays();
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
+        final var reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder.append(String.format(block));
         reportBuilder.append(String.format("%nValidation Report for "));
         reportBuilder.append(SCAN_DYNAMODB_TABLE_IDLE);
-        reportBuilder.append(String.format("%n========================"));
+        reportBuilder.append(String.format(block));
 
         if (outcomes.isEmpty()) {
             reportBuilder.append(String.format(
@@ -27,7 +29,7 @@ public class ScanDynamodbTableIdleRuleReport implements RuleReport<ScanDynamodbT
         }
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var outcome = (ScanOutcome) outcomes.get(i);
+            final var outcome = (ScanOutcome) outcomes.get(i);
 
             reportBuilder.append(String.format(
                     "%n- [❌] Dynamodb table '%s' has been idle for more than %d days.",

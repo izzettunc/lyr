@@ -11,7 +11,7 @@ public class CloudWatchUtil {
     public static final int SEASON_IN_DAYS = 90;
     public static final int YEAR_IN_DAYS = 365;
 
-    public static int getAppropriateTimeWindowForPeriod(int periodInDays) {
+    public static int getAppropriateTimeWindowForPeriod(final int periodInDays) {
         if (periodInDays < DAY_IN_DAYS) {
             throw new IllegalArgumentException("Period in days must be greater than or equal to " + DAY_IN_DAYS
                     + ". periodInDays: " + periodInDays);

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.example.TestUtil;
 import com.example.services.ServiceProvider;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.paginators.ListTablesIterable;
 
 class DynamoDbConnectorTest {
 
-    DynamoDbClient mockedDynamoDbClient = Mockito.mock(DynamoDbClient.class);
+    final DynamoDbClient mockedDynamoDbClient = Mockito.mock(DynamoDbClient.class);
     DynamoDbConnector testObject;
 
     @BeforeEach
@@ -41,7 +42,7 @@ class DynamoDbConnectorTest {
     @Test
     void testThatDynamoDbConnectorGetsDynamoDbClientFromServiceProvider() {
         // Given
-        try (var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
+        try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
             DynamoDbConnector.create();
             // Then
@@ -52,14 +53,16 @@ class DynamoDbConnectorTest {
     @Test
     void testThatGetTableReturnsOptionalOfDescribeTableResponseWhenFound() {
         // Given
-        var expectedDescribeTableResponse = DescribeTableResponse.builder()
-                .table(TableDescription.builder().tableName("dummy").build())
+        final var expectedDescribeTableResponse = DescribeTableResponse.builder()
+                .table(TableDescription.builder()
+                        .tableName(TestUtil.DUMMY_STRING)
+                        .build())
                 .build();
 
         // When
         when(mockedDynamoDbClient.describeTable(any(DescribeTableRequest.class)))
                 .thenReturn(expectedDescribeTableResponse);
-        var actualResult = testObject.getTable("dummy");
+        final var actualResult = testObject.getTable(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.of(expectedDescribeTableResponse));
@@ -71,7 +74,7 @@ class DynamoDbConnectorTest {
         // When
         when(mockedDynamoDbClient.describeTable(any(DescribeTableRequest.class)))
                 .thenThrow(ResourceNotFoundException.class);
-        var actualResult = testObject.getTable("dummy");
+        final var actualResult = testObject.getTable(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());
@@ -80,17 +83,17 @@ class DynamoDbConnectorTest {
     @Test
     void testThatListTablesReturnsListOfListTablesResponse() {
         // Given
-        var listOfListTablesResponse = List.of(
+        final var listOfListTablesResponse = List.of(
                 ListTablesResponse.builder().tableNames("table1", "table2").build(),
                 ListTablesResponse.builder().tableNames("table3", "table4").build());
 
-        var mockedListTablesIterable = mock(ListTablesIterable.class);
+        final var mockedListTablesIterable = mock(ListTablesIterable.class);
 
         // When
         when(mockedListTablesIterable.stream()).thenReturn(listOfListTablesResponse.stream());
         when(mockedDynamoDbClient.listTablesPaginator()).thenReturn(mockedListTablesIterable);
 
-        var actualResult = testObject.listTables();
+        final var actualResult = testObject.listTables();
 
         // Then
         assertThat(actualResult)

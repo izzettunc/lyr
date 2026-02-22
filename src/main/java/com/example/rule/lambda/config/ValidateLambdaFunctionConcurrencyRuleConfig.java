@@ -16,12 +16,12 @@ public class ValidateLambdaFunctionConcurrencyRuleConfig implements RuleConfig {
 
     private List<LambdaFunctionConcurrency> functionConcurrences;
 
-    public static ValidateLambdaFunctionConcurrencyRuleConfig parse(Object config) {
+    public static ValidateLambdaFunctionConcurrencyRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new IllegalArgumentException("Invalid config type for ValidateLambdaFunctionConcurrencyRuleConfig");
         }
 
-        var lambdaFunctionConcurrences = ((Map<String, Integer>) config)
+        final var lambdaFunctionConcurrences = ((Map<String, Integer>) config)
                 .entrySet().stream()
                         .map(entry -> new LambdaFunctionConcurrency(entry.getKey(), entry.getValue()))
                         .toList();

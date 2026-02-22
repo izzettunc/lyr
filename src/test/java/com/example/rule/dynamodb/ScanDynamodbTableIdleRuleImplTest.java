@@ -1,5 +1,11 @@
 package com.example.rule.dynamodb;
 
+import static com.example.TestUtil.TABLE_1;
+import static com.example.TestUtil.TABLE_2;
+import static com.example.TestUtil.TABLE_3;
+import static com.example.TestUtil.TABLE_4;
+import static com.example.TestUtil.TABLE_WITH_DATA;
+import static com.example.TestUtil.TABLE_WITH_DATA_OTHER;
 import static com.example.TestUtil.createDummyListTableResponse;
 import static com.example.TestUtil.createImmutableListOfScanOutcome;
 import static com.example.TestUtil.createOptionalDescribeTableResponse;
@@ -36,6 +42,8 @@ public class ScanDynamodbTableIdleRuleImplTest {
     static DynamoDbConnector mockedDynamoDbConnectorInstance = Mockito.mock(DynamoDbConnector.class);
     static ScanDynamodbTableIdleRuleImpl testObject;
 
+    private static final int VALID_MAX_IDLE_PERIOD_IN_DAYS = 5;
+
     @BeforeEach
     public void beforeEach() {
         mockedDynamoDbConnector.when(DynamoDbConnector::create).thenReturn(mockedDynamoDbConnectorInstance);
@@ -61,15 +69,15 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplExecutesSuccessfully() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(true)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(
-                createDummyListTableResponse("table1", "table2"), createDummyListTableResponse("table3", "table4"));
-        var optTable = createOptionalDescribeTableResponse(123L);
-        var expectedOutcome = createImmutableListOfScanOutcome("table1", "table2", "table3", "table4");
+        final var timeWindow = 1;
+        final var listOfListTableResponses =
+                List.of(createDummyListTableResponse(TABLE_1, TABLE_2), createDummyListTableResponse(TABLE_3, TABLE_4));
+        final var optTable = createOptionalDescribeTableResponse(123L);
+        final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -84,7 +92,7 @@ public class ScanDynamodbTableIdleRuleImplTest {
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)
@@ -96,8 +104,9 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplThrowsIllegalArgumentExceptionWhenLessThanADayProvidedAsAPeriod() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(-5)
+        final var invalidMaxIdlePeriodInDays = -5;
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(invalidMaxIdlePeriodInDays)
                 .excludeEmptyTables(true)
                 .build();
 
@@ -108,13 +117,14 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplReturnsEmptyListWhenNoTablesArePresent() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(true)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(ListTablesResponse.builder().build());
-        var expectedOutcome = ImmutableList.of();
+        final var timeWindow = 1;
+        final var listOfListTableResponses =
+                List.of(ListTablesResponse.builder().build());
+        final var expectedOutcome = ImmutableList.of();
 
         // When
         mockedCloudWatchUtil
@@ -122,7 +132,7 @@ public class ScanDynamodbTableIdleRuleImplTest {
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)
@@ -134,16 +144,20 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplReturnsOnlyTheTablesThatHasZeroConsumedReadAndWriteCapacity() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(true)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(
-                createDummyListTableResponse("table1", "tableWithReadCon"),
-                createDummyListTableResponse("tableWithWriteCon", "table4", "tableWithBothCon"));
-        var optTable = createOptionalDescribeTableResponse(123L);
-        var expectedOutcome = createImmutableListOfScanOutcome("table1", "table4");
+        final var timeWindow = 1;
+        final var tableNameWithReadCon = "tableWithReadCon";
+        final var tableNameWithWriteCon = "tableWithWriteCon";
+        final var tableNameWithBothCon = "tableWithBothCon";
+        final var dataSize = 123d;
+        final var listOfListTableResponses = List.of(
+                createDummyListTableResponse(TABLE_1, tableNameWithReadCon),
+                createDummyListTableResponse(tableNameWithWriteCon, TABLE_4, tableNameWithBothCon));
+        final var optTable = createOptionalDescribeTableResponse(123L);
+        final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -152,19 +166,19 @@ public class ScanDynamodbTableIdleRuleImplTest {
         when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
         when(mockedDynamoDbConnectorInstance.getTable(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        or(eq("table1"), eq("table4")), any(), any(), anyInt()))
+                        or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
                 .thenReturn(0d);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        or(eq("tableWithReadCon"), eq("tableWithBothCon")), any(), any(), anyInt()))
-                .thenReturn(123d);
+                        or(eq(tableNameWithReadCon), eq(tableNameWithBothCon)), any(), any(), anyInt()))
+                .thenReturn(dataSize);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        or(eq("table1"), eq("table4")), any(), any(), anyInt()))
+                        or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
                 .thenReturn(0d);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        or(eq("tableWithWriteCon"), eq("tableWithBothCon")), any(), any(), anyInt()))
-                .thenReturn(123d);
+                        or(eq(tableNameWithWriteCon), eq(tableNameWithBothCon)), any(), any(), anyInt()))
+                .thenReturn(dataSize);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)
@@ -176,17 +190,17 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplReturnsOnlyTheTablesThatHasDataInIt() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(true)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(
-                createDummyListTableResponse("table1", "tableWithData"),
-                createDummyListTableResponse("tableWithDataOther", "table4"));
-        var optTableWithData = createOptionalDescribeTableResponse(123L);
-        var optTableWithNoData = createOptionalDescribeTableResponse(0L);
-        var expectedOutcome = createImmutableListOfScanOutcome("tableWithData", "tableWithDataOther");
+        final var timeWindow = 1;
+        final var listOfListTableResponses = List.of(
+                createDummyListTableResponse(TABLE_1, TABLE_WITH_DATA),
+                createDummyListTableResponse(TABLE_WITH_DATA_OTHER, TABLE_4));
+        final var optTableWithData = createOptionalDescribeTableResponse(123L);
+        final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
+        final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
         // When
         mockedCloudWatchUtil
@@ -199,12 +213,12 @@ public class ScanDynamodbTableIdleRuleImplTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("tableWithData"), eq("tableWithDataOther"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("table1"), eq("table4"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)
@@ -216,18 +230,18 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleImplReturnsAllTheIdleTablesRegardlessTheirSize() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(false)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(
-                createDummyListTableResponse("table1", "tableWithData"),
-                createDummyListTableResponse("tableWithDataOther", "table4"));
-        var optTableWithData = createOptionalDescribeTableResponse(123L);
-        var optTableWithNoData = createOptionalDescribeTableResponse(0L);
-        var expectedOutcome =
-                createImmutableListOfScanOutcome("table1", "table4", "tableWithData", "tableWithDataOther");
+        final var timeWindow = 1;
+        final var listOfListTableResponses = List.of(
+                createDummyListTableResponse(TABLE_1, TABLE_WITH_DATA),
+                createDummyListTableResponse(TABLE_WITH_DATA_OTHER, TABLE_4));
+        final var optTableWithData = createOptionalDescribeTableResponse(123L);
+        final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
+        final var expectedOutcome =
+                createImmutableListOfScanOutcome(TABLE_1, TABLE_4, TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
         // When
         mockedCloudWatchUtil
@@ -240,12 +254,12 @@ public class ScanDynamodbTableIdleRuleImplTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("tableWithData"), eq("tableWithDataOther"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("table1"), eq("table4"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)
@@ -257,16 +271,18 @@ public class ScanDynamodbTableIdleRuleImplTest {
     @Test
     void testThatScanDynamodbTableIdleRuleWorksOnOnlyTheTablesThatExists() {
         // Given
-        var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(5)
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
                 .excludeEmptyTables(false)
                 .build();
-        var timeWindow = 1;
-        var listOfListTableResponses = List.of(
-                createDummyListTableResponse("table1", "tableThatDoesntExist"),
-                createDummyListTableResponse("otherTableThatDoesntExists", "table4"));
-        var optTable = createOptionalDescribeTableResponse(0L);
-        var expectedOutcome = createImmutableListOfScanOutcome("table1", "table4");
+        final var timeWindow = 1;
+        final var tableNameThatDoesntExist = "tableThatDoesntExist";
+        final var otherTableNameThatDoesntExists = "otherTableThatDoesntExists";
+        final var listOfListTableResponses = List.of(
+                createDummyListTableResponse(TABLE_1, tableNameThatDoesntExist),
+                createDummyListTableResponse(otherTableNameThatDoesntExists, TABLE_4));
+        final var optTable = createOptionalDescribeTableResponse(0L);
+        final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -279,12 +295,12 @@ public class ScanDynamodbTableIdleRuleImplTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("tableWithData"), eq("tableWithDataOther"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(Optional.empty());
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq("table1"), eq("table4"))))
+        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTable);
 
-        var actualOutcome = testObject.execute(config);
+        final var actualOutcome = testObject.execute(config);
 
         // Then
         assertThat(actualOutcome)

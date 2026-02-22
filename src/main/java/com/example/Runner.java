@@ -4,18 +4,21 @@ import com.example.config.Config;
 import com.example.report.ConsoleReporter;
 import com.example.rule.Rule;
 import com.example.rule.RuleFactory;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class Runner {
-    public static void main(String[] args) {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Runner {
+    static void main(final String[] args) {
         Config.loadUserConfig("userConfig.yaml");
 
-        var rules = Config.getConfig().getRuleConfig().keySet().stream()
+        final var rules = Config.getConfig().getRuleConfig().keySet().stream()
                 .map(RuleFactory::createRule)
                 .toList();
 
         rules.forEach(Rule::evaluate);
 
-        var reporter = new ConsoleReporter();
+        final var reporter = new ConsoleReporter();
         reporter.report(rules);
     }
 }

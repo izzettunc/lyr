@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.glue.paginators.ListSessionsIterable;
 
 class GlueConnectorTest {
 
-    GlueClient mockedGlueClient = Mockito.mock(GlueClient.class);
+    final GlueClient mockedGlueClient = Mockito.mock(GlueClient.class);
     GlueConnector testObject;
 
     @BeforeEach
@@ -38,7 +38,7 @@ class GlueConnectorTest {
     @Test
     void testThatGlueConnectorGetsSsmClientFromServiceProvider() {
         // Given
-        try (var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
+        try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
             GlueConnector.create();
             // Then
@@ -49,7 +49,7 @@ class GlueConnectorTest {
     @Test
     void testThatGetSessionHistoryReturnsListOfListSessionsResponse() {
         // Given
-        var listOfListSessionsResponse = List.of(
+        final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
                         .sessions(
                                 Session.builder().id("12").build(),
@@ -60,14 +60,14 @@ class GlueConnectorTest {
                                 Session.builder().id("56").build(),
                                 Session.builder().id("78").build())
                         .build());
-        var mockedListSessionsIterable = mock(ListSessionsIterable.class);
+        final var mockedListSessionsIterable = mock(ListSessionsIterable.class);
 
         // When
         when(mockedListSessionsIterable.stream()).thenReturn(listOfListSessionsResponse.stream());
         when(mockedGlueClient.listSessionsPaginator(any(ListSessionsRequest.class)))
                 .thenReturn(mockedListSessionsIterable);
 
-        var actualResult = testObject.getSessionHistory();
+        final var actualResult = testObject.getSessionHistory();
 
         // Then
         assertThat(actualResult)

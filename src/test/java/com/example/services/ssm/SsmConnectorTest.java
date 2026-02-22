@@ -7,6 +7,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.example.TestUtil;
 import com.example.services.ServiceProvider;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +21,7 @@ import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
 class SsmConnectorTest {
-    SsmClient mockedSsmClient = Mockito.mock(SsmClient.class);
+    final SsmClient mockedSsmClient = Mockito.mock(SsmClient.class);
     SsmConnector testObject;
 
     @BeforeEach
@@ -36,7 +37,7 @@ class SsmConnectorTest {
     @Test
     void testThatSsmConnectorGetsSsmClientFromServiceProvider() {
         // Given
-        try (var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
+        try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
             SsmConnector.create();
             // Then
@@ -47,13 +48,16 @@ class SsmConnectorTest {
     @Test
     void testThatGetParameterReturnsOptionalOfParameterWhenFound() {
         // Given
-        var expectedParameter = Parameter.builder().name("dummy").value("dummy").build();
-        var getParameterResponse =
+        final var expectedParameter = Parameter.builder()
+                .name(TestUtil.DUMMY_STRING)
+                .value(TestUtil.DUMMY_STRING)
+                .build();
+        final var getParameterResponse =
                 GetParameterResponse.builder().parameter(expectedParameter).build();
 
         // When
         when(mockedSsmClient.getParameter(any(GetParameterRequest.class))).thenReturn(getParameterResponse);
-        var actualResult = testObject.getParameter("dummy");
+        final var actualResult = testObject.getParameter(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.of(expectedParameter));
@@ -64,7 +68,7 @@ class SsmConnectorTest {
         // Given nothing
         // When
         when(mockedSsmClient.getParameter(any(GetParameterRequest.class))).thenThrow(ParameterNotFoundException.class);
-        var actualResult = testObject.getParameter("dummy");
+        final var actualResult = testObject.getParameter(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());
