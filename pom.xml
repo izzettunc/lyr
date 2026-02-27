@@ -9,30 +9,45 @@
     <version>SNAPSHOT-0.0.1</version>
 
     <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <!-- AWS -->
         <awssdk.version>2.41.27</awssdk.version>
+
         <!-- Utility -->
         <apache-commons-lang3.version>3.20.0</apache-commons-lang3.version>
         <lombok.version>1.18.42</lombok.version>
         <guava.version>33.5.0-jre</guava.version>
+
         <!-- Parser -->
         <snakeyaml.version>2.2</snakeyaml.version>
+
         <!-- Test -->
         <junit.version>6.0.2</junit.version>
         <assertj.version>3.27.7</assertj.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <jacoco-maven-plguin.version>0.8.14</jacoco-maven-plguin.version>
         <mockito.version>5.21.0</mockito.version>
+
+        <!-- Plugins -->
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+
+        <!-- Test -->
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+
         <!-- Code formatter/styler -->
         <spotless-maven-plugin.version>3.2.1</spotless-maven-plugin.version>
         <palantir-java-format>2.88.0</palantir-java-format>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <checkstyle.version>13.2.0</checkstyle.version>
-        <!-- Other -->
-        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+
+        <!-- SAST -->
+        <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+        <spotbugs.version>4.9.8</spotbugs.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+
     </properties>
 
     <dependencyManagement>
@@ -64,38 +79,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- Utility dependencies -->
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${apache-commons-lang3.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Parser dependencies -->
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
-        </dependency>
-
         <!-- AWS dependencies-->
 
         <dependency>
@@ -133,8 +116,36 @@
             <artifactId>aws-core</artifactId>
         </dependency>
 
-        <!-- Testing dependencies -->
+        <!-- Parser dependencies -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
 
+        <!-- Utility dependencies -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache-commons-lang3.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Testing dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -159,32 +170,61 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- SAST -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>${spotbugs.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle-plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>${checkstyle.version}</version>
-                    </dependency>
-                </dependencies>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <!-- Test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>check</goal>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Code formatter/styler -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -208,42 +248,71 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
+                    <configLocation>checkstyle.xml</configLocation>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plguin.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+
+            <!-- SAST -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
                     <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>report</goal>
+                            <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+
+                <configuration>
+                    <failOnViolation>true</failOnViolation>
+
+                    <printFailingErrors>true</printFailingErrors>
+                    <linkXRef>false</linkXRef>
+                    <includeTests>true</includeTests>
+
+                    <rulesets>
+                        <ruleset>pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <excludeFromFailureFile>exclude-pmd.properties</excludeFromFailureFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
