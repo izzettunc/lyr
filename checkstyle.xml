@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <module name="SuppressionFilter">
+        <property name="file" value="suppressions.xml"/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="AbbreviationAsWordInName">
+            <property name="allowedAbbreviationLength" value="1"/>
+            <property name="ignoreFinal" value="false"/>
+            <property name="ignoreOverriddenMethods" value="false"/>
+        </module>
+
+        <module name="AnnotationLocation">
+            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+        </module>
+
+        <module name="AnnotationUseStyle"/>
+
+        <module name="ArrayTypeStyle"/>
+
+        <module name="AvoidDoubleBraceInitialization"/>
+
+        <module name="AvoidEscapedUnicodeCharacters"/>
+
+        <module name="AvoidEscapedUnicodeCharacters">
+            <property name="allowEscapesForControlCharacters" value="true"/>
+            <property name="allowNonPrintableEscapes" value="true"/>
+        </module>
+
+        <module name="AvoidNestedBlocks">
+            <property name="allowInSwitchCase" value="true"/>
+        </module>
+
+        <module name="AvoidNoArgumentSuperConstructorCall"/>
+
+        <module name="AvoidStarImport"/>
+
+        <module name="BooleanExpressionComplexity"/>
+        <module name="CatchParameterName">
+            <property name="format" value="^([a-z][a-zA-Z0-9]{2,}|_)$"/>
+        </module>
+        <module name="ClassTypeParameterName"/>
+        <module name="CommentsIndentation"/>
+        <module name="ConstantName">
+            <property name="format" value="^log(ger)?$|^(?=.{3,})[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+        <module name="ConstructorsDeclarationGrouping"/>
+        <module name="CovariantEquals"/>
+        <module name="CyclomaticComplexity">
+            <property name="switchBlockAsSingleDecisionPoint" value="true"/>
+        </module>
+        <module name="DeclarationOrder"/>
+        <module name="DefaultComesLast"/>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock">
+            <!-- Match nothing, so comments never count as content -->
+            <property name="commentFormat" value="a^"/>
+        </module>
+        <module name="EmptyStatement"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="EqualsHashCode"/>
+        <module name="ExplicitInitialization"/>
+        <module name="FinalClass"/>
+        <module name="FinalLocalVariable">
+            <property name="validateEnhancedForLoopVariable" value="true"/>
+        </module>
+        <module name="FinalParameters">
+            <property name="tokens"
+                      value=" METHOD_DEF , CTOR_DEF , LITERAL_CATCH , FOR_EACH_CLAUSE , PATTERN_VARIABLE_DEF"/>
+        </module>
+        <module name="GenericWhitespace"/>
+        <module name="HexLiteralCase"/>
+        <module name="HiddenField"/>
+        <module name="HideUtilityClassConstructor">
+            <property name="ignoreAnnotatedBy" value="NoArgsConstructor"/>
+        </module>
+        <module name="IllegalImport">
+            <!-- Reflections are dangerous hence not allowed -->
+            <property name="illegalPkgs" value="java.lang.reflect, sun"/>
+        </module>
+        <module name="IllegalToken"/>
+        <module name="InnerAssignment"/>
+        <module name="InterfaceTypeParameterName"/>
+        <module name="LambdaBodyLength"/>
+        <module name="LambdaParameterName">
+            <property name="format" value="^([a-z][a-zA-Z0-9]{2,}|_)$"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="format" value="^([a-z][a-zA-Z0-9]{2,}|_)$"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="allowOneCharVarInForLoop" value="true"/>
+            <property name="format" value="^([a-z][a-zA-Z0-9]{2,}|_)$"/>
+        </module>
+        <module name="MagicNumber"/>
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="MethodLength"/>
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="MethodParamPad"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifierOrder"/>
+        <module name="MultipleStringLiterals"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="NeedBraces"/>
+        <module name="NestedForDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NestedIfDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NestedTryDepth">
+            <property name="max" value="2"/>
+        </module>
+        <module name="NoArrayTrailingComma"/>
+        <module name="NoCodeInFile"/>
+        <module name="NoEnumTrailingComma"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+        <module name="NumericalPrefixesInfixesSuffixesCharacterCase"/>
+        <module name="OneStatementPerLine"/>
+        <module name="OperatorWrap"/>
+        <module name="OneTopLevelClass"/>
+        <module name="OuterTypeFilename"/>
+        <module name="OuterTypeNumber"/>
+        <module name="OverloadMethodsDeclarationOrder"/>
+        <module name="PackageDeclaration"/>
+        <module name="PackageName"/>
+        <module name="ParameterName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="max" value="5"/>
+        </module>
+        <module name="ParenPad"/>
+        <module name="PatternVariableAssignment"/>
+        <module name="PatternVariableName">
+            <property name="format" value="^([a-z][a-zA-Z0-9]{2,}|_)$"/>
+        </module>
+        <module name="RecordComponentName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="RecordTypeParameterName"/>
+        <module name="RedundantImport"/>
+        <!-- Disallow javadoc -->
+        <module name="Regexp">
+            <property name="format" value="(?s)/\*\*.*?\*/"/>
+            <property name="message" value="Javadoc comments are not allowed."/>
+            <property name="illegalPattern" value="true"/>
+        </module>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="SingleSpaceSeparator"/>
+        <module name="StaticVariableName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]{2,}$"/>
+        </module>
+        <module name="StringLiteralEquality"/>
+        <module name="TodoComment">
+            <property name="format" value="(?i)(TODO)|(FIXME)|(FIX)"/>
+        </module>
+        <module name="TypeName"/>
+        <module name="TypecastParenPad"/>
+        <module name="UncommentedMain">
+            <property name="excludedClasses" value="\.Runner$"/>
+        </module>
+        <module name="UnnecessaryNullCheckWithInstanceOf"/>
+        <module name="UnnecessaryParentheses"/>
+        <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
+        <module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
+        <module name="UnnecessarySemicolonInEnumeration"/>
+        <module name="UnnecessarySemicolonInTryWithResources"/>
+        <module name="UnusedImports"/>
+        <module name="UnusedLambdaParameterShouldBeUnnamed"/>
+        <module name="UpperEll"/>
+        <module name="WhenShouldBeUsed"/>
+        <module name="WhitespaceAfter"/>
+    </module>
+
+    <module name="FileLength">
+        <property name="max" value="400"/>
+    </module>
+
+    <module name="NewlineAtEndOfFile"/>
+
+    <module name="FileTabCharacter"/>
+</module>

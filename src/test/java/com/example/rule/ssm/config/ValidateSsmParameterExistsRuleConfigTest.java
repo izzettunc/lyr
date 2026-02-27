@@ -1,27 +1,27 @@
 package com.example.rule.ssm.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
+import static com.example.TestUtil.PARAMETER_1;
+import static com.example.TestUtil.PARAMETER_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateSsmParameterExistsRuleConfigTest {
 
     @Test
     void testThatValidateSsmParameterExistsRuleConfigIsParsedCorrectly() {
         // Given
-        List<String> config = List.of("ssmParam1", "ssmParam2");
-        RuleConfig expectedRuleConfig = ValidateSsmParameterExistsRuleConfig
-                .builder()
+        final List<String> config = List.of(PARAMETER_1, PARAMETER_2);
+        final RuleConfig expectedRuleConfig = ValidateSsmParameterExistsRuleConfig.builder()
                 .parameterNames(config)
                 .build();
 
         // When
-        var actualRuleConfig = ValidateSsmParameterExistsRuleConfig.parse(config);
+        final var actualRuleConfig = ValidateSsmParameterExistsRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -33,7 +33,7 @@ class ValidateSsmParameterExistsRuleConfigTest {
     @Test
     void testThatValidateSsmParameterExistsRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        Map<String, String> invalidConfig = Map.of("abc", "def");
+        final Map<String, String> invalidConfig = Map.of("abc", "def");
 
         // When & Then
         assertThatThrownBy(() -> ValidateSsmParameterExistsRuleConfig.parse(invalidConfig))

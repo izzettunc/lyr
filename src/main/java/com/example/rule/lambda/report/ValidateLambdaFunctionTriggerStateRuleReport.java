@@ -1,35 +1,44 @@
 package com.example.rule.lambda.report;
 
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
+
 import com.example.rule.RuleReport;
+import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionTriggerStateRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.example.rule.lambda.LambdaReason;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
-
-public class ValidateLambdaFunctionTriggerStateRuleReport implements RuleReport<ValidateLambdaFunctionTriggerStateRuleConfig> {
+public class ValidateLambdaFunctionTriggerStateRuleReport
+        implements RuleReport<ValidateLambdaFunctionTriggerStateRuleConfig> {
 
     @Override
-    public String report(ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig, ImmutableList<? extends Outcome> outcomes) {
+    public String report(
+            final ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig, final List<? extends Outcome> outcomes) {
 
-        StringBuilder reportBuilder = new StringBuilder();
-        reportBuilder.append(String.format("%n========================"));
-        reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
-        reportBuilder.append(String.format("%n========================"));
-
+        final StringBuilder reportBuilder = new StringBuilder();
+        final var block = "%n========================";
+        reportBuilder
+                .append(String.format(block))
+                .append(String.format("%nValidation Report for "))
+                .append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE)
+                .append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
-            var functionName = ruleConfig.getFunctionTriggerStates().get(i).functionName();
-            var expectedState = ruleConfig.getFunctionTriggerStates().get(i).enabled() ? "enabled" : "disabled";
-            var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
+            final var functionName =
+                    ruleConfig.getFunctionTriggerStates().get(i).functionName();
+            final var expectedState =
+                    ruleConfig.getFunctionTriggerStates().get(i).enabled() ? "enabled" : "disabled";
+            final var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
 
-            if (outcome.success()){
-                reportBuilder.append(String.format("%n- [✅] Lambda function '%s' expected to be %s. Validation passed: %s", functionName, expectedState, outcome.reason()));
-            } else{
-                reportBuilder.append(String.format("%n- [❌] Lambda function '%s' expected to be %s. Validation failed: %s", functionName, expectedState, outcome.reason()));
+            if (outcome.success()) {
+                reportBuilder.append(String.format(
+                        "%n- [✅] Lambda function '%s' expected to be %s. Validation passed: %s",
+                        functionName, expectedState, outcome.reason()));
+            } else {
+                reportBuilder.append(String.format(
+                        "%n- [❌] Lambda function '%s' expected to be %s. Validation failed: %s",
+                        functionName, expectedState, outcome.reason()));
             }
         }
 

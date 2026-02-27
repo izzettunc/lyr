@@ -1,35 +1,37 @@
 package com.example.rule;
 
 import com.example.rule.outcome.ValidationOutcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ValidationRule<T extends Enum<T>> extends Rule {
 
-    ValidationRule(String name, RuleConfig parameters, RuleStrategy strategy, RuleReport report) {
+    ValidationRule(
+            final String name, final RuleConfig parameters, final RuleStrategy strategy, final RuleReport report) {
         super(name, parameters, strategy, report);
     }
 
     @Override
     public String report() {
         if (outcome == null) {
-            throw new IllegalStateException("Rule outcome is not evaluated yet. Please call evaluate() before report().");
+            throw new IllegalStateException(
+                    "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
-        return report.report(parameters, outcome);
+        return ruleReportStrategy.report(ruleConfig, outcome);
     }
 
     @Override
-    public ImmutableList<ValidationOutcome<T>> evaluate() {
+    public List<ValidationOutcome<T>> evaluate() {
         if (outcome == null) {
-            outcome = strategy.execute(parameters);
+            outcome = ruleExecutionStrategy.execute(ruleConfig);
         }
 
         return Rule.recastOutcomeList(outcome);
     }
 
     @Override
-    public ImmutableList<ValidationOutcome<T>> reevaluate() {
-        outcome = strategy.execute(parameters);
+    public List<ValidationOutcome<T>> reevaluate() {
+        outcome = ruleExecutionStrategy.execute(ruleConfig);
         return Rule.recastOutcomeList(outcome);
     }
 }

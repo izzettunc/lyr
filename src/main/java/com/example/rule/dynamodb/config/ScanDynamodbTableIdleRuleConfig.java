@@ -1,12 +1,11 @@
 package com.example.rule.dynamodb.config;
 
 import com.example.rule.RuleConfig;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -20,17 +19,16 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
     @Builder.Default
     private final Boolean excludeEmptyTables = Boolean.FALSE;
 
-    public static ScanDynamodbTableIdleRuleConfig parse(Object config) {
+    public static ScanDynamodbTableIdleRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new IllegalArgumentException(config.getClass().getSimpleName() + " is not a Map");
         }
 
-        var configMap = (Map<String, Object>) config;
+        final var configMap = (Map<String, Object>) config;
 
         return ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
                 .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
                 .build();
-
     }
 }

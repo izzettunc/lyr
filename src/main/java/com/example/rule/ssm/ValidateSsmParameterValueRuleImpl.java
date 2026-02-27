@@ -10,23 +10,24 @@ import com.google.common.collect.ImmutableList;
 public class ValidateSsmParameterValueRuleImpl implements RuleStrategy<ValidateSsmParameterValueRuleConfig> {
 
     @Override
-    public ImmutableList<Outcome> execute(ValidateSsmParameterValueRuleConfig parameters) {
-        return parameters
-                .getParameterValues()
-                .stream()
-                .map(parameterValue -> {
-                    var optSsmParameter = SsmConnector.create().getParameter(parameterValue.parameterName());
-
-                    if (optSsmParameter.isEmpty()) {
-                        return ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND);
-                    }
-
-                    if (!optSsmParameter.get().value().equalsIgnoreCase(parameterValue.value())) {
-                        return ValidationOutcome.invalid(SsmReason.PARAMETER_VALUE_MISMATCH);
-                    }
-
-                    return ValidationOutcome.valid();
-                })
+    public ImmutableList<Outcome> execute(final ValidateSsmParameterValueRuleConfig parameters) {
+        return parameters.getParameterValues().stream()
+                .map(this::validateSsmParameterValue)
                 .collect(ImmutableList.toImmutableList());
+    }
+
+    private ValidationOutcome<SsmReason> validateSsmParameterValue(
+            final ValidateSsmParameterValueRuleConfig.SsmParameterValue parameterValue) {
+        final var optSsmParameter = SsmConnector.create().getParameter(parameterValue.parameterName());
+
+        if (optSsmParameter.isEmpty()) {
+            return ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND);
+        }
+
+        if (!optSsmParameter.get().value().equalsIgnoreCase(parameterValue.value())) {
+            return ValidationOutcome.invalid(SsmReason.PARAMETER_VALUE_MISMATCH);
+        }
+
+        return ValidationOutcome.valid();
     }
 }

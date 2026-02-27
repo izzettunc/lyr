@@ -1,17 +1,5 @@
 package com.example.services.cloudwatch;
 
-
-import com.example.services.ServiceProvider;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
-import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
-import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResponse;
-
-import java.time.Instant;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -20,9 +8,20 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.example.TestUtil;
+import com.example.services.ServiceProvider;
+import java.time.Instant;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
+import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
+import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResponse;
+
 class CloudWatchConnectorTest {
 
-    CloudWatchClient mockedCloudWatchClient = mock(CloudWatchClient.class);
+    final CloudWatchClient mockedCloudWatchClient = mock(CloudWatchClient.class);
     CloudWatchConnector testObject;
 
     @BeforeEach
@@ -49,40 +48,48 @@ class CloudWatchConnectorTest {
     @Test
     void testThatGetTotalConsumedReadCapacityOfADynamoDbTableReturnsSumOfAllDataPoints() {
         // Given
-        var getMetricStatisticResponse = GetMetricStatisticsResponse.builder().datapoints(
-                        Datapoint.builder().sum(1d).build(),
-                        Datapoint.builder().sum(2d).build(),
-                        Datapoint.builder().sum(3d).build(),
-                        Datapoint.builder().sum(4d).build())
+        final var metricStatisticDataPointValue = 3d;
+        final var summedMetricStatisticDataPointValue = 12d;
+        final var getMetricStatisticResponse = GetMetricStatisticsResponse.builder()
+                .datapoints(
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build())
                 .build();
 
         // When
         when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
                 .thenReturn(getMetricStatisticResponse);
 
-        var actualResult = testObject.getTotalConsumedReadCapacityOfADynamoDbTable("dummy", Instant.now(), Instant.now(), 123);
+        final var actualResult = testObject.getTotalConsumedReadCapacityOfADynamoDbTable(
+                TestUtil.DUMMY_STRING, Instant.now(), Instant.now(), 123);
 
         // Then
-        assertThat(actualResult).isEqualTo(10d);
+        assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
     }
 
     @Test
     void testThatGetTotalConsumedWriteCapacityOfADynamoDbTableReturnsSumOfAllDataPoints() {
         // Given
-        var getMetricStatisticResponse = GetMetricStatisticsResponse.builder().datapoints(
-                        Datapoint.builder().sum(1d).build(),
-                        Datapoint.builder().sum(2d).build(),
-                        Datapoint.builder().sum(3d).build(),
-                        Datapoint.builder().sum(4d).build())
+        final var metricStatisticDataPointValue = 3d;
+        final var summedMetricStatisticDataPointValue = 12d;
+        final var getMetricStatisticResponse = GetMetricStatisticsResponse.builder()
+                .datapoints(
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build())
                 .build();
 
         // When
         when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
                 .thenReturn(getMetricStatisticResponse);
 
-        var actualResult = testObject.getTotalConsumedWriteCapacityOfADynamoDbTable("dummy", Instant.now(), Instant.now(), 123);
+        final var actualResult = testObject.getTotalConsumedWriteCapacityOfADynamoDbTable(
+                TestUtil.DUMMY_STRING, Instant.now(), Instant.now(), 123);
 
         // Then
-        assertThat(actualResult).isEqualTo(10d);
+        assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
     }
 }

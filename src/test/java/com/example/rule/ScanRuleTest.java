@@ -1,12 +1,5 @@
 package com.example.rule;
 
-import com.example.rule.outcome.Outcome;
-import com.example.rule.outcome.ScanOutcome;
-import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,16 +10,25 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ScanRuleTest {
+import com.example.TestUtil;
+import com.example.rule.outcome.Outcome;
+import com.example.rule.outcome.ScanOutcome;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-    RuleStrategy ruleStrategy = mock(RuleStrategy.class);
-    RuleReport ruleReport = mock(RuleReport.class);
-    RuleConfig ruleConfig = mock(RuleConfig.class);
+class ScanRuleTest {
+
+    final RuleStrategy ruleStrategy = mock(RuleStrategy.class);
+    final RuleReport ruleReport = mock(RuleReport.class);
+    final RuleConfig ruleConfig = mock(RuleConfig.class);
     ScanRule testObject;
 
     @BeforeEach
     public void beforeEach() {
-        testObject = new ScanRule("test", ruleConfig, ruleStrategy, ruleReport);
+        testObject = new ScanRule(TestUtil.DUMMY_STRING, ruleConfig, ruleStrategy, ruleReport);
     }
 
     @AfterEach
@@ -37,12 +39,13 @@ public class ScanRuleTest {
     @Test
     void testThatEvaluatingScanRuleCachesAndReturnsTheOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
+        final List<Outcome> expectedOutcome =
+                ImmutableList.of(new ScanOutcome(TestUtil.DUMMY_STRING), new ScanOutcome(TestUtil.DUMMY2_STRING));
         assertThat(testObject.outcome).isNull();
 
         // When
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
-        var actualOutcome = testObject.evaluate();
+        final var actualOutcome = testObject.evaluate();
 
         // Then
         assertThat(testObject.outcome)
@@ -59,14 +62,17 @@ public class ScanRuleTest {
     }
 
     @Test
-    void testThatEvaluatingScanRuleMultipleTimeJustReturnsCachedOutcome() {
+    void testThatEvaluatingScanRuleFiveTimesJustReturnsCachedOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
-        ImmutableList<Outcome> updatedOutcome = ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
+        final List<Outcome> expectedOutcome =
+                ImmutableList.of(new ScanOutcome(TestUtil.DUMMY_STRING), new ScanOutcome(TestUtil.DUMMY2_STRING));
+        final List<Outcome> updatedOutcome = ImmutableList.of(
+                new ScanOutcome(TestUtil.UPDATED_DUMMY_STRING), new ScanOutcome(TestUtil.UPDATED_DUMMY2_STRING));
+        final var amountOfReevaluation = 5;
         assertThat(testObject.outcome).isNull();
 
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
-        var initialOutcome = testObject.evaluate();
+        final var initialOutcome = testObject.evaluate();
 
         assertThat(testObject.outcome)
                 .usingRecursiveComparison()
@@ -80,8 +86,8 @@ public class ScanRuleTest {
 
         // When
         when(ruleStrategy.execute(ruleConfig)).thenReturn(updatedOutcome);
-        ImmutableList<ScanOutcome> actualOutcome = ImmutableList.of();
-        for (int i = 0; i < 5; i++) {
+        List<ScanOutcome> actualOutcome = ImmutableList.of();
+        for (int i = 0; i < amountOfReevaluation; i++) {
             actualOutcome = testObject.evaluate();
         }
 
@@ -102,12 +108,13 @@ public class ScanRuleTest {
     @Test
     void testThatReevaluateCachesAndReturnsTheOutcome() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
+        final var expectedOutcome =
+                ImmutableList.of(new ScanOutcome(TestUtil.DUMMY_STRING), new ScanOutcome(TestUtil.DUMMY2_STRING));
         assertThat(testObject.outcome).isNull();
 
         // When
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
-        var actualOutcome = testObject.reevaluate();
+        final var actualOutcome = testObject.reevaluate();
 
         // Then
         assertThat(testObject.outcome)
@@ -126,63 +133,57 @@ public class ScanRuleTest {
     @Test
     void testThatReevaluatingScanRuleMultipleTimeChangesOutcomeEachTime() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
-        ImmutableList<Outcome> expectedUpdatedOutcome = ImmutableList.of(new ScanOutcome("updatedTest"), new ScanOutcome("updatedTest2"));
-        ImmutableList<Outcome> expectedUpdatedOutcomeLast = ImmutableList.of(new ScanOutcome("updatedTestLast"), new ScanOutcome("updatedTestLast"));
+        final var expectedOutcome =
+                ImmutableList.of(new ScanOutcome(TestUtil.DUMMY_STRING), new ScanOutcome(TestUtil.DUMMY2_STRING));
+        final var expectedUpdatedOutcome = ImmutableList.of(
+                new ScanOutcome(TestUtil.UPDATED_DUMMY_STRING), new ScanOutcome(TestUtil.UPDATED_DUMMY2_STRING));
+        final var expectedUpdatedOutcomeLast = ImmutableList.of(
+                new ScanOutcome(TestUtil.FINAL_UPDATED_DUMMY_STRING),
+                new ScanOutcome(TestUtil.FINAL_UPDATED_DUMMY2_STRING));
+        final var amountOfReevaluation = 3;
         assertThat(testObject.outcome).isNull();
 
         // When
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
-        var initialOutcome = testObject.reevaluate();
-        var initialOutcomeCached = ImmutableList.copyOf(testObject.outcome);
+        final var initialOutcome = testObject.reevaluate();
+        final var initialOutcomeCached = ImmutableList.copyOf(testObject.outcome);
 
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedUpdatedOutcome);
-        var updatedOutcome = testObject.reevaluate();
-        var updatedOutcomeCached = ImmutableList.copyOf(testObject.outcome);
+        final var updatedOutcome = testObject.reevaluate();
+        final var updatedOutcomeCached = ImmutableList.copyOf(testObject.outcome);
 
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedUpdatedOutcomeLast);
-        var updatedOutcomeLast = testObject.reevaluate();
-        var updatedOutcomeCachedLast = ImmutableList.copyOf(testObject.outcome);
+        final var updatedOutcomeLast = testObject.reevaluate();
+        final var updatedOutcomeCachedLast = ImmutableList.copyOf(testObject.outcome);
 
         // Then
         assertThat(initialOutcomeCached)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
-
-        assertThat(initialOutcome)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedOutcome)
+                .isEqualTo(initialOutcome);
 
         assertThat(updatedOutcomeCached)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcome);
-
-        assertThat(updatedOutcome)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcome);
+                .isEqualTo(expectedUpdatedOutcome)
+                .isEqualTo(updatedOutcome);
 
         assertThat(updatedOutcomeCachedLast)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcomeLast);
+                .isEqualTo(expectedUpdatedOutcomeLast)
+                .isEqualTo(updatedOutcomeLast);
 
-        assertThat(updatedOutcomeLast)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcomeLast);
-
-        verify(ruleStrategy, times(3)).execute(ruleConfig);
+        verify(ruleStrategy, times(amountOfReevaluation)).execute(ruleConfig);
     }
 
     @Test
     void testThatReportReportsSuccessfullyWhenOutcomeIsAlreadyCalculated() {
         // Given
-        ImmutableList<Outcome> expectedOutcome = ImmutableList.of(new ScanOutcome("test"), new ScanOutcome("test2"));
-        var expectedReport = "dummyReport";
+        final List<Outcome> expectedOutcome =
+                ImmutableList.of(new ScanOutcome(TestUtil.DUMMY_STRING), new ScanOutcome(TestUtil.DUMMY2_STRING));
+        final var expectedReport = "dummyReport";
 
         assertThat(testObject.outcome).isNull();
         when(ruleStrategy.execute(ruleConfig)).thenReturn(expectedOutcome);
@@ -192,11 +193,10 @@ public class ScanRuleTest {
 
         // When
         when(ruleReport.report(ruleConfig, expectedOutcome)).thenReturn(expectedReport);
-        var actualReport = testObject.report();
+        final var actualReport = testObject.report();
 
         // Then
-        assertThat(actualReport)
-                .isEqualTo(expectedReport);
+        assertThat(actualReport).isEqualTo(expectedReport);
 
         verify(ruleReport, times(1)).report(ruleConfig, expectedOutcome);
     }

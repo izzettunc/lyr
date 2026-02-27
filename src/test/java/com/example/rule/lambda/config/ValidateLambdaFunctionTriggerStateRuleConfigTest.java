@@ -1,33 +1,33 @@
 package com.example.rule.lambda.config;
 
-
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
+import static com.example.TestUtil.DISABLED;
+import static com.example.TestUtil.ENABLED;
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateLambdaFunctionTriggerStateRuleConfigTest {
 
     @Test
     void testThatValidateLambdaFunctionTriggerStateRuleConfigIsParsedCorrectly() {
         // Given
-        Map<String, String> config = Map.of("lambda1", "Enabled", "lambda2", "Disabled");
-        var listOfLambdaFunctionTriggerState = List.of(
-                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("lambda1", true),
-                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState("lambda2", false)
-        );
+        final Map<String, String> config = Map.of(FUNCTION_1, ENABLED, FUNCTION_2, DISABLED);
+        final var listOfLambdaFunctionTriggerState = List.of(
+                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_1, true),
+                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_2, false));
 
-        RuleConfig expectedRuleConfig = ValidateLambdaFunctionTriggerStateRuleConfig
-                .builder()
+        final RuleConfig expectedRuleConfig = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
                 .functionTriggerStates(listOfLambdaFunctionTriggerState)
                 .build();
 
         // When
-        var actualRuleConfig = ValidateLambdaFunctionTriggerStateRuleConfig.parse(config);
+        final var actualRuleConfig = ValidateLambdaFunctionTriggerStateRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -38,19 +38,21 @@ class ValidateLambdaFunctionTriggerStateRuleConfigTest {
     }
 
     @Test
-    void testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+    void
+            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        List<String> invalidConfig = List.of("lambda1", "lambda2");
+        final List<String> invalidConfig = List.of(FUNCTION_1, FUNCTION_2);
 
         // When & Then
-            assertThatThrownBy(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(invalidConfig))
+        assertThatThrownBy(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(invalidConfig))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenOtherThanEnabledOrDisabledIsProvided() {
+    void
+            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenOtherThanEnabledOrDisabledIsProvided() {
         // Given
-        Map<String, String> invalidConfig = Map.of("lambda1", "Other", "lambda2", "Disabled");
+        final Map<String, String> invalidConfig = Map.of(FUNCTION_1, "Other", FUNCTION_2, DISABLED);
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(invalidConfig))

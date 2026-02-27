@@ -1,9 +1,10 @@
 package com.example.rule;
 
 import com.example.rule.outcome.Outcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface RuleReport<T extends RuleConfig> {
 
-    String report(T ruleConfig, ImmutableList<? extends Outcome> outcome);
+    String report(T ruleConfig, List<? extends Outcome> outcome);
 }

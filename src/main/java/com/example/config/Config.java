@@ -3,57 +3,55 @@ package com.example.config;
 import com.example.report.ReportType;
 import com.example.rule.RuleConfig;
 import com.example.rule.RuleConfigFactory;
-import lombok.Getter;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import org.yaml.snakeyaml.Yaml;
 
 @Getter
-public class Config {
+public final class Config {
     private static final String DEFAULT_CONFIG_PATH = "defaultConfig.yaml";
     private static final Config DEFAULT_CONFIG = new Config(DEFAULT_CONFIG_PATH, true);
-    private static final Config CONFIG = new Config();
+    private static final Config INSTANCE = new Config();
 
     private Map<String, RuleConfig> ruleConfig = new HashMap<>();
-    private ReportType reportType = ReportType.CONSOLE;
+    private final ReportType reportType = ReportType.CONSOLE;
     private String path;
-    private boolean isDefault = false;
+    private boolean isDefault;
 
-    private Config() {
+    private Config() {}
 
+    private Config(final String configPath) {
+        this(configPath, false);
     }
 
-    public Config(String path) {
-        this(path, false);
-    }
-
-    private Config(String path, boolean isDefault) {
-        this.path = path;
-        this.isDefault = isDefault;
+    private Config(final String configPath, final boolean isDefaultConfig) {
+        this.path = configPath;
+        this.isDefault = isDefaultConfig;
         load();
     }
 
     public void load() {
-        Yaml yaml = new Yaml();
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream(path)) {
-            Map<String, Object> rawConfig = yaml.load(in);
+        try (InputStream configInputStream =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+            final Yaml yaml = new Yaml();
+            final Map<String, Object> rawConfig = yaml.load(configInputStream);
             ruleConfig = generateRuleConfigFromRawConfig(rawConfig);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load defaultConfig.yaml", e);
+        } catch (final Exception exception) {
+            throw new RuntimeException("Failed to load defaultConfig.yaml", exception);
         }
     }
 
-    private Map<String, RuleConfig> generateRuleConfigFromRawConfig(Map<String, Object> rawConfig) {
-        Map<String, RuleConfig> ruleConfigMap = new HashMap<>();
-        for (Map.Entry<String, Object> entry : rawConfig.entrySet()) {
+    private Map<String, RuleConfig> generateRuleConfigFromRawConfig(final Map<String, Object> rawConfig) {
+        final Map<String, RuleConfig> ruleConfigMap = new HashMap<>();
+        for (final Map.Entry<String, Object> entry : rawConfig.entrySet()) {
             if (entry.getValue() != null) {
                 ruleConfigMap.put(entry.getKey(), RuleConfigFactory.createRuleConfig(entry.getKey(), entry.getValue()));
-            } else if(isDefault) {
+            } else if (isDefault) {
                 ruleConfigMap.put(entry.getKey(), null);
             } else {
-                var defaultRuleConfig = DEFAULT_CONFIG.getRuleConfig().get(entry.getKey());
+                final var defaultRuleConfig = DEFAULT_CONFIG.getRuleConfig().get(entry.getKey());
                 if (defaultRuleConfig != null || DEFAULT_CONFIG.getRuleConfig().containsKey(entry.getKey())) {
                     ruleConfigMap.put(entry.getKey(), defaultRuleConfig);
                 } else {
@@ -64,13 +62,12 @@ public class Config {
         return ruleConfigMap;
     }
 
-    public static void loadUserConfig(String path) {
-        CONFIG.path = path;
-        CONFIG.load();
+    public static void loadUserConfig(final String path) {
+        INSTANCE.path = path;
+        INSTANCE.load();
     }
 
-    public static Config getConfig() {
-        return CONFIG;
+    public static Config getInstance() {
+        return INSTANCE;
     }
 }
-

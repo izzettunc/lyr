@@ -1,34 +1,34 @@
 package com.example.rule;
 
 import com.example.rule.outcome.ScanOutcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ScanRule extends Rule {
-    ScanRule(String name, RuleConfig parameters, RuleStrategy strategy, RuleReport report) {
+    ScanRule(final String name, final RuleConfig parameters, final RuleStrategy strategy, final RuleReport report) {
         super(name, parameters, strategy, report);
     }
 
     @Override
     public String report() {
         if (outcome == null) {
-            throw new IllegalStateException("Rule outcome is not evaluated yet. Please call evaluate() before report().");
+            throw new IllegalStateException(
+                    "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
-        return report.report(parameters, outcome);
+        return ruleReportStrategy.report(ruleConfig, outcome);
     }
 
     @Override
-    public ImmutableList<ScanOutcome> evaluate(){
+    public List<ScanOutcome> evaluate() {
         if (outcome == null) {
-            outcome = strategy.execute(parameters);
+            outcome = ruleExecutionStrategy.execute(ruleConfig);
         }
         return Rule.recastOutcomeList(outcome);
     }
 
     @Override
-    public ImmutableList<ScanOutcome> reevaluate() {
-        outcome = strategy.execute(parameters);
+    public List<ScanOutcome> reevaluate() {
+        outcome = ruleExecutionStrategy.execute(ruleConfig);
         return Rule.recastOutcomeList(outcome);
     }
-
 }

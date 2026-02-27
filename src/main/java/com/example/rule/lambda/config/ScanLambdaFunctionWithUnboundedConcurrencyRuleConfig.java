@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements RuleConfig {
 
-    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(Object ignore) {
+    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(final Object ignore) {
         // No config available for this rule
         return null;
     }

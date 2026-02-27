@@ -1,10 +1,7 @@
 package com.example.rule.outcome;
 
+import java.io.Serializable;
 import lombok.Builder;
 
-import java.io.Serializable;
-import java.util.List;
-
 @Builder
-public record ScanOutcome(String result) implements Serializable, Outcome {
-}
+public record ScanOutcome(String result) implements Serializable, Outcome {}

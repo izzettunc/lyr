@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Custom PMD Ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Custom PMD ruleset based on standard categories, with some exclusions that are already check by other SAST
+    </description>
+
+    <!-- Standard rulesets -->
+    <rule ref="category/java/bestpractices.xml"/>
+    <rule ref="category/java/errorprone.xml">
+        <!-- Justification: Below rules are already checked by and configured via checkstyle-->
+        <exclude name="AvoidDuplicateLiterals"/>
+        <exclude name="AvoidLiteralsInIfCondition"/>
+    </rule>
+    <rule ref="category/java/performance.xml"/>
+    <rule ref="category/java/security.xml"/>
+
+    <!-- Overwritten rules -->
+
+    <!-- Justification: Default value of maximum 1 assert is not practical hence set a more reasonable value -->
+    <rule ref="category/java/bestpractices.xml/UnitTestContainsTooManyAsserts">
+        <properties>
+            <property name="maximumAsserts" value="7" />
+        </properties>
+    </rule>
+
+</ruleset>

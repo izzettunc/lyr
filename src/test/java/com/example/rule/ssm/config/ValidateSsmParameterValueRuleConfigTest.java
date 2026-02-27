@@ -1,32 +1,33 @@
 package com.example.rule.ssm.config;
 
-import com.example.rule.RuleConfig;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
-
+import static com.example.TestUtil.PARAMETER_1;
+import static com.example.TestUtil.PARAMETER_2;
+import static com.example.TestUtil.VALUE_1;
+import static com.example.TestUtil.VALUE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.example.rule.RuleConfig;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ValidateSsmParameterValueRuleConfigTest {
 
     @Test
     void testThatValidateSsmParameterValueRuleConfigIsParsedCorrectly() {
         // Given
-        Map<String, String> config = Map.of("parameter1", "value1", "parameter2", "value2");
-        var listOfSsmParameterValue = List.of(
-                new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter1", "value1"),
-                new ValidateSsmParameterValueRuleConfig.SsmParameterValue("parameter2", "value2")
-        );
+        final Map<String, String> config = Map.of(PARAMETER_1, VALUE_1, PARAMETER_2, VALUE_2);
+        final var listOfSsmParameterValue = List.of(
+                new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_1, VALUE_1),
+                new ValidateSsmParameterValueRuleConfig.SsmParameterValue(PARAMETER_2, VALUE_2));
 
-        RuleConfig expectedRuleConfig = ValidateSsmParameterValueRuleConfig
-                .builder()
+        final RuleConfig expectedRuleConfig = ValidateSsmParameterValueRuleConfig.builder()
                 .parameterValues(listOfSsmParameterValue)
                 .build();
 
         // When
-        var actualRuleConfig = ValidateSsmParameterValueRuleConfig.parse(config);
+        final var actualRuleConfig = ValidateSsmParameterValueRuleConfig.parse(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -39,7 +40,7 @@ class ValidateSsmParameterValueRuleConfigTest {
     @Test
     void testThatValidateSsmParameterValueRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
-        List<String> invalidConfig = List.of("lambda1", "lambda2");
+        final List<String> invalidConfig = List.of("lambda1", "lambda2");
 
         // When & Then
         assertThatThrownBy(() -> ValidateSsmParameterValueRuleConfig.parse(invalidConfig))

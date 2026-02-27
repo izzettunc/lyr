@@ -1,16 +1,19 @@
 package com.example.rule.lambda.report;
 
+import static com.example.TestUtil.FUNCTION_1;
+import static com.example.TestUtil.FUNCTION_2;
+import static com.example.TestUtil.FUNCTION_3;
+import static com.example.TestUtil.FUNCTION_4;
+import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionConcurrencyRuleConfig;
 import com.example.rule.outcome.ValidationOutcome;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static com.example.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ValidateLambdaFunctionConcurrencyRuleReportTest {
 
@@ -24,29 +27,26 @@ class ValidateLambdaFunctionConcurrencyRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereIsAnOutcome() {
         // Given
-        var config = ValidateLambdaFunctionConcurrencyRuleConfig
-                .builder()
+        final var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(List.of(
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function1", 1),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function2", 2),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function3", 3),
-                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency("function4", 4)
-                ))
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_1, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_2, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_3, 1),
+                        new ValidateLambdaFunctionConcurrencyRuleConfig.LambdaFunctionConcurrency(FUNCTION_4, 1)))
                 .build();
 
-        var outcome = ImmutableList.of(
+        final var outcome = ImmutableList.of(
                 ValidationOutcome.valid(),
                 ValidationOutcome.invalid(null),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND),
-                ValidationOutcome.invalid(LambdaReason.FUNCTION_CONCURRENCY_MISMATCH)
-        );
+                ValidationOutcome.invalid(LambdaReason.FUNCTION_CONCURRENCY_MISMATCH));
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
         assertThat(actualResult)
-                .contains("function1", "function2", "function3", "function4")
+                .contains(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4)
                 .contains("null", "FUNCTION_NOT_FOUND", "FUNCTION_CONCURRENCY_MISMATCH")
                 .contains(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY);
     }
@@ -54,18 +54,16 @@ class ValidateLambdaFunctionConcurrencyRuleReportTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
         // Given
-        var config = ValidateLambdaFunctionConcurrencyRuleConfig
-                .builder()
+        final var config = ValidateLambdaFunctionConcurrencyRuleConfig.builder()
                 .functionConcurrences(List.of())
                 .build();
 
-        ImmutableList<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
+        final List<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
 
         // When
-        var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.report(config, outcome);
 
         // Then
-        assertThat(actualResult)
-                .contains(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY);
+        assertThat(actualResult).contains(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY);
     }
 }

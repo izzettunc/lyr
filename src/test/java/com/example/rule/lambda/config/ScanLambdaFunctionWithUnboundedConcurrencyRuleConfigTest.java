@@ -1,24 +1,23 @@
 package com.example.rule.lambda.config;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
 
     @Test
     void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsParsedToNull() {
         // Given
-        Object configList = List.of(15);
-        Object configMap = Map.of("abc", 15, "def", 30);
+        final Object configList = List.of(15);
+        final Object configMap = Map.of("abc", 15, "def", 30);
 
         // When
-        var actualRuleConfigList = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configList);
-        var actualRuleConfigMap = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configMap);
-        var actualRuleConfigNull = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(null);
+        final var actualRuleConfigList = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configList);
+        final var actualRuleConfigMap = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configMap);
+        final var actualRuleConfigNull = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(null);
 
         // Then
         assertThat(actualRuleConfigList).isNull();

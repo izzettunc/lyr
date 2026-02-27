@@ -1,12 +1,11 @@
 package com.example.rule.glue.config;
 
 import com.example.rule.RuleConfig;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -16,12 +15,12 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
     @NonNull
     private final Integer maxIdleTimeoutInMinutes;
 
-    public static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parse(Object config) {
+    public static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new IllegalArgumentException(config.getClass().getSimpleName() + " is not a Map");
         }
 
-        var configMap = (Map<String, Integer>) config;
+        final var configMap = (Map<String, Integer>) config;
 
         return ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(RuleConfig.getMandatoryAttribute("maxIdleTimeoutInMinutes", configMap))
