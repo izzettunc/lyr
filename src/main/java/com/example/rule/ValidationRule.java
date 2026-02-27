@@ -1,7 +1,7 @@
 package com.example.rule;
 
 import com.example.rule.outcome.ValidationOutcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ValidationRule<T extends Enum<T>> extends Rule {
 
@@ -17,21 +17,21 @@ public class ValidationRule<T extends Enum<T>> extends Rule {
                     "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
-        return report.report(config, outcome);
+        return ruleReportStrategy.report(ruleConfig, outcome);
     }
 
     @Override
-    public ImmutableList<ValidationOutcome<T>> evaluate() {
+    public List<ValidationOutcome<T>> evaluate() {
         if (outcome == null) {
-            outcome = strategy.execute(config);
+            outcome = ruleExecutionStrategy.execute(ruleConfig);
         }
 
         return Rule.recastOutcomeList(outcome);
     }
 
     @Override
-    public ImmutableList<ValidationOutcome<T>> reevaluate() {
-        outcome = strategy.execute(config);
+    public List<ValidationOutcome<T>> reevaluate() {
+        outcome = ruleExecutionStrategy.execute(ruleConfig);
         return Rule.recastOutcomeList(outcome);
     }
 }

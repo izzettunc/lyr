@@ -52,7 +52,7 @@ class ValidateSsmParameterExistsRuleReportTest {
                 .parameterNames(List.of())
                 .build();
 
-        final ImmutableList<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
+        final List<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
 
         // When
         final var actualResult = testObject.report(config, outcome);

@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-public class RuleFactoryTest {
+class RuleFactoryTest {
 
     final Config mockedConfig = mock(Config.class);
 
@@ -45,7 +45,7 @@ public class RuleFactoryTest {
     void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
         // Given
         try (MockedStatic<Config> configMockedStatic = Mockito.mockStatic(Config.class)) {
-            configMockedStatic.when(Config::getConfig).thenReturn(mockedConfig);
+            configMockedStatic.when(Config::getInstance).thenReturn(mockedConfig);
 
             final var unknownRuleName = "unknownRuleName";
 
@@ -65,15 +65,15 @@ public class RuleFactoryTest {
         // Given
         // rulename, expectedTypeOfRule, expectedTypeOfRuleImpl, expectedTypeOfRuleReport
         try (MockedStatic<Config> configMockedStatic = Mockito.mockStatic(Config.class)) {
-            configMockedStatic.when(Config::getConfig).thenReturn(mockedConfig);
+            configMockedStatic.when(Config::getInstance).thenReturn(mockedConfig);
 
             // When
             final var rule = RuleFactory.createRule(ruleName);
 
             // Then
             assertThat(rule).isNotNull().isInstanceOf(expectedTypeOfRule);
-            assertThat(rule.getStrategy()).isNotNull().isInstanceOf(expectedTypeOfRuleImpl);
-            assertThat(rule.getReport()).isNotNull().isInstanceOf(expectedTypeOfRuleReport);
+            assertThat(rule.getRuleExecutionStrategy()).isNotNull().isInstanceOf(expectedTypeOfRuleImpl);
+            assertThat(rule.getRuleReportStrategy()).isNotNull().isInstanceOf(expectedTypeOfRuleReport);
         }
     }
 

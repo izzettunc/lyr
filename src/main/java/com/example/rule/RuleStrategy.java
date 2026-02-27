@@ -1,8 +1,9 @@
 package com.example.rule;
 
 import com.example.rule.outcome.Outcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface RuleStrategy<T extends RuleConfig> {
-    ImmutableList<Outcome> execute(T parameters);
+    List<Outcome> execute(T parameters);
 }

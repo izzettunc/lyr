@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-public class ScanDynamodbTableIdleRuleConfigTest {
+class ScanDynamodbTableIdleRuleConfigTest {
 
     private static final String MAX_IDLE_PERIOD_IN_DAYS = "maxIdlePeriodInDays";
     private static final String EXCLUDE_EMPTY_TABLES = "excludeEmptyTables";

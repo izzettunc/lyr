@@ -89,7 +89,7 @@ class ValidateLambdaFunctionTriggerStateRuleReportTest {
                 .functionTriggerStates(List.of())
                 .build();
 
-        final ImmutableList<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
+        final List<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
 
         // When
         final var actualResult = testObject.report(config, outcome);

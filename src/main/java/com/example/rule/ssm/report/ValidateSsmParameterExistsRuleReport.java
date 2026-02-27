@@ -7,20 +7,21 @@ import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
 import com.example.rule.ssm.SsmReason;
 import com.example.rule.ssm.config.ValidateSsmParameterExistsRuleConfig;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ValidateSsmParameterExistsRuleReport implements RuleReport<ValidateSsmParameterExistsRuleConfig> {
 
     @Override
     public String report(
-            final ValidateSsmParameterExistsRuleConfig ruleConfig, final ImmutableList<? extends Outcome> outcomes) {
+            final ValidateSsmParameterExistsRuleConfig ruleConfig, final List<? extends Outcome> outcomes) {
 
         final StringBuilder reportBuilder = new StringBuilder();
         final var block = "%n========================";
-        reportBuilder.append(String.format(block));
-        reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(VALIDATE_SSM_PARAMETER_EXISTS);
-        reportBuilder.append(String.format(block));
+        reportBuilder
+                .append(String.format(block))
+                .append(String.format("%nValidation Report for "))
+                .append(VALIDATE_SSM_PARAMETER_EXISTS)
+                .append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
             final var parameterName = ruleConfig.getParameterNames().get(i);

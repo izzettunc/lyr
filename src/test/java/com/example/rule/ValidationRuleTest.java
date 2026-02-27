@@ -14,11 +14,12 @@ import com.example.TestUtil;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ValidationRuleTest {
+class ValidationRuleTest {
     private enum TestEnum {
         ONE,
         TWO,
@@ -43,7 +44,7 @@ public class ValidationRuleTest {
     @Test
     void testThatEvaluatingValidationRuleCachesAndReturnsTheOutcome() {
         // Given
-        final ImmutableList<Outcome> expectedOutcome =
+        final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         assertThat(testObject.outcome).isNull();
 
@@ -68,9 +69,9 @@ public class ValidationRuleTest {
     @Test
     void testThatEvaluatingValidationRuleFiveTimeJustReturnsCachedOutcome() {
         // Given
-        final ImmutableList<Outcome> expectedOutcome =
+        final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
-        final ImmutableList<Outcome> updatedOutcome =
+        final List<Outcome> updatedOutcome =
                 ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
         final var amountOfReevaluation = 5;
         assertThat(testObject.outcome).isNull();
@@ -90,7 +91,7 @@ public class ValidationRuleTest {
 
         // When
         when(ruleStrategy.execute(ruleConfig)).thenReturn(updatedOutcome);
-        ImmutableList<ValidationOutcome<TestEnum>> actualOutcome = ImmutableList.of();
+        List<ValidationOutcome<TestEnum>> actualOutcome = ImmutableList.of();
         for (int i = 0; i < amountOfReevaluation; i++) {
             actualOutcome = testObject.evaluate();
         }
@@ -112,7 +113,7 @@ public class ValidationRuleTest {
     @Test
     void testThatReevaluateCachesAndReturnsTheOutcome() {
         // Given
-        final ImmutableList<Outcome> expectedOutcome =
+        final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         assertThat(testObject.outcome).isNull();
 
@@ -137,11 +138,11 @@ public class ValidationRuleTest {
     @Test
     void testThatReevaluatingValidationRuleMultipleTimeChangesOutcomeEachTime() {
         // Given
-        final ImmutableList<Outcome> expectedOutcome =
+        final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
-        final ImmutableList<Outcome> expectedUpdatedOutcome =
+        final List<Outcome> expectedUpdatedOutcome =
                 ImmutableList.of(ValidationOutcome.invalid(TestEnum.TWO), ValidationOutcome.valid(TestEnum.THREE));
-        final ImmutableList<Outcome> expectedUpdatedOutcomeLast =
+        final List<Outcome> expectedUpdatedOutcomeLast =
                 ImmutableList.of(ValidationOutcome.valid(TestEnum.ONE), ValidationOutcome.invalid(TestEnum.THREE));
         final var amountOfReevaluation = 3;
         assertThat(testObject.outcome).isNull();
@@ -163,32 +164,20 @@ public class ValidationRuleTest {
         assertThat(initialOutcomeCached)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
-
-        assertThat(initialOutcome)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedOutcome)
+                .isEqualTo(initialOutcome);
 
         assertThat(updatedOutcomeCached)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcome);
-
-        assertThat(updatedOutcome)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcome);
+                .isEqualTo(expectedUpdatedOutcome)
+                .isEqualTo(updatedOutcome);
 
         assertThat(updatedOutcomeCachedLast)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcomeLast);
-
-        assertThat(updatedOutcomeLast)
-                .usingRecursiveComparison()
-                .ignoringCollectionOrder()
-                .isEqualTo(expectedUpdatedOutcomeLast);
+                .isEqualTo(expectedUpdatedOutcomeLast)
+                .isEqualTo(updatedOutcomeLast);
 
         verify(ruleStrategy, times(amountOfReevaluation)).execute(ruleConfig);
     }
@@ -196,7 +185,7 @@ public class ValidationRuleTest {
     @Test
     void testThatReportReportsSuccessfullyWhenOutcomeIsAlreadyCalculated() {
         // Given
-        final ImmutableList<Outcome> expectedOutcome =
+        final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
         final var expectedReport = "dummyReport";
 

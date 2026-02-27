@@ -10,10 +10,10 @@ import lombok.Getter;
 import org.yaml.snakeyaml.Yaml;
 
 @Getter
-public class Config {
+public final class Config {
     private static final String DEFAULT_CONFIG_PATH = "defaultConfig.yaml";
     private static final Config DEFAULT_CONFIG = new Config(DEFAULT_CONFIG_PATH, true);
-    private static final Config CONFIG = new Config();
+    private static final Config INSTANCE = new Config();
 
     private Map<String, RuleConfig> ruleConfig = new HashMap<>();
     private final ReportType reportType = ReportType.CONSOLE;
@@ -22,7 +22,7 @@ public class Config {
 
     private Config() {}
 
-    public Config(final String configPath) {
+    private Config(final String configPath) {
         this(configPath, false);
     }
 
@@ -33,8 +33,9 @@ public class Config {
     }
 
     public void load() {
-        final Yaml yaml = new Yaml();
-        try (InputStream configInputStream = getClass().getClassLoader().getResourceAsStream(path)) {
+        try (InputStream configInputStream =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+            final Yaml yaml = new Yaml();
             final Map<String, Object> rawConfig = yaml.load(configInputStream);
             ruleConfig = generateRuleConfigFromRawConfig(rawConfig);
         } catch (final Exception exception) {
@@ -62,11 +63,11 @@ public class Config {
     }
 
     public static void loadUserConfig(final String path) {
-        CONFIG.path = path;
-        CONFIG.load();
+        INSTANCE.path = path;
+        INSTANCE.load();
     }
 
-    public static Config getConfig() {
-        return CONFIG;
+    public static Config getInstance() {
+        return INSTANCE;
     }
 }

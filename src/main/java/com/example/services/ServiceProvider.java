@@ -1,6 +1,7 @@
 package com.example.services;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ public class ServiceProvider {
     private static volatile DynamoDbClient dynamoDbClient;
     private static volatile CloudWatchClient cloudWatchClient;
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchClient getOrBuildCloudWatchClient() {
         if (cloudWatchClient == null) {
             synchronized (ServiceProvider.class) {
@@ -34,6 +36,7 @@ public class ServiceProvider {
         return cloudWatchClient;
     }
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static DynamoDbClient getOrBuildDynamoDbClient() {
         if (dynamoDbClient == null) {
             synchronized (ServiceProvider.class) {
@@ -45,6 +48,7 @@ public class ServiceProvider {
         return dynamoDbClient;
     }
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static GlueClient getOrBuildGlueClient() {
         if (glueClient == null) {
             synchronized (ServiceProvider.class) {
@@ -56,6 +60,7 @@ public class ServiceProvider {
         return glueClient;
     }
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static LambdaClient getOrBuildLambdaClient() {
         if (lambdaClient == null) {
             synchronized (ServiceProvider.class) {
@@ -67,6 +72,7 @@ public class ServiceProvider {
         return lambdaClient;
     }
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static SsmClient getOrBuildSsmClient() {
         if (ssmClient == null) {
             synchronized (ServiceProvider.class) {

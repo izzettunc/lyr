@@ -6,7 +6,7 @@ import com.example.rule.RuleReport;
 import com.example.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ScanOutcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
         implements RuleReport<ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig> {
@@ -14,15 +14,16 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
     @Override
     public String report(
             final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig,
-            final ImmutableList<? extends Outcome> outcomes) {
+            final List<? extends Outcome> outcomes) {
         final var maxIdleTimeoutInMinutes = ruleConfig.getMaxIdleTimeoutInMinutes();
 
         final StringBuilder reportBuilder = new StringBuilder();
         final var block = "%n========================";
-        reportBuilder.append(String.format(block));
-        reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
-        reportBuilder.append(String.format(block));
+        reportBuilder
+                .append(String.format(block))
+                .append(String.format("%nValidation Report for "))
+                .append(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT)
+                .append(String.format(block));
 
         if (outcomes.isEmpty()) {
             reportBuilder.append(String.format(
@@ -31,12 +32,10 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
             return reportBuilder.toString();
         }
 
-        for (int i = 0; i < outcomes.size(); i++) {
-            final var outcome = (ScanOutcome) outcomes.get(i);
-
+        for (final Outcome outcome : outcomes) {
             reportBuilder.append(String.format(
                     "%n- [❌] Session '%s' has been active for more than idle timeout of %d minutes.",
-                    outcome.result(), maxIdleTimeoutInMinutes));
+                    ((ScanOutcome) outcome).result(), maxIdleTimeoutInMinutes));
         }
 
         return reportBuilder.toString();

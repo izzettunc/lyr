@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 public class RuleFactory {
 
     public static Rule createRule(final String ruleName) {
-        final var ruleConfig = Config.getConfig().getRuleConfig().get(ruleName);
+        final var ruleConfig = Config.getInstance().getRuleConfig().get(ruleName);
 
         return switch (ruleName) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->

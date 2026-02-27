@@ -33,7 +33,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
-public class ScanDynamodbTableIdleRuleImplTest {
+class ScanDynamodbTableIdleRuleImplTest {
 
     static MockedStatic<CloudWatchUtil> mockedCloudWatchUtil = Mockito.mockStatic(CloudWatchUtil.class);
     static MockedStatic<CloudWatchConnector> mockedCloudWatchConnector = Mockito.mockStatic(CloudWatchConnector.class);

@@ -24,7 +24,7 @@ import com.example.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-public class RuleConfigFactoryTest {
+class RuleConfigFactoryTest {
 
     @Test
     void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {

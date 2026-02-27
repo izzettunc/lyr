@@ -11,42 +11,47 @@ class ServiceProviderTest {
 
     @Test
     void testThatServiceProviderBuildsOnlyOneCloudWatchClient() {
-        final var firstClient = ServiceProvider.getOrBuildCloudWatchClient();
-        final var secondClient = ServiceProvider.getOrBuildCloudWatchClient();
+        try (final var firstClient = ServiceProvider.getOrBuildCloudWatchClient();
+                final var secondClient = ServiceProvider.getOrBuildCloudWatchClient()) {
 
-        assertThat(firstClient).isSameAs(secondClient);
+            assertThat(firstClient).isSameAs(secondClient);
+        }
     }
 
     @Test
     void testThatServiceProviderBuildsOnlyOneDynamoDbClient() {
-        final var firstClient = ServiceProvider.getOrBuildDynamoDbClient();
-        final var secondClient = ServiceProvider.getOrBuildDynamoDbClient();
+        try (final var firstClient = ServiceProvider.getOrBuildDynamoDbClient();
+                final var secondClient = ServiceProvider.getOrBuildDynamoDbClient()) {
 
-        assertThat(firstClient).isSameAs(secondClient);
+            assertThat(firstClient).isSameAs(secondClient);
+        }
     }
 
     @Test
     void testThatServiceProviderBuildsOnlyOneGlueClient() {
-        final var firstClient = ServiceProvider.getOrBuildGlueClient();
-        final var secondClient = ServiceProvider.getOrBuildGlueClient();
+        try (final var firstClient = ServiceProvider.getOrBuildGlueClient();
+                final var secondClient = ServiceProvider.getOrBuildGlueClient()) {
 
-        assertThat(firstClient).isSameAs(secondClient);
+            assertThat(firstClient).isSameAs(secondClient);
+        }
     }
 
     @Test
     void testThatServiceProviderBuildsOnlyOneLambdaClient() {
-        final var firstClient = ServiceProvider.getOrBuildLambdaClient();
-        final var secondClient = ServiceProvider.getOrBuildLambdaClient();
+        try (final var firstClient = ServiceProvider.getOrBuildLambdaClient();
+                final var secondClient = ServiceProvider.getOrBuildLambdaClient()) {
 
-        assertThat(firstClient).isSameAs(secondClient);
+            assertThat(firstClient).isSameAs(secondClient);
+        }
     }
 
     @Test
     void testThatServiceProviderBuildsOnlyOneSsmClient() {
-        final var firstClient = ServiceProvider.getOrBuildSsmClient();
-        final var secondClient = ServiceProvider.getOrBuildSsmClient();
+        try (final var firstClient = ServiceProvider.getOrBuildSsmClient();
+                final var secondClient = ServiceProvider.getOrBuildSsmClient()) {
 
-        assertThat(firstClient).isSameAs(secondClient);
+            assertThat(firstClient).isSameAs(secondClient);
+        }
     }
 
     @Test

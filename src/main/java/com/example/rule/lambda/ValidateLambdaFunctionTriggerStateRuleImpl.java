@@ -37,9 +37,9 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl
         }
 
         final var allDisabled = optEventMappings.get().eventSourceMappings().stream()
-                .noneMatch(mapping -> mapping.state().equalsIgnoreCase(ENABLED));
+                .noneMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
         final var allEnabled = optEventMappings.get().eventSourceMappings().stream()
-                .allMatch(mapping -> mapping.state().equalsIgnoreCase(ENABLED));
+                .allMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
 
         return validateEventMappings(lambdaFunctionTriggerState, allEnabled, allDisabled);
     }

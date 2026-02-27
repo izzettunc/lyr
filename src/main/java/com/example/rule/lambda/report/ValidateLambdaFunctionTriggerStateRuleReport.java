@@ -7,22 +7,22 @@ import com.example.rule.lambda.LambdaReason;
 import com.example.rule.lambda.config.ValidateLambdaFunctionTriggerStateRuleConfig;
 import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class ValidateLambdaFunctionTriggerStateRuleReport
         implements RuleReport<ValidateLambdaFunctionTriggerStateRuleConfig> {
 
     @Override
     public String report(
-            final ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig,
-            final ImmutableList<? extends Outcome> outcomes) {
+            final ValidateLambdaFunctionTriggerStateRuleConfig ruleConfig, final List<? extends Outcome> outcomes) {
 
         final StringBuilder reportBuilder = new StringBuilder();
         final var block = "%n========================";
-        reportBuilder.append(String.format(block));
-        reportBuilder.append(String.format("%nValidation Report for "));
-        reportBuilder.append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
-        reportBuilder.append(String.format(block));
+        reportBuilder
+                .append(String.format(block))
+                .append(String.format("%nValidation Report for "))
+                .append(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE)
+                .append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
             final var functionName =

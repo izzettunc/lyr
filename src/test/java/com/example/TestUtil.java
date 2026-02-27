@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.rule.outcome.ScanOutcome;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public final class TestUtil {
     public static final String DUMMY_STRING = "dummy";
     public static final String DUMMY2_STRING = "dummy2";
@@ -58,7 +60,7 @@ public final class TestUtil {
         return ListTablesResponse.builder().tableNames(tableNames).build();
     }
 
-    public static ImmutableList<ScanOutcome> createImmutableListOfScanOutcome(final String... outcome) {
+    public static List<ScanOutcome> createImmutableListOfScanOutcome(final String... outcome) {
         return Stream.of(outcome).map(ScanOutcome::new).collect(ImmutableList.toImmutableList());
     }
 

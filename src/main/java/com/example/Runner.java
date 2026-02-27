@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Runner {
-    static void main(final String[] args) {
+    static void main() {
         Config.loadUserConfig("userConfig.yaml");
 
-        final var rules = Config.getConfig().getRuleConfig().keySet().stream()
+        final var rules = Config.getInstance().getRuleConfig().keySet().stream()
                 .map(RuleFactory::createRule)
                 .toList();
 

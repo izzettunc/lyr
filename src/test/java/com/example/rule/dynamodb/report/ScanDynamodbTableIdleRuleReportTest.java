@@ -9,7 +9,7 @@ import com.example.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ScanDynamodbTableIdleRuleReportTest {
+class ScanDynamodbTableIdleRuleReportTest {
 
     ScanDynamodbTableIdleRuleReport testObject;
 
