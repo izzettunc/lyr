@@ -5,6 +5,8 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
+import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
@@ -27,16 +29,19 @@ public final class LambdaConnector {
         return new LambdaConnector(lambdaClient);
     }
 
-    public Optional<ListEventSourceMappingsResponse> listEventSourceMappings(final String functionName) {
-        try {
-            return Optional.of(client.listEventSourceMappings(builder -> builder.functionName(functionName)));
-        } catch (final ResourceNotFoundException resourceNotFoundException) {
-            return Optional.empty();
-        }
+    public List<EventSourceMappingConfiguration> listEventSourceMappings(final String functionName) {
+        return client.listEventSourceMappingsPaginator(builder -> builder.functionName(functionName)).stream()
+                .map(ListEventSourceMappingsResponse::eventSourceMappings)
+                .flatMap(List::stream)
+                .toList();
     }
 
-    public List<ListFunctionsResponse> listLambdaFunctions() {
-        return client.listFunctionsPaginator().stream().toList();
+    public List<String> listLambdaFunctionNames() {
+        return client.listFunctionsPaginator().stream()
+                .map(ListFunctionsResponse::functions)
+                .flatMap(List::stream)
+                .map(FunctionConfiguration::functionName)
+                .toList();
     }
 
     public Optional<GetFunctionResponse> getLambdaFunction(final String functionName) {

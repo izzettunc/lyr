@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- AWS -->
-        <awssdk.version>2.41.27</awssdk.version>
+        <awssdk.version>2.42.4</awssdk.version>
 
         <!-- Utility -->
         <apache-commons-lang3.version>3.20.0</apache-commons-lang3.version>
@@ -23,23 +23,23 @@
         <guava.version>33.5.0-jre</guava.version>
 
         <!-- Parser -->
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <snakeyaml.version>2.6</snakeyaml.version>
 
         <!-- Test -->
-        <junit.version>6.0.2</junit.version>
+        <junit.version>6.0.3</junit.version>
         <assertj.version>3.27.7</assertj.version>
-        <mockito.version>5.21.0</mockito.version>
+        <mockito.version>5.22.0</mockito.version>
 
         <!-- Plugins -->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
         <!-- Test -->
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
 
         <!-- Code formatter/styler -->
         <spotless-maven-plugin.version>3.2.1</spotless-maven-plugin.version>
-        <palantir-java-format>2.88.0</palantir-java-format>
+        <palantir-java-format>2.89.0</palantir-java-format>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <checkstyle.version>13.2.0</checkstyle.version>
 

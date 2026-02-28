@@ -24,7 +24,6 @@ import org.mockito.Mockito;
 import software.amazon.awssdk.services.lambda.model.Concurrency;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
-import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 
 class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
 
@@ -54,32 +53,14 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
         // Given
         final var config =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
-        final var listOfListFunctionsResponse = List.of(
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_1)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_2)
-                                        .build())
-                        .build(),
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_3)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_4)
-                                        .build())
-                        .build());
+        final var listOfFunctionNames = List.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4);
 
         final var expectedResult = Stream.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4)
                 .map(ScanOutcome::new)
                 .collect(ImmutableList.toImmutableList());
 
         // When
-        when(mockedLambdaConnectorInstance.listLambdaFunctions()).thenReturn(listOfListFunctionsResponse);
+        when(mockedLambdaConnectorInstance.listLambdaFunctionNames()).thenReturn(listOfFunctionNames);
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_1)).thenReturn(createOptFunction(FUNCTION_1));
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_2)).thenReturn(createOptFunction(FUNCTION_2));
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_3)).thenReturn(createOptFunction(FUNCTION_3));
@@ -98,31 +79,13 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
         // Given
         final var config =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
-        final var listOfListFunctionsResponse = List.of(
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_1)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_2)
-                                        .build())
-                        .build(),
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_3)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_4)
-                                        .build())
-                        .build());
+        final var listOfFunctionNames = List.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4);
 
         final var expectedResult =
                 Stream.of(FUNCTION_2, FUNCTION_3).map(ScanOutcome::new).collect(ImmutableList.toImmutableList());
 
         // When
-        when(mockedLambdaConnectorInstance.listLambdaFunctions()).thenReturn(listOfListFunctionsResponse);
+        when(mockedLambdaConnectorInstance.listLambdaFunctionNames()).thenReturn(listOfFunctionNames);
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_1))
                 .thenReturn(createOptFunction(FUNCTION_1, false));
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_2)).thenReturn(createOptFunction(FUNCTION_2));
@@ -143,31 +106,13 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
         // Given
         final var config =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
-        final var listOfListFunctionsResponse = List.of(
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_1)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_2)
-                                        .build())
-                        .build(),
-                ListFunctionsResponse.builder()
-                        .functions(
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_3)
-                                        .build(),
-                                FunctionConfiguration.builder()
-                                        .functionName(FUNCTION_4)
-                                        .build())
-                        .build());
+        final var listOfFunctionNames = List.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4);
 
         final var expectedResult =
                 Stream.of(FUNCTION_2, FUNCTION_3).map(ScanOutcome::new).collect(ImmutableList.toImmutableList());
 
         // When
-        when(mockedLambdaConnectorInstance.listLambdaFunctions()).thenReturn(listOfListFunctionsResponse);
+        when(mockedLambdaConnectorInstance.listLambdaFunctionNames()).thenReturn(listOfFunctionNames);
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_1)).thenReturn(Optional.empty());
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_2)).thenReturn(createOptFunction(FUNCTION_2));
         when(mockedLambdaConnectorInstance.getLambdaFunction(FUNCTION_3)).thenReturn(createOptFunction(FUNCTION_3));
@@ -186,13 +131,12 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
         // Given
         final var config =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
-        final var listOfListFunctionsResponse =
-                List.of(ListFunctionsResponse.builder().build());
+        final List<String> listOfFunctionNames = List.of();
 
         final var expectedResult = ImmutableList.of();
 
         // When
-        when(mockedLambdaConnectorInstance.listLambdaFunctions()).thenReturn(listOfListFunctionsResponse);
+        when(mockedLambdaConnectorInstance.listLambdaFunctionNames()).thenReturn(listOfFunctionNames);
         final var actualResult = testObject.execute(config);
 
         // Then

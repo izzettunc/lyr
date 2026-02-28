@@ -6,19 +6,13 @@ import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ScanOutcome;
 import com.example.services.lambda.LambdaConnector;
 import com.google.common.collect.ImmutableList;
-import java.util.List;
-import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
-import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleImpl
         implements RuleStrategy<ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig> {
 
     @Override
     public ImmutableList<Outcome> execute(final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored) {
-        return LambdaConnector.create().listLambdaFunctions().stream()
-                .map(ListFunctionsResponse::functions)
-                .flatMap(List::stream)
-                .map(FunctionConfiguration::functionName)
+        return LambdaConnector.create().listLambdaFunctionNames().stream()
                 .map(functionName -> LambdaConnector.create().getLambdaFunction(functionName))
                 .filter(optLambdaFunction ->
                         optLambdaFunction.isPresent() && optLambdaFunction.get().concurrency() == null)

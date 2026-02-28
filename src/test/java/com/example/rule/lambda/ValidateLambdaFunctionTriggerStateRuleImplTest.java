@@ -25,7 +25,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
-import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ResourceNotFoundException;
 
 class ValidateLambdaFunctionTriggerStateRuleImplTest {
 
@@ -96,7 +96,39 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
 
         // When
         when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(Optional.empty());
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(List.of());
+
+        final var actualResult = testObject.execute(config);
+
+        // Then
+        assertThat(actualResult)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedResult);
+    }
+
+    @Test
+    void
+            testThatValidateLambdaFunctionTriggerStateRuleReturnsCorrectOutcomeBasedOnWantedStateWhenNoFunctionOfEventSourceMappingFound() {
+        // Given
+        final var listOfLambdaFunctionTriggerState = List.of(
+                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_1, true),
+                new ValidateLambdaFunctionTriggerStateRuleConfig.LambdaFunctionTriggerState(FUNCTION_2, false));
+
+        final var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
+                .functionTriggerStates(listOfLambdaFunctionTriggerState)
+                .build();
+
+        final var optLambdaFunction = Optional.of(GetFunctionResponse.builder().build());
+
+        final var expectedResult = ImmutableList.of(
+                ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND),
+                ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND));
+
+        // When
+        when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString()))
+                .thenThrow(ResourceNotFoundException.class);
 
         final var actualResult = testObject.execute(config);
 
@@ -120,12 +152,10 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
                 .build();
 
         final var optLambdaFunction = Optional.of(GetFunctionResponse.builder().build());
-        final var optEventMappings = Optional.of(ListEventSourceMappingsResponse.builder()
-                .eventSourceMappings(
-                        EventSourceMappingConfiguration.builder().state(ENABLED).build(),
-                        EventSourceMappingConfiguration.builder().state(ENABLED).build(),
-                        EventSourceMappingConfiguration.builder().state(ENABLED).build())
-                .build());
+        final var listOfEventMappings = List.of(
+                EventSourceMappingConfiguration.builder().state(ENABLED).build(),
+                EventSourceMappingConfiguration.builder().state(ENABLED).build(),
+                EventSourceMappingConfiguration.builder().state(ENABLED).build());
 
         final var expectedResult = ImmutableList.of(
                 ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_ENABLED),
@@ -133,7 +163,7 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
 
         // When
         when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(optEventMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(listOfEventMappings);
 
         final var actualResult = testObject.execute(config);
 
@@ -157,18 +187,10 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
                 .build();
 
         final var optLambdaFunction = Optional.of(GetFunctionResponse.builder().build());
-        final var optEventMappings = Optional.of(ListEventSourceMappingsResponse.builder()
-                .eventSourceMappings(
-                        EventSourceMappingConfiguration.builder()
-                                .state(DISABLED)
-                                .build(),
-                        EventSourceMappingConfiguration.builder()
-                                .state(ENABLING)
-                                .build(),
-                        EventSourceMappingConfiguration.builder()
-                                .state(DISABLING)
-                                .build())
-                .build());
+        final var listOfEventMappings = List.of(
+                EventSourceMappingConfiguration.builder().state(DISABLED).build(),
+                EventSourceMappingConfiguration.builder().state(ENABLING).build(),
+                EventSourceMappingConfiguration.builder().state(DISABLING).build());
 
         final var expectedResult = ImmutableList.of(
                 ValidationOutcome.valid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_DISABLED),
@@ -176,7 +198,7 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
 
         // When
         when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(optEventMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(listOfEventMappings);
 
         final var actualResult = testObject.execute(config);
 
@@ -200,19 +222,11 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
                 .build();
 
         final var optLambdaFunction = Optional.of(GetFunctionResponse.builder().build());
-        final var optEventMappings = Optional.of(ListEventSourceMappingsResponse.builder()
-                .eventSourceMappings(
-                        EventSourceMappingConfiguration.builder().state(ENABLED).build(),
-                        EventSourceMappingConfiguration.builder()
-                                .state(DISABLED)
-                                .build(),
-                        EventSourceMappingConfiguration.builder()
-                                .state(ENABLING)
-                                .build(),
-                        EventSourceMappingConfiguration.builder()
-                                .state(DISABLING)
-                                .build())
-                .build());
+        final var listOfEventMappings = List.of(
+                EventSourceMappingConfiguration.builder().state(ENABLED).build(),
+                EventSourceMappingConfiguration.builder().state(DISABLED).build(),
+                EventSourceMappingConfiguration.builder().state(ENABLING).build(),
+                EventSourceMappingConfiguration.builder().state(DISABLING).build());
 
         final var expectedResult = ImmutableList.of(
                 ValidationOutcome.invalid(LambdaReason.ALL_EVENT_MAPPINGS_ARE_NOT_DISABLED),
@@ -220,7 +234,7 @@ class ValidateLambdaFunctionTriggerStateRuleImplTest {
 
         // When
         when(mockedLambdaConnectorInstance.getLambdaFunction(anyString())).thenReturn(optLambdaFunction);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(optEventMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(anyString())).thenReturn(listOfEventMappings);
 
         final var actualResult = testObject.execute(config);
 

@@ -11,8 +11,6 @@ import com.google.common.collect.ImmutableList;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.Period;
-import java.util.List;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
 public class ScanDynamodbTableIdleRuleImpl implements RuleStrategy<ScanDynamodbTableIdleRuleConfig> {
 
@@ -32,9 +30,7 @@ public class ScanDynamodbTableIdleRuleImpl implements RuleStrategy<ScanDynamodbT
                 CloudWatchUtil.getAppropriateTimeWindowForPeriod(parameters.getMaxIdlePeriodInDays());
         final var periodInSeconds = (int) Duration.ofDays(appropriateTimeWindow).getSeconds();
 
-        return dynamoDbConnector.listTables().stream()
-                .map(ListTablesResponse::tableNames)
-                .flatMap(List::stream)
+        return dynamoDbConnector.listTableNames().stream()
                 .filter(tableName -> {
                     final var totalConsumedReadCapacity =
                             cloudWatchConnector.getTotalConsumedReadCapacityOfADynamoDbTable(

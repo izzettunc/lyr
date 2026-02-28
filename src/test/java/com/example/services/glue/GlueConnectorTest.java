@@ -1,5 +1,9 @@
 package com.example.services.glue;
 
+import static com.example.TestUtil.SESSION_1;
+import static com.example.TestUtil.SESSION_2;
+import static com.example.TestUtil.SESSION_3;
+import static com.example.TestUtil.SESSION_4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -36,7 +40,7 @@ class GlueConnectorTest {
     }
 
     @Test
-    void testThatGlueConnectorGetsSsmClientFromServiceProvider() {
+    void testThatGlueConnectorGetsGlueClientFromServiceProvider() {
         // Given
         try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
@@ -47,20 +51,27 @@ class GlueConnectorTest {
     }
 
     @Test
-    void testThatGetSessionHistoryReturnsListOfListSessionsResponse() {
+    void testThatGetSessionHistoryReturnsListOfSessions() {
         // Given
         final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
                         .sessions(
-                                Session.builder().id("12").build(),
-                                Session.builder().id("34").build())
+                                Session.builder().id(SESSION_1).build(),
+                                Session.builder().id(SESSION_2).build())
                         .build(),
                 ListSessionsResponse.builder()
                         .sessions(
-                                Session.builder().id("56").build(),
-                                Session.builder().id("78").build())
+                                Session.builder().id(SESSION_3).build(),
+                                Session.builder().id(SESSION_4).build())
                         .build());
+
         final var mockedListSessionsIterable = mock(ListSessionsIterable.class);
+
+        final var expectedListOfSessions = List.of(
+                Session.builder().id(SESSION_1).build(),
+                Session.builder().id(SESSION_2).build(),
+                Session.builder().id(SESSION_3).build(),
+                Session.builder().id(SESSION_4).build());
 
         // When
         when(mockedListSessionsIterable.stream()).thenReturn(listOfListSessionsResponse.stream());
@@ -73,6 +84,6 @@ class GlueConnectorTest {
         assertThat(actualResult)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(listOfListSessionsResponse);
+                .isEqualTo(expectedListOfSessions);
     }
 }
