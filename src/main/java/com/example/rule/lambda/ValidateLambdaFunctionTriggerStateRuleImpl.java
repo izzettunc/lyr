@@ -6,6 +6,9 @@ import com.example.rule.outcome.Outcome;
 import com.example.rule.outcome.ValidationOutcome;
 import com.example.services.lambda.LambdaConnector;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
+import software.amazon.awssdk.services.lambda.model.ResourceNotFoundException;
 
 public class ValidateLambdaFunctionTriggerStateRuleImpl
         implements RuleStrategy<ValidateLambdaFunctionTriggerStateRuleConfig> {
@@ -13,7 +16,6 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl
 
     @Override
     public ImmutableList<Outcome> execute(final ValidateLambdaFunctionTriggerStateRuleConfig parameters) {
-
         return parameters.getFunctionTriggerStates().stream()
                 .map(this::validateLambdaFunctionTriggerState)
                 .collect(ImmutableList.toImmutableList());
@@ -28,18 +30,23 @@ public class ValidateLambdaFunctionTriggerStateRuleImpl
             return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);
         }
 
-        final var optEventMappings = lambdaConnector.listEventSourceMappings(lambdaFunctionTriggerState.functionName());
+        final List<EventSourceMappingConfiguration> listOfEventMappings;
+        try {
+            listOfEventMappings = lambdaConnector.listEventSourceMappings(lambdaFunctionTriggerState.functionName());
+        } catch (final ResourceNotFoundException resourceNotFoundException) {
+            return ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND);
+        }
 
-        if (optEventMappings.isEmpty() && lambdaFunctionTriggerState.enabled()) {
+        if (listOfEventMappings.isEmpty() && lambdaFunctionTriggerState.enabled()) {
             return ValidationOutcome.invalid(LambdaReason.NO_EVENT_SOURCE_MAPPINGS);
-        } else if (optEventMappings.isEmpty()) {
+        } else if (listOfEventMappings.isEmpty()) {
             return ValidationOutcome.valid(LambdaReason.NO_EVENT_SOURCE_MAPPINGS);
         }
 
-        final var allDisabled = optEventMappings.get().eventSourceMappings().stream()
-                .noneMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
-        final var allEnabled = optEventMappings.get().eventSourceMappings().stream()
-                .allMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
+        final var allDisabled =
+                listOfEventMappings.stream().noneMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
+        final var allEnabled =
+                listOfEventMappings.stream().allMatch(mapping -> ENABLED.equalsIgnoreCase(mapping.state()));
 
         return validateEventMappings(lambdaFunctionTriggerState, allEnabled, allDisabled);
     }
