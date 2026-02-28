@@ -5,6 +5,7 @@ import java.util.List;
 import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.glue.model.ListSessionsRequest;
 import software.amazon.awssdk.services.glue.model.ListSessionsResponse;
+import software.amazon.awssdk.services.glue.model.Session;
 
 public final class GlueConnector {
     private final GlueClient client;
@@ -21,8 +22,10 @@ public final class GlueConnector {
         return new GlueConnector(glueClient);
     }
 
-    public List<ListSessionsResponse> getSessionHistory() {
+    public List<Session> getSessionHistory() {
         return client.listSessionsPaginator(ListSessionsRequest.builder().build()).stream()
+                .map(ListSessionsResponse::sessions)
+                .flatMap(List::stream)
                 .toList();
     }
 }
