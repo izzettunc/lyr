@@ -6,7 +6,6 @@ import static com.example.TestUtil.TABLE_3;
 import static com.example.TestUtil.TABLE_4;
 import static com.example.TestUtil.TABLE_WITH_DATA;
 import static com.example.TestUtil.TABLE_WITH_DATA_OTHER;
-import static com.example.TestUtil.createDummyListTableResponse;
 import static com.example.TestUtil.createImmutableListOfScanOutcome;
 import static com.example.TestUtil.createOptionalDescribeTableResponse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
 class ScanDynamodbTableIdleRuleImplTest {
 
@@ -74,8 +72,7 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .excludeEmptyTables(true)
                 .build();
         final var timeWindow = 1;
-        final var listOfListTableResponses =
-                List.of(createDummyListTableResponse(TABLE_1, TABLE_2), createDummyListTableResponse(TABLE_3, TABLE_4));
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
         final var optTable = createOptionalDescribeTableResponse(123L);
         final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
@@ -83,7 +80,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedDynamoDbConnectorInstance.getTable(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
@@ -122,15 +119,14 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .excludeEmptyTables(true)
                 .build();
         final var timeWindow = 1;
-        final var listOfListTableResponses =
-                List.of(ListTablesResponse.builder().build());
+        final List<String> listOfTables = List.of();
         final var expectedOutcome = ImmutableList.of();
 
         // When
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
 
         final var actualOutcome = testObject.execute(config);
 
@@ -153,9 +149,8 @@ class ScanDynamodbTableIdleRuleImplTest {
         final var tableNameWithWriteCon = "tableWithWriteCon";
         final var tableNameWithBothCon = "tableWithBothCon";
         final var dataSize = 123d;
-        final var listOfListTableResponses = List.of(
-                createDummyListTableResponse(TABLE_1, tableNameWithReadCon),
-                createDummyListTableResponse(tableNameWithWriteCon, TABLE_4, tableNameWithBothCon));
+        final var listOfTables =
+                List.of(TABLE_1, tableNameWithReadCon, tableNameWithWriteCon, TABLE_4, tableNameWithBothCon);
         final var optTable = createOptionalDescribeTableResponse(123L);
         final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_4);
 
@@ -163,7 +158,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedDynamoDbConnectorInstance.getTable(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
@@ -195,9 +190,9 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .excludeEmptyTables(true)
                 .build();
         final var timeWindow = 1;
-        final var listOfListTableResponses = List.of(
-                createDummyListTableResponse(TABLE_1, TABLE_WITH_DATA),
-                createDummyListTableResponse(TABLE_WITH_DATA_OTHER, TABLE_4));
+        final var listOfTables = List.of(
+                TABLE_1, TABLE_WITH_DATA,
+                TABLE_WITH_DATA_OTHER, TABLE_4);
         final var optTableWithData = createOptionalDescribeTableResponse(123L);
         final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
         final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
@@ -206,7 +201,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
@@ -236,8 +231,8 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .build();
         final var timeWindow = 1;
         final var listOfListTableResponses = List.of(
-                createDummyListTableResponse(TABLE_1, TABLE_WITH_DATA),
-                createDummyListTableResponse(TABLE_WITH_DATA_OTHER, TABLE_4));
+                TABLE_1, TABLE_WITH_DATA,
+                TABLE_WITH_DATA_OTHER, TABLE_4);
         final var optTableWithData = createOptionalDescribeTableResponse(123L);
         final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
         final var expectedOutcome =
@@ -247,7 +242,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfListTableResponses);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
@@ -279,8 +274,8 @@ class ScanDynamodbTableIdleRuleImplTest {
         final var tableNameThatDoesntExist = "tableThatDoesntExist";
         final var otherTableNameThatDoesntExists = "otherTableThatDoesntExists";
         final var listOfListTableResponses = List.of(
-                createDummyListTableResponse(TABLE_1, tableNameThatDoesntExist),
-                createDummyListTableResponse(otherTableNameThatDoesntExists, TABLE_4));
+                TABLE_1, tableNameThatDoesntExist,
+                otherTableNameThatDoesntExists, TABLE_4);
         final var optTable = createOptionalDescribeTableResponse(0L);
         final var expectedOutcome = createImmutableListOfScanOutcome(TABLE_1, TABLE_4);
 
@@ -288,7 +283,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         mockedCloudWatchUtil
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
-        when(mockedDynamoDbConnectorInstance.listTables()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfListTableResponses);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);

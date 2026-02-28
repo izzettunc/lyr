@@ -25,8 +25,11 @@ public final class DynamoDbConnector {
         return new DynamoDbConnector(dynamoDbClient);
     }
 
-    public List<ListTablesResponse> listTables() {
-        return client.listTablesPaginator().stream().toList();
+    public List<String> listTableNames() {
+        return client.listTablesPaginator().stream()
+                .map(ListTablesResponse::tableNames)
+                .flatMap(List::stream)
+                .toList();
     }
 
     public Optional<DescribeTableResponse> getTable(final String tableName) {

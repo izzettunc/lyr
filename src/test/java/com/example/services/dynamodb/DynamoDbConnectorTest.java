@@ -1,5 +1,9 @@
 package com.example.services.dynamodb;
 
+import static com.example.TestUtil.TABLE_1;
+import static com.example.TestUtil.TABLE_2;
+import static com.example.TestUtil.TABLE_3;
+import static com.example.TestUtil.TABLE_4;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -81,24 +85,26 @@ class DynamoDbConnectorTest {
     }
 
     @Test
-    void testThatListTablesReturnsListOfListTablesResponse() {
+    void testThatListTablesReturnsListOfListTableNamesResponse() {
         // Given
         final var listOfListTablesResponse = List.of(
-                ListTablesResponse.builder().tableNames("table1", "table2").build(),
-                ListTablesResponse.builder().tableNames("table3", "table4").build());
+                ListTablesResponse.builder().tableNames(TABLE_1, TABLE_2).build(),
+                ListTablesResponse.builder().tableNames(TABLE_3, TABLE_4).build());
 
         final var mockedListTablesIterable = mock(ListTablesIterable.class);
+
+        final var expectedListOfTableNames = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
         // When
         when(mockedListTablesIterable.stream()).thenReturn(listOfListTablesResponse.stream());
         when(mockedDynamoDbClient.listTablesPaginator()).thenReturn(mockedListTablesIterable);
 
-        final var actualResult = testObject.listTables();
+        final var actualResult = testObject.listTableNames();
 
         // Then
         assertThat(actualResult)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(listOfListTablesResponse);
+                .isEqualTo(expectedListOfTableNames);
     }
 }
