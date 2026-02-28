@@ -73,7 +73,7 @@ class DynamoDbConnectorTest {
     }
 
     @Test
-    void testThatGetParameterReturnsOptionalOfDescribeTableResponseWhenNotFound() {
+    void testThatGetTableReturnsOptionalOfDescribeTableResponseWhenNotFound() {
         // Given nothing
         // When
         when(mockedDynamoDbClient.describeTable(any(DescribeTableRequest.class)))
@@ -85,7 +85,7 @@ class DynamoDbConnectorTest {
     }
 
     @Test
-    void testThatListTablesReturnsListOfListTableNamesResponse() {
+    void testThatListTablesReturnsListOfTableNames() {
         // Given
         final var listOfListTablesResponse = List.of(
                 ListTablesResponse.builder().tableNames(TABLE_1, TABLE_2).build(),

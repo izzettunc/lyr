@@ -35,7 +35,7 @@ class CloudWatchConnectorTest {
     }
 
     @Test
-    void testThatCloudWatchConnectorGetsCloudWatchCientFromServiceProvider() {
+    void testThatCloudWatchConnectorGetsCloudWatchClientFromServiceProvider() {
         // Given
         try (var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When

@@ -40,7 +40,7 @@ class GlueConnectorTest {
     }
 
     @Test
-    void testThatGlueConnectorGetsSsmClientFromServiceProvider() {
+    void testThatGlueConnectorGetsGlueClientFromServiceProvider() {
         // Given
         try (final var mockedServiceProvider = mockStatic(ServiceProvider.class)) {
             // When
@@ -51,7 +51,7 @@ class GlueConnectorTest {
     }
 
     @Test
-    void testThatGetSessionHistoryReturnsListOfListSessionsResponse() {
+    void testThatGetSessionHistoryReturnsListOfSessions() {
         // Given
         final var listOfListSessionsResponse = List.of(
                 ListSessionsResponse.builder()
