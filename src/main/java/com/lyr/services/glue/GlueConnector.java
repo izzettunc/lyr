@@ -1,0 +1,31 @@
+package com.lyr.services.glue;
+
+import com.lyr.services.ServiceProvider;
+import java.util.List;
+import software.amazon.awssdk.services.glue.GlueClient;
+import software.amazon.awssdk.services.glue.model.ListSessionsRequest;
+import software.amazon.awssdk.services.glue.model.ListSessionsResponse;
+import software.amazon.awssdk.services.glue.model.Session;
+
+public final class GlueConnector {
+    private final GlueClient client;
+
+    private GlueConnector(final GlueClient glueClient) {
+        this.client = glueClient;
+    }
+
+    public static GlueConnector create() {
+        return new GlueConnector(ServiceProvider.getOrBuildGlueClient());
+    }
+
+    public static GlueConnector create(final GlueClient glueClient) {
+        return new GlueConnector(glueClient);
+    }
+
+    public List<Session> getSessionHistory() {
+        return client.listSessionsPaginator(ListSessionsRequest.builder().build()).stream()
+                .map(ListSessionsResponse::sessions)
+                .flatMap(List::stream)
+                .toList();
+    }
+}
