@@ -2,6 +2,8 @@ package com.lyr;
 
 import com.google.common.collect.ImmutableList;
 import com.lyr.rule.outcome.ScanOutcome;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -68,5 +70,22 @@ public final class TestUtil {
         return Optional.of(DescribeTableResponse.builder()
                 .table(TableDescription.builder().tableSizeBytes(tableSizeBytes).build())
                 .build());
+    }
+
+    public static String getAbsoluteFilePathOfResource(final String filePath) {
+        var fileUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
+
+        Path path;
+        try {
+            path = Paths.get(fileUrl.toURI());
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+
+        if (!path.isAbsolute()) {
+            path = path.toAbsolutePath();
+        }
+
+        return path.toString();
     }
 }

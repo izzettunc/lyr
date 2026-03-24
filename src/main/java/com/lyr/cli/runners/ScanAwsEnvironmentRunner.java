@@ -1,6 +1,6 @@
 package com.lyr.cli.runners;
 
-import com.lyr.config.RuleSet;
+import com.lyr.config.RuleSetConfig;
 import com.lyr.report.ConsoleReporter;
 import com.lyr.rule.Rule;
 import com.lyr.rule.RuleFactory;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScanAwsEnvironmentRunner {
-    public static void run(final String userConfigFilePath) {
-        if (userConfigFilePath != null) {
-            RuleSet.loadUserRuleSet(userConfigFilePath);
+    public static void run(final String userRuleSetPath) {
+        if (userRuleSetPath != null) {
+            RuleSetConfig.loadUserRuleSetConfig(userRuleSetPath);
         }
 
-        final var rules = RuleSet.getInstance().getRuleToRuleConfigMap().keySet().stream()
+        final var rules = RuleSetConfig.getInstance().getRuleToRuleConfigMap().keySet().stream()
                 .map(RuleFactory::createRule)
                 .toList();
 
