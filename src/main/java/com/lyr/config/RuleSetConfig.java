@@ -10,22 +10,22 @@ import lombok.Getter;
 import org.yaml.snakeyaml.Yaml;
 
 @Getter
-public final class RuleSet {
-    private static final String DEFAULT_RULESET_PATH = "defaultRuleSet.yaml";
-    private static final RuleSet DEFAULT_RULE_SET = new RuleSet(DEFAULT_RULESET_PATH, true);
+public final class RuleSetConfig {
+    private static final String DEFAULT_RULESET_CONFIG_PATH = "defaultRuleSet.yaml";
+    private static final RuleSetConfig DEFAULT_RULE_SET_CONFIG = new RuleSetConfig(DEFAULT_RULESET_CONFIG_PATH, true);
 
-    private static final RuleSet INSTANCE = new RuleSet();
+    private static final RuleSetConfig INSTANCE = new RuleSetConfig();
 
     private Map<String, RuleConfig> ruleToRuleConfigMap = new HashMap<>();
     private boolean isDefault;
 
-    private RuleSet() {}
+    private RuleSetConfig() {}
 
-    private RuleSet(final String ruleSetPath) {
+    private RuleSetConfig(final String ruleSetPath) {
         this(ruleSetPath, false);
     }
 
-    private RuleSet(final String ruleSetPath, final boolean isDefaultRuleSet) {
+    private RuleSetConfig(final String ruleSetPath, final boolean isDefaultRuleSet) {
         this.isDefault = isDefaultRuleSet;
         if (this.isDefault) {
             loadFromResource(ruleSetPath);
@@ -56,6 +56,11 @@ public final class RuleSet {
 
     private Map<String, RuleConfig> generateRuleToRuleConfigFromRawRuleSetMap(final Map<String, Object> rawRuleSetMap) {
         final Map<String, RuleConfig> ruleConfigMap = new HashMap<>();
+
+        if (rawRuleSetMap == null) {
+            return ruleConfigMap;
+        }
+
         for (final Map.Entry<String, Object> entry : rawRuleSetMap.entrySet()) {
             if (entry.getValue() != null) {
                 ruleConfigMap.put(entry.getKey(), RuleConfigFactory.createRuleConfig(entry.getKey(), entry.getValue()));
@@ -63,9 +68,9 @@ public final class RuleSet {
                 ruleConfigMap.put(entry.getKey(), null);
             } else {
                 final var defaultRuleConfig =
-                        DEFAULT_RULE_SET.getRuleToRuleConfigMap().get(entry.getKey());
+                        DEFAULT_RULE_SET_CONFIG.getRuleToRuleConfigMap().get(entry.getKey());
                 if (defaultRuleConfig != null
-                        || DEFAULT_RULE_SET.getRuleToRuleConfigMap().containsKey(entry.getKey())) {
+                        || DEFAULT_RULE_SET_CONFIG.getRuleToRuleConfigMap().containsKey(entry.getKey())) {
                     ruleConfigMap.put(entry.getKey(), defaultRuleConfig);
                 } else {
                     throw new IllegalArgumentException("No config found for rule: " + entry.getKey());
@@ -75,11 +80,15 @@ public final class RuleSet {
         return ruleConfigMap;
     }
 
-    public static void loadUserRuleSet(final String path) {
+    public static void loadUserRuleSetConfig(final String path) {
         INSTANCE.loadFromSystem(path);
     }
 
-    public static RuleSet getInstance() {
-        return INSTANCE;
+    public static RuleSetConfig getInstance() {
+        if (INSTANCE.ruleToRuleConfigMap.isEmpty()) {
+            return DEFAULT_RULE_SET_CONFIG;
+        } else {
+            return INSTANCE;
+        }
     }
 }

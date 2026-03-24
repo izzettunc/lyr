@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import com.lyr.config.RuleSet;
+import com.lyr.config.RuleSetConfig;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleImpl;
 import com.lyr.rule.dynamodb.report.ScanDynamodbTableIdleRuleReport;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl;
@@ -39,13 +39,13 @@ import org.mockito.Mockito;
 
 class RuleFactoryTest {
 
-    final RuleSet mockedRuleSet = mock(RuleSet.class);
+    final RuleSetConfig mockedRuleSetConfig = mock(RuleSetConfig.class);
 
     @Test
     void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
         // Given
-        try (MockedStatic<RuleSet> configMockedStatic = Mockito.mockStatic(RuleSet.class)) {
-            configMockedStatic.when(RuleSet::getInstance).thenReturn(mockedRuleSet);
+        try (MockedStatic<RuleSetConfig> configMockedStatic = Mockito.mockStatic(RuleSetConfig.class)) {
+            configMockedStatic.when(RuleSetConfig::getInstance).thenReturn(mockedRuleSetConfig);
 
             final var unknownRuleName = "unknownRuleName";
 
@@ -64,8 +64,8 @@ class RuleFactoryTest {
             final Class<?> expectedTypeOfRuleReport) {
         // Given
         // rulename, expectedTypeOfRule, expectedTypeOfRuleImpl, expectedTypeOfRuleReport
-        try (MockedStatic<RuleSet> configMockedStatic = Mockito.mockStatic(RuleSet.class)) {
-            configMockedStatic.when(RuleSet::getInstance).thenReturn(mockedRuleSet);
+        try (MockedStatic<RuleSetConfig> configMockedStatic = Mockito.mockStatic(RuleSetConfig.class)) {
+            configMockedStatic.when(RuleSetConfig::getInstance).thenReturn(mockedRuleSetConfig);
 
             // When
             final var rule = RuleFactory.createRule(ruleName);

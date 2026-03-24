@@ -9,7 +9,7 @@ import static com.lyr.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
 import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
 import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 
-import com.lyr.config.RuleSet;
+import com.lyr.config.RuleSetConfig;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleImpl;
 import com.lyr.rule.dynamodb.report.ScanDynamodbTableIdleRuleReport;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl;
@@ -35,7 +35,8 @@ import lombok.NoArgsConstructor;
 public class RuleFactory {
 
     public static Rule createRule(final String ruleName) {
-        final var ruleConfig = RuleSet.getInstance().getRuleToRuleConfigMap().get(ruleName);
+        final var ruleConfig =
+                RuleSetConfig.getInstance().getRuleToRuleConfigMap().get(ruleName);
 
         return switch (ruleName) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
