@@ -50,7 +50,7 @@ aws login # Follow the login flow of aws cli
 ### Installation
 
 > [!NOTE]
-> While it's on the roadmap to create native images or at the least already build jar as a release at this time to install you have to manually build it.
+> While it's on the roadmap to create native images or at the least an already built jar as a release, at this time you have to manually build it to install.
 
 #### Prerequisites
 
@@ -59,8 +59,6 @@ aws login # Follow the login flow of aws cli
 - AWS CLI
 
 #### Steps
-
-As per version 0.0.1, you can install lyr by following steps.
 
 ```bash
 git clone https://github.com/izzettunc/lyr.git
