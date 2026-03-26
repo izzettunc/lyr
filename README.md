@@ -1,4 +1,8 @@
+# Lyr
+
+<p align="center">
 Lyr is a CLI tool that analyzes cloud health and security across live environments and IaC artifacts, empowering developers with actionable insights delivered through both automation‑ready JSON reports and polished, human‑readable PDF summaries.
+</p>
 
 ### Table of Contents
 
