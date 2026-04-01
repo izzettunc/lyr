@@ -1,5 +1,7 @@
 package com.lyr.config;
 
+import com.lyr.exception.config.RuleSetConfigLoadException;
+import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.rule.RuleConfig;
 import com.lyr.rule.RuleConfigFactory;
 import com.lyr.util.FileUtils;
@@ -40,7 +42,7 @@ public final class RuleSetConfig {
             final Map<String, Object> rawConfig = yaml.load(ruleSetInputStream);
             ruleToRuleConfigMap = generateRuleToRuleConfigFromRawRuleSetMap(rawConfig);
         } catch (final Exception exception) {
-            throw new RuntimeException("Failed to load ruleset from resource. Path: " + path, exception);
+            throw new RuleSetConfigLoadException("Failed to load ruleset from resource. Path: " + path, exception);
         }
     }
 
@@ -50,7 +52,7 @@ public final class RuleSetConfig {
             final Map<String, Object> rawConfig = yaml.load(ruleSetInputStream);
             ruleToRuleConfigMap = generateRuleToRuleConfigFromRawRuleSetMap(rawConfig);
         } catch (final Exception exception) {
-            throw new RuntimeException("Failed to load ruleset from system. Path: " + path, exception);
+            throw new RuleSetConfigLoadException("Failed to load ruleset from system. Path: " + path, exception);
         }
     }
 
@@ -61,19 +63,25 @@ public final class RuleSetConfig {
             return ruleConfigMap;
         }
 
-        for (final Map.Entry<String, Object> entry : rawRuleSetMap.entrySet()) {
-            if (entry.getValue() != null) {
-                ruleConfigMap.put(entry.getKey(), RuleConfigFactory.createRuleConfig(entry.getKey(), entry.getValue()));
+        for (final Map.Entry<String, Object> ruleNameToRuleConfigEntry : rawRuleSetMap.entrySet()) {
+            if (ruleNameToRuleConfigEntry.getValue() != null) {
+                ruleConfigMap.put(
+                        ruleNameToRuleConfigEntry.getKey(),
+                        RuleConfigFactory.createRuleConfig(
+                                ruleNameToRuleConfigEntry.getKey(), ruleNameToRuleConfigEntry.getValue()));
             } else if (isDefault) {
-                ruleConfigMap.put(entry.getKey(), null);
+                ruleConfigMap.put(ruleNameToRuleConfigEntry.getKey(), null);
             } else {
                 final var defaultRuleConfig =
-                        DEFAULT_RULE_SET_CONFIG.getRuleToRuleConfigMap().get(entry.getKey());
+                        DEFAULT_RULE_SET_CONFIG.getRuleToRuleConfigMap().get(ruleNameToRuleConfigEntry.getKey());
                 if (defaultRuleConfig != null
-                        || DEFAULT_RULE_SET_CONFIG.getRuleToRuleConfigMap().containsKey(entry.getKey())) {
-                    ruleConfigMap.put(entry.getKey(), defaultRuleConfig);
+                        || DEFAULT_RULE_SET_CONFIG
+                                .getRuleToRuleConfigMap()
+                                .containsKey(ruleNameToRuleConfigEntry.getKey())) {
+                    ruleConfigMap.put(ruleNameToRuleConfigEntry.getKey(), defaultRuleConfig);
                 } else {
-                    throw new IllegalArgumentException("No config found for rule: " + entry.getKey());
+                    throw new RuleWithNoConfigException(
+                            "No config found for rule: " + ruleNameToRuleConfigEntry.getKey());
                 }
             }
         }
