@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
+import com.lyr.exception.rule.UnknownRuleException;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -27,13 +28,13 @@ import org.mockito.MockedStatic;
 class RuleConfigFactoryTest {
 
     @Test
-    void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
+    void testThatRuleFactoryThrowsUnknownRuleExceptionWhenUnknownRuleNameIsProvided() {
         // Given
         final var unknownRuleName = "unknownRuleName";
 
         // When & Then
         assertThatThrownBy(() -> RuleConfigFactory.createRuleConfig(unknownRuleName, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(UnknownRuleException.class);
     }
 
     @Test

@@ -10,6 +10,7 @@ import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
 import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 
 import com.lyr.config.RuleSetConfig;
+import com.lyr.exception.rule.UnknownRuleException;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleImpl;
 import com.lyr.rule.dynamodb.report.ScanDynamodbTableIdleRuleReport;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl;
@@ -87,7 +88,7 @@ public class RuleFactory {
                         ruleConfig,
                         new ValidateSsmParameterValueRuleImpl(),
                         new ValidateSsmParameterValueRuleReport());
-            default -> throw new IllegalArgumentException("Unknown rule name: " + ruleName);
+            default -> throw new UnknownRuleException("An unknown rule tried to be created. Rule name: " + ruleName);
         };
     }
 }

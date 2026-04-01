@@ -7,6 +7,8 @@ import static com.lyr.TestUtil.FUNCTION_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.lyr.exception.rule.config.BadRuleConfigException;
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -39,23 +41,23 @@ class ValidateLambdaFunctionTriggerStateRuleConfigTest {
 
     @Test
     void
-            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsInvalidRuleConfigTypeExceptionExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         final List<String> invalidConfig = List.of(FUNCTION_1, FUNCTION_2);
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(invalidConfig))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidRuleConfigTypeException.class);
     }
 
     @Test
     void
-            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsIllegalArgumentExceptionWhenOtherThanEnabledOrDisabledIsProvided() {
+            testThatValidateLambdaFunctionTriggerStateRuleConfigThrowsBadRuleConfigExceptionWhenOtherThanEnabledOrDisabledIsProvided() {
         // Given
         final Map<String, String> invalidConfig = Map.of(FUNCTION_1, "Other", FUNCTION_2, DISABLED);
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(invalidConfig))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BadRuleConfigException.class);
     }
 }

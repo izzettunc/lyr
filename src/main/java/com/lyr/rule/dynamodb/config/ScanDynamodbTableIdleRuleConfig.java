@@ -1,5 +1,9 @@
 package com.lyr.rule.dynamodb.config;
 
+import static com.lyr.rule.Constants.SCAN_DYNAMODB_TABLE_IDLE;
+
+import com.lyr.exception.rule.config.BadRuleConfigException;
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -21,14 +25,21 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
 
     public static ScanDynamodbTableIdleRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
-            throw new IllegalArgumentException(config.getClass().getSimpleName() + " is not a Map");
+            throw new InvalidRuleConfigTypeException(SCAN_DYNAMODB_TABLE_IDLE, "map");
         }
 
         final var configMap = (Map<String, Object>) config;
 
-        return ScanDynamodbTableIdleRuleConfig.builder()
+        final var scanDynamodbTableIdleRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
                 .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
                 .build();
+
+        if (scanDynamodbTableIdleRuleConfig.getMaxIdlePeriodInDays() < 1) {
+            throw new BadRuleConfigException("Max idle period attribute of " + SCAN_DYNAMODB_TABLE_IDLE
+                    + " rule config, must be longer than a day");
+        }
+
+        return scanDynamodbTableIdleRuleConfig;
     }
 }

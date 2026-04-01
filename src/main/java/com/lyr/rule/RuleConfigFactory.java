@@ -9,6 +9,7 @@ import static com.lyr.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
 import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
 import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 
+import com.lyr.exception.rule.UnknownRuleException;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -35,7 +36,9 @@ public class RuleConfigFactory {
             case VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE -> ValidateLambdaFunctionTriggerStateRuleConfig.parse(config);
             case VALIDATE_SSM_PARAMETER_EXISTS -> ValidateSsmParameterExistsRuleConfig.parse(config);
             case VALIDATE_SSM_PARAMETER_VALUE -> ValidateSsmParameterValueRuleConfig.parse(config);
-            default -> throw new IllegalArgumentException("Unknown rule name: " + ruleName);
+            default ->
+                throw new UnknownRuleException(
+                        "A config for an unknown rule tried to be created. Rule name: " + ruleName);
         };
     }
 }

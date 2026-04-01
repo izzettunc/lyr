@@ -1,5 +1,8 @@
 package com.lyr.rule.lambda.config;
 
+import static com.lyr.rule.Constants.VALIDATE_LAMBDA_FUNCTION_CONCURRENCY;
+
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +21,7 @@ public class ValidateLambdaFunctionConcurrencyRuleConfig implements RuleConfig {
 
     public static ValidateLambdaFunctionConcurrencyRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
-            throw new IllegalArgumentException("Invalid config type for ValidateLambdaFunctionConcurrencyRuleConfig");
+            throw new InvalidRuleConfigTypeException(VALIDATE_LAMBDA_FUNCTION_CONCURRENCY, "map");
         }
 
         final var lambdaFunctionConcurrences = ((Map<String, Integer>) config)

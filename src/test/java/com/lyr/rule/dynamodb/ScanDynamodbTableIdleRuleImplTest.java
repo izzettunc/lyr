@@ -9,7 +9,6 @@ import static com.lyr.TestUtil.TABLE_WITH_DATA_OTHER;
 import static com.lyr.TestUtil.createImmutableListOfScanOutcome;
 import static com.lyr.TestUtil.createOptionalDescribeTableResponse;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -96,19 +95,6 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedOutcome);
-    }
-
-    @Test
-    void testThatScanDynamodbTableIdleRuleImplThrowsIllegalArgumentExceptionWhenLessThanADayProvidedAsAPeriod() {
-        // Given
-        final var invalidMaxIdlePeriodInDays = -5;
-        final var config = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(invalidMaxIdlePeriodInDays)
-                .excludeEmptyTables(true)
-                .build();
-
-        // When & Then
-        assertThatThrownBy(() -> testObject.execute(config)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -5,6 +5,7 @@ import static com.lyr.TestUtil.PARAMETER_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,13 @@ class ValidateSsmParameterExistsRuleConfigTest {
     }
 
     @Test
-    void testThatValidateSsmParameterExistsRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+    void
+            testThatValidateSsmParameterExistsRuleConfigThrowsInvalidRuleConfigTypeExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         final Map<String, String> invalidConfig = Map.of("abc", "def");
 
         // When & Then
         assertThatThrownBy(() -> ValidateSsmParameterExistsRuleConfig.parse(invalidConfig))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidRuleConfigTypeException.class);
     }
 }

@@ -3,6 +3,9 @@ package com.lyr.rule.dynamodb.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.lyr.exception.rule.config.BadRuleConfigException;
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
+import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -36,23 +39,37 @@ class ScanDynamodbTableIdleRuleConfigTest {
     }
 
     @Test
-    void testThatScanDynamodbTableIdleRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+    void testThatScanDynamodbTableIdleRuleConfigThrowsInvalidRuleConfigTypeExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         final List<Integer> invalidConfig = List.of(15);
 
         // When & Then
         assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(invalidConfig))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidRuleConfigTypeException.class);
     }
 
     @Test
-    void testThatScanDynamodbTableIdleRuleConfigThrowsIllegalArgumentExceptionWhenConfigHasMissingValues() {
+    void
+            testThatScanDynamodbTableIdleRuleConfigThrowsMissingMandatoryRuleConfigAttributeExceptionWhenConfigHasMissingValues() {
         // Given
         final Map<String, Object> configMissingMandatoryAttributes = Map.of();
 
         // When & Then
         assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(configMissingMandatoryAttributes))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MissingMandatoryRuleConfigAttributeException.class);
+    }
+
+    @Test
+    void testThatScanDynamodbTableIdleRuleConfigThrowsBadRuleConfigExceptionWhenLessThanADayProvidedAsAPeriod() {
+        // Given
+        final int maxIdlePeriodInDays = -5;
+        final boolean excludeEmptyTables = true;
+        final Map<String, Object> configWithBadAttribute =
+                Map.of(MAX_IDLE_PERIOD_IN_DAYS, maxIdlePeriodInDays, EXCLUDE_EMPTY_TABLES, excludeEmptyTables);
+
+        // When & Then
+        assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(configWithBadAttribute))
+                .isInstanceOf(BadRuleConfigException.class);
     }
 
     @Test
