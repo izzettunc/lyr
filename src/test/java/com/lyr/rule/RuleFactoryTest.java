@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import com.lyr.config.RuleSetConfig;
+import com.lyr.exception.rule.UnknownRuleException;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleImpl;
 import com.lyr.rule.dynamodb.report.ScanDynamodbTableIdleRuleReport;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleImpl;
@@ -42,7 +43,7 @@ class RuleFactoryTest {
     final RuleSetConfig mockedRuleSetConfig = mock(RuleSetConfig.class);
 
     @Test
-    void testThatRuleFactoryThrowsIllegalArgumentExceptionWhenUnknownRuleNameIsProvided() {
+    void testThatRuleFactoryThrowsUnknownRuleExceptionWhenUnknownRuleNameIsProvided() {
         // Given
         try (MockedStatic<RuleSetConfig> configMockedStatic = Mockito.mockStatic(RuleSetConfig.class)) {
             configMockedStatic.when(RuleSetConfig::getInstance).thenReturn(mockedRuleSetConfig);
@@ -50,8 +51,7 @@ class RuleFactoryTest {
             final var unknownRuleName = "unknownRuleName";
 
             // When & Then
-            assertThatThrownBy(() -> RuleFactory.createRule(unknownRuleName))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> RuleFactory.createRule(unknownRuleName)).isInstanceOf(UnknownRuleException.class);
         }
     }
 

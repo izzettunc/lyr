@@ -1,5 +1,8 @@
 package com.lyr.rule.ssm.config;
 
+import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_EXISTS;
+
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -15,7 +18,7 @@ public class ValidateSsmParameterExistsRuleConfig implements RuleConfig {
 
     public static ValidateSsmParameterExistsRuleConfig parse(final Object config) {
         if (!(config instanceof List)) {
-            throw new IllegalArgumentException("Invalid config type for ValidateSsmParameterExistsRuleConfig");
+            throw new InvalidRuleConfigTypeException(VALIDATE_SSM_PARAMETER_EXISTS, "list");
         }
 
         return ValidateSsmParameterExistsRuleConfig.builder()

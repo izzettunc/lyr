@@ -5,6 +5,7 @@ import static com.lyr.TestUtil.FUNCTION_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +38,12 @@ class ValidateLambdaFunctionConcurrencyRuleConfigTest {
 
     @Test
     void
-            testThatValidateLambdaFunctionConcurrencyRuleConfigThrowsIllegalArgumentExceptionWhenInvalidConfigTypeIsProvided() {
+            testThatValidateLambdaFunctionConcurrencyRuleConfigThrowsInvalidRuleConfigTypeExceptionWhenInvalidConfigTypeIsProvided() {
         // Given
         final List<String> invalidConfig = List.of(FUNCTION_1, FUNCTION_2);
 
         // When & Then
         assertThatThrownBy(() -> ValidateLambdaFunctionConcurrencyRuleConfig.parse(invalidConfig))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidRuleConfigTypeException.class);
     }
 }

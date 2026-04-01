@@ -16,10 +16,6 @@ public class ScanDynamodbTableIdleRuleImpl implements RuleStrategy<ScanDynamodbT
 
     @Override
     public ImmutableList<Outcome> execute(final ScanDynamodbTableIdleRuleConfig parameters) {
-        if (parameters.getMaxIdlePeriodInDays() < 1) {
-            throw new IllegalArgumentException("Period must be longer than a day");
-        }
-
         final var dynamoDbConnector = DynamoDbConnector.create();
         final var cloudWatchConnector = CloudWatchConnector.create();
 
