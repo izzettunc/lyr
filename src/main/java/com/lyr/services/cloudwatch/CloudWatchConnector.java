@@ -30,27 +30,24 @@ public final class CloudWatchConnector {
 
     public double getTotalConsumedReadCapacityOfADynamoDbTable(
             final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
-        final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
-                .metricName(CONSUMED_READ_CAPACITY_UNITS)
-                .startTime(startTime)
-                .endTime(endTime)
-                .period(periodInSeconds)
-                .namespace(AWS_DYNAMO_DB)
-                .statistics(Statistic.SUM)
-                .dimensions(
-                        Dimension.builder().name(TABLE_NAME).value(tableName).build())
-                .build());
-
-        return statistics.datapoints().stream()
-                .map(Datapoint::sum)
-                .reduce(Double::sum)
-                .orElse(0d);
+        return getSummedDynamoDbTableMetric(
+                tableName, CONSUMED_READ_CAPACITY_UNITS, startTime, endTime, periodInSeconds);
     }
 
     public double getTotalConsumedWriteCapacityOfADynamoDbTable(
             final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
+        return getSummedDynamoDbTableMetric(
+                tableName, CONSUMED_WRITE_CAPACITY_UNITS, startTime, endTime, periodInSeconds);
+    }
+
+    private double getSummedDynamoDbTableMetric(
+            final String tableName,
+            final String metricName,
+            final Instant startTime,
+            final Instant endTime,
+            final int periodInSeconds) {
         final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
-                .metricName(CONSUMED_WRITE_CAPACITY_UNITS)
+                .metricName(metricName)
                 .startTime(startTime)
                 .endTime(endTime)
                 .period(periodInSeconds)

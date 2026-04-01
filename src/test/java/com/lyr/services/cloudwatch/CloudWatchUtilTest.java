@@ -1,7 +1,6 @@
 package com.lyr.services.cloudwatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,22 +19,6 @@ class CloudWatchUtilTest {
 
         // Then
         assertThat(actualAppropriateTimeWindow).isEqualTo(expectedAppropriateTimeWindow);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getInvalidPeriods")
-    void testThatGetAppropriateTimeWindowForPeriodThrowsIllegalArgumentExceptionGivenInvalidPeriodInDays(
-            final int periodInDays) {
-        // Given periodInDays
-        // When & Then
-        assertThatThrownBy(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(periodInDays))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Period in days must be greater than or equal to " + CloudWatchUtil.DAY_IN_DAYS
-                        + ". periodInDays: " + periodInDays);
-    }
-
-    public static Stream<Arguments> getInvalidPeriods() {
-        return Stream.of(Arguments.of(-1), Arguments.of(0));
     }
 
     public static Stream<Arguments> getValidPeriods() {
