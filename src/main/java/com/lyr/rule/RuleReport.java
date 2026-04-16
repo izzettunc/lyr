@@ -6,5 +6,5 @@ import java.util.List;
 @SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface RuleReport<T extends RuleConfig> {
 
-    String report(T ruleConfig, List<? extends Outcome> outcome);
+    String reportToConsole(T ruleConfig, List<? extends Outcome> outcome);
 }

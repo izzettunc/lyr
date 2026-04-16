@@ -1,5 +1,6 @@
 package com.lyr.rule;
 
+import com.lyr.report.ReportType;
 import com.lyr.rule.outcome.ScanOutcome;
 import java.util.List;
 
@@ -9,13 +10,15 @@ public class ScanRule extends Rule {
     }
 
     @Override
-    public String report() {
+    public String report(final ReportType reportType) {
         if (outcome == null) {
             throw new IllegalStateException(
                     "Rule outcome is not evaluated yet. Please call evaluate() before report().");
         }
 
-        return ruleReportStrategy.report(ruleConfig, outcome);
+        return switch (reportType) {
+            case CONSOLE -> ruleReportStrategy.reportToConsole(ruleConfig, outcome);
+        };
     }
 
     @Override
