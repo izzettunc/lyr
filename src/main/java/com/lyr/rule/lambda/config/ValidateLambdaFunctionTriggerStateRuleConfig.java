@@ -16,8 +16,8 @@ import lombok.Getter;
 @Getter
 public class ValidateLambdaFunctionTriggerStateRuleConfig implements RuleConfig {
 
-    private static final String ENABLED = "enabled";
-    private static final String DISABLED = "disabled";
+    public static final String ENABLED = "enabled";
+    public static final String DISABLED = "disabled";
 
     public record LambdaFunctionTriggerState(String functionName, boolean enabled) {}
 

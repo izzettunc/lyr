@@ -1,7 +1,6 @@
 package com.lyr.rule.lambda.report;
 
-import static com.lyr.rule.Constants.VALIDATE_LAMBDA_FUNCTION_EXISTS;
-
+import com.lyr.report.console.ConsoleReportStyler;
 import com.lyr.rule.RuleReport;
 import com.lyr.rule.lambda.LambdaReason;
 import com.lyr.rule.lambda.config.ValidateLambdaFunctionExistsRuleConfig;
@@ -12,27 +11,21 @@ import java.util.List;
 public class ValidateLambdaFunctionExistsRuleReport implements RuleReport<ValidateLambdaFunctionExistsRuleConfig> {
 
     @Override
-    public String report(
+    public String reportToConsole(
             final ValidateLambdaFunctionExistsRuleConfig ruleConfig, final List<? extends Outcome> outcomes) {
-
+        final var validationOutcomes = (List<ValidationOutcome<LambdaReason>>) outcomes;
         final StringBuilder reportBuilder = new StringBuilder();
-        final var block = "%n========================";
-        reportBuilder
-                .append(String.format(block))
-                .append(String.format("%nValidation Report for "))
-                .append(VALIDATE_LAMBDA_FUNCTION_EXISTS)
-                .append(String.format(block));
 
         for (int i = 0; i < outcomes.size(); i++) {
             final var functionName = ruleConfig.getFunctionNames().get(i);
-            final var outcome = (ValidationOutcome<LambdaReason>) outcomes.get(i);
+            final var outcome = validationOutcomes.get(i);
 
-            if (outcome.success()) {
-                reportBuilder.append(String.format("%n- [✅] Lambda function '%s' exists.", functionName));
-            } else {
-                reportBuilder.append(String.format(
-                        "%n- [❌] Lambda function '%s' validation failed: %s", functionName, outcome.reason()));
-            }
+            final var outcomeReport = outcome.success()
+                    ? String.format("Lambda function '%s' exists.", functionName)
+                    : String.format("Lambda function '%s' validation failed: %s", functionName, outcome.reason());
+
+            final var styledOutcomeReport = ConsoleReportStyler.styleOutcome(outcomeReport, outcome.success());
+            reportBuilder.append(ConsoleReportStyler.toNewLine(styledOutcomeReport));
         }
 
         return reportBuilder.toString();
