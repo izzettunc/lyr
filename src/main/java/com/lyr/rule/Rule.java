@@ -1,6 +1,7 @@
 package com.lyr.rule;
 
 import com.google.common.collect.ImmutableList;
+import com.lyr.report.ReportType;
 import com.lyr.rule.outcome.Outcome;
 import java.util.List;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public abstract class Rule {
         this.ruleReportStrategy = ruleReport;
     }
 
-    public abstract String report();
+    public abstract String report(ReportType reportType);
 
     public abstract List<? extends Outcome> evaluate();
 

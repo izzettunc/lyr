@@ -9,8 +9,10 @@ import static org.mockito.Mockito.verify;
 
 import com.lyr.TestUtil;
 import com.lyr.config.RuleSetConfig;
+import com.lyr.config.Settings;
 import com.lyr.rule.Rule;
 import com.lyr.rule.RuleFactory;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ class ScanAwsEnvironmentRunnerTest {
         reset(mockedRule);
         mockedRuleFactory.reset();
         resetUserRuleSetConfigByLoadingEmptyFile();
+        Settings.setAppSettings(null);
     }
 
     @AfterAll
@@ -42,12 +45,12 @@ class ScanAwsEnvironmentRunnerTest {
     @Test
     void testThatGivenNoUserDefinedRuleSetDefaultRulesAreCreatedAndEvaluatedAndAReportIsCreated() {
         // Given
-        final String userRuleSetPath = null;
+        Settings.setAppSettings(Settings.builder().build());
         final var numberOfDefaultRules = 3;
         // When
         mockedRuleFactory.when(() -> RuleFactory.createRule(any())).thenReturn(mockedRule);
 
-        ScanAwsEnvironmentRunner.run(userRuleSetPath);
+        ScanAwsEnvironmentRunner.run();
 
         // Then
         mockedRuleFactory.verify(() -> RuleFactory.createRule("scan.dynamodb.table.idle"), times(1));
@@ -55,7 +58,8 @@ class ScanAwsEnvironmentRunnerTest {
         mockedRuleFactory.verify(
                 () -> RuleFactory.createRule("scan.lambda.function.withUnboundedConcurrency"), times(1));
         verify(mockedRule, times(numberOfDefaultRules)).evaluate();
-        verify(mockedRule, times(numberOfDefaultRules)).report();
+        verify(mockedRule, times(numberOfDefaultRules))
+                .report(Settings.getAppSettings().getReportType());
     }
 
     @Test
@@ -63,15 +67,20 @@ class ScanAwsEnvironmentRunnerTest {
         // Given
         final var testUserRuleSetAbsolutePath = TestUtil.getAbsoluteFilePathOfResource("testUserConfig.yaml");
         final var numberOfRulesInTestUserRuleSet = 1;
+        final var settings = Settings.builder()
+                .userRuleSetConfigPath(Optional.of(testUserRuleSetAbsolutePath))
+                .build();
+        Settings.setAppSettings(settings);
 
         // When
         mockedRuleFactory.when(() -> RuleFactory.createRule(any())).thenReturn(mockedRule);
 
-        ScanAwsEnvironmentRunner.run(testUserRuleSetAbsolutePath);
+        ScanAwsEnvironmentRunner.run();
 
         // Then
         mockedRuleFactory.verify(() -> RuleFactory.createRule("scan.dynamodb.table.idle"), times(1));
         verify(mockedRule, times(numberOfRulesInTestUserRuleSet)).evaluate();
-        verify(mockedRule, times(numberOfRulesInTestUserRuleSet)).report();
+        verify(mockedRule, times(numberOfRulesInTestUserRuleSet))
+                .report(Settings.getAppSettings().getReportType());
     }
 }

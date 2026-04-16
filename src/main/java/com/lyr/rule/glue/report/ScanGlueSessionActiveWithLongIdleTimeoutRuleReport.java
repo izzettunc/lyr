@@ -1,7 +1,7 @@
 package com.lyr.rule.glue.report;
 
-import static com.lyr.rule.Constants.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
-
+import com.lyr.report.console.ConsoleReportStyler;
+import com.lyr.report.console.Sentiment;
 import com.lyr.rule.RuleReport;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.outcome.Outcome;
@@ -12,30 +12,26 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleReport
         implements RuleReport<ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig> {
 
     @Override
-    public String report(
+    public String reportToConsole(
             final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig,
             final List<? extends Outcome> outcomes) {
         final var maxIdleTimeoutInMinutes = ruleConfig.getMaxIdleTimeoutInMinutes();
+        final var scanOutcomes = (List<ScanOutcome>) outcomes;
 
-        final StringBuilder reportBuilder = new StringBuilder();
-        final var block = "%n========================";
-        reportBuilder
-                .append(String.format(block))
-                .append(String.format("%nValidation Report for "))
-                .append(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT)
-                .append(String.format(block));
-
-        if (outcomes.isEmpty()) {
-            reportBuilder.append(String.format(
-                    "%n- [✅] No active sessions found with idle timeout greater than %d minutes.",
-                    maxIdleTimeoutInMinutes));
-            return reportBuilder.toString();
+        if (scanOutcomes.isEmpty()) {
+            final var outcomeReport = String.format(
+                    "No active sessions found with idle timeout greater than %d minutes.", maxIdleTimeoutInMinutes);
+            final var styledOutcomeReport = ConsoleReportStyler.styleOutcome(outcomeReport, Sentiment.POSITIVE);
+            return ConsoleReportStyler.toNewLine(styledOutcomeReport);
         }
 
-        for (final Outcome outcome : outcomes) {
-            reportBuilder.append(String.format(
-                    "%n- [❌] Session '%s' has been active for more than idle timeout of %d minutes.",
-                    ((ScanOutcome) outcome).result(), maxIdleTimeoutInMinutes));
+        final var reportBuilder = new StringBuilder();
+        for (final ScanOutcome outcome : scanOutcomes) {
+            final var outcomeReport = String.format(
+                    "Session '%s' has been active for more than idle timeout of %d minutes.",
+                    outcome.result(), maxIdleTimeoutInMinutes);
+            final var styledOutcome = ConsoleReportStyler.styleOutcome(outcomeReport, Sentiment.NEGATIVE);
+            reportBuilder.append(ConsoleReportStyler.toNewLine(styledOutcome));
         }
 
         return reportBuilder.toString();

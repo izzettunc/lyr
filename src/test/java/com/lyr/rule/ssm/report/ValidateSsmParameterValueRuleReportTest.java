@@ -8,24 +8,40 @@ import static com.lyr.TestUtil.VALUE_1;
 import static com.lyr.TestUtil.VALUE_2;
 import static com.lyr.TestUtil.VALUE_3;
 import static com.lyr.TestUtil.VALUE_4;
-import static com.lyr.rule.Constants.VALIDATE_SSM_PARAMETER_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.google.common.collect.ImmutableList;
+import com.lyr.report.console.ConsoleReportStyler;
+import com.lyr.report.console.Sentiment;
 import com.lyr.rule.outcome.ValidationOutcome;
 import com.lyr.rule.ssm.SsmReason;
 import com.lyr.rule.ssm.config.ValidateSsmParameterValueRuleConfig;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 class ValidateSsmParameterValueRuleReportTest {
 
+    static final MockedStatic<ConsoleReportStyler> mockedConsoleReportStyler =
+            mockStatic(ConsoleReportStyler.class, Mockito.CALLS_REAL_METHODS);
     ValidateSsmParameterValueRuleReport testObject;
 
     @BeforeEach
     public void beforeEach() {
         testObject = new ValidateSsmParameterValueRuleReport();
+        mockedConsoleReportStyler.reset();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedConsoleReportStyler.closeOnDemand();
     }
 
     @Test
@@ -44,30 +60,21 @@ class ValidateSsmParameterValueRuleReportTest {
                 ValidationOutcome.invalid(null),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_NOT_FOUND),
                 ValidationOutcome.invalid(SsmReason.PARAMETER_VALUE_MISMATCH));
+        final var expectedRawLines = List.of(
+                "Ssm parameter 'parameter1' has expected value.",
+                "Ssm parameter 'parameter2' validation failed: null",
+                "Ssm parameter 'parameter3' validation failed: PARAMETER_NOT_FOUND",
+                "Ssm parameter 'parameter4' validation failed: PARAMETER_VALUE_MISMATCH");
 
         // When
-        final var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.reportToConsole(config, outcome);
 
         // Then
-        assertThat(actualResult)
-                .contains(PARAMETER_1, PARAMETER_2, PARAMETER_3, PARAMETER_4)
-                .contains("null", "PARAMETER_NOT_FOUND", "PARAMETER_VALUE_MISMATCH")
-                .contains(VALIDATE_SSM_PARAMETER_VALUE);
-    }
-
-    @Test
-    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
-        // Given
-        final var config = ValidateSsmParameterValueRuleConfig.builder()
-                .parameterValues(List.of())
-                .build();
-
-        final List<ValidationOutcome<SsmReason>> outcome = ImmutableList.of();
-
-        // When
-        final var actualResult = testObject.report(config, outcome);
-
-        // Then
-        assertThat(actualResult).contains(VALIDATE_SSM_PARAMETER_VALUE);
+        assertThat(actualResult).containsSubsequence(expectedRawLines);
+        mockedConsoleReportStyler.verify(
+                () -> ConsoleReportStyler.styleOutcome(anyString(), any(Sentiment.class)),
+                times(expectedRawLines.size()));
+        mockedConsoleReportStyler.verify(
+                () -> ConsoleReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 }

@@ -9,24 +9,40 @@ import static com.lyr.TestUtil.FUNCTION_6;
 import static com.lyr.TestUtil.FUNCTION_7;
 import static com.lyr.TestUtil.FUNCTION_8;
 import static com.lyr.TestUtil.FUNCTION_9;
-import static com.lyr.rule.Constants.VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.google.common.collect.ImmutableList;
+import com.lyr.report.console.ConsoleReportStyler;
+import com.lyr.report.console.Sentiment;
 import com.lyr.rule.lambda.LambdaReason;
 import com.lyr.rule.lambda.config.ValidateLambdaFunctionTriggerStateRuleConfig;
 import com.lyr.rule.outcome.ValidationOutcome;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 class ValidateLambdaFunctionTriggerStateRuleReportTest {
 
+    static final MockedStatic<ConsoleReportStyler> mockedConsoleReportStyler =
+            mockStatic(ConsoleReportStyler.class, Mockito.CALLS_REAL_METHODS);
     ValidateLambdaFunctionTriggerStateRuleReport testObject;
 
     @BeforeEach
     public void beforeEach() {
         testObject = new ValidateLambdaFunctionTriggerStateRuleReport();
+        mockedConsoleReportStyler.reset();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedConsoleReportStyler.closeOnDemand();
     }
 
     @Test
@@ -56,45 +72,26 @@ class ValidateLambdaFunctionTriggerStateRuleReportTest {
                 ValidationOutcome.valid(LambdaReason.NO_EVENT_SOURCE_MAPPINGS),
                 ValidationOutcome.invalid(LambdaReason.FUNCTION_NOT_FOUND));
 
-        // When
-        final var actualResult = testObject.report(config, outcome);
-
-        // Then
-        assertThat(actualResult)
-                .contains(
-                        FUNCTION_1,
-                        FUNCTION_2,
-                        FUNCTION_3,
-                        FUNCTION_4,
-                        FUNCTION_5,
-                        FUNCTION_6,
-                        FUNCTION_7,
-                        FUNCTION_8,
-                        FUNCTION_9)
-                .contains("enabled", "disabled")
-                .contains(
-                        "ALL_EVENT_MAPPINGS_ARE_ENABLED",
-                        "ALL_EVENT_MAPPINGS_ARE_DISABLED",
-                        "ALL_EVENT_MAPPINGS_ARE_NOT_ENABLED",
-                        "ALL_EVENT_MAPPINGS_ARE_NOT_DISABLED",
-                        "NO_EVENT_SOURCE_MAPPINGS",
-                        "FUNCTION_NOT_FOUND")
-                .contains(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
-    }
-
-    @Test
-    void testThatReportReturnsAReportAsAStringWhenThereNoOutcome() {
-        // Given
-        final var config = ValidateLambdaFunctionTriggerStateRuleConfig.builder()
-                .functionTriggerStates(List.of())
-                .build();
-
-        final List<ValidationOutcome<LambdaReason>> outcome = ImmutableList.of();
+        final var expectedRawLines = List.of(
+                "Lambda function 'function1' expected to be enabled. Validation passed: ALL_EVENT_MAPPINGS_ARE_ENABLED",
+                "Lambda function 'function2' expected to be disabled. Validation failed: ALL_EVENT_MAPPINGS_ARE_ENABLED",
+                "Lambda function 'function3' expected to be disabled. Validation passed: ALL_EVENT_MAPPINGS_ARE_DISABLED",
+                "Lambda function 'function4' expected to be enabled. Validation failed: ALL_EVENT_MAPPINGS_ARE_DISABLED",
+                "Lambda function 'function5' expected to be enabled. Validation failed: ALL_EVENT_MAPPINGS_ARE_NOT_ENABLED",
+                "Lambda function 'function6' expected to be disabled. Validation failed: ALL_EVENT_MAPPINGS_ARE_NOT_DISABLED",
+                "Lambda function 'function7' expected to be enabled. Validation failed: NO_EVENT_SOURCE_MAPPINGS",
+                "Lambda function 'function8' expected to be disabled. Validation passed: NO_EVENT_SOURCE_MAPPINGS",
+                "Lambda function 'function9' expected to be disabled. Validation failed: FUNCTION_NOT_FOUND");
 
         // When
-        final var actualResult = testObject.report(config, outcome);
+        final var actualResult = testObject.reportToConsole(config, outcome);
 
         // Then
-        assertThat(actualResult).contains(VALIDATE_LAMBDA_FUNCTION_TRIGGER_STATE);
+        assertThat(actualResult).containsSubsequence(expectedRawLines);
+        mockedConsoleReportStyler.verify(
+                () -> ConsoleReportStyler.styleOutcome(anyString(), any(Sentiment.class)),
+                times(expectedRawLines.size()));
+        mockedConsoleReportStyler.verify(
+                () -> ConsoleReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 }

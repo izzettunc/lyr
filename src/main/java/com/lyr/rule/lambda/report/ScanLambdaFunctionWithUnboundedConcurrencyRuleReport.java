@@ -1,7 +1,7 @@
 package com.lyr.rule.lambda.report;
 
-import static com.lyr.rule.Constants.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
-
+import com.lyr.report.console.ConsoleReportStyler;
+import com.lyr.report.console.Sentiment;
 import com.lyr.rule.RuleReport;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.outcome.Outcome;
@@ -12,25 +12,23 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleReport
         implements RuleReport<ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig> {
 
     @Override
-    public String report(
+    public String reportToConsole(
             final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig ignored,
             final List<? extends Outcome> outcomes) {
-        final StringBuilder reportBuilder = new StringBuilder();
-        final var block = "%n========================";
-        reportBuilder
-                .append(String.format(block))
-                .append(String.format("%nValidation Report for "))
-                .append(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY)
-                .append(String.format(block));
+        final List<ScanOutcome> scanOutcomes = (List<ScanOutcome>) outcomes;
 
-        if (outcomes.isEmpty()) {
-            reportBuilder.append(String.format("%n- [✅] No lambda found with unbounded concurrency."));
-            return reportBuilder.toString();
+        if (scanOutcomes.isEmpty()) {
+            final var outcomeReport = "No lambda found with unbounded concurrency.";
+            final var styledOutcomeReport = ConsoleReportStyler.styleOutcome(outcomeReport, Sentiment.POSITIVE);
+            return ConsoleReportStyler.toNewLine(styledOutcomeReport);
         }
 
-        for (final Outcome outcome : outcomes) {
-            reportBuilder.append(String.format(
-                    "%n- [❌] Lambda function '%s' has unbounded concurrency.", ((ScanOutcome) outcome).result()));
+        final StringBuilder reportBuilder = new StringBuilder();
+        for (final ScanOutcome outcome : scanOutcomes) {
+            final var outcomeReport =
+                    String.format("Lambda function '%s' has unbounded concurrency.", outcome.result());
+            final var styledOutcomeReport = ConsoleReportStyler.styleOutcome(outcomeReport, Sentiment.NEGATIVE);
+            reportBuilder.append(ConsoleReportStyler.toNewLine(styledOutcomeReport));
         }
 
         return reportBuilder.toString();

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import com.lyr.TestUtil;
+import com.lyr.report.ReportType;
 import com.lyr.rule.outcome.Outcome;
 import com.lyr.rule.outcome.ValidationOutcome;
 import java.util.List;
@@ -183,7 +184,7 @@ class ValidationRuleTest {
     }
 
     @Test
-    void testThatReportReportsSuccessfullyWhenOutcomeIsAlreadyCalculated() {
+    void testThatReportReportsSuccessfullyToConsoleWhenOutcomeIsAlreadyCalculated() {
         // Given
         final List<Outcome> expectedOutcome =
                 ImmutableList.of(ValidationOutcome.valid(), ValidationOutcome.invalid(TestEnum.ONE));
@@ -196,13 +197,13 @@ class ValidationRuleTest {
         assertThat(testObject.outcome).isNotNull();
 
         // When
-        when(ruleReport.report(ruleConfig, expectedOutcome)).thenReturn(expectedReport);
-        final var actualReport = testObject.report();
+        when(ruleReport.reportToConsole(ruleConfig, expectedOutcome)).thenReturn(expectedReport);
+        final var actualReport = testObject.report(ReportType.CONSOLE);
 
         // Then
         assertThat(actualReport).isEqualTo(expectedReport);
 
-        verify(ruleReport, times(1)).report(ruleConfig, expectedOutcome);
+        verify(ruleReport, times(1)).reportToConsole(ruleConfig, expectedOutcome);
     }
 
     @Test
@@ -211,8 +212,8 @@ class ValidationRuleTest {
         assertThat(testObject.outcome).isNull();
 
         // When & Then
-        assertThatThrownBy(() -> testObject.report()).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> testObject.report(ReportType.CONSOLE)).isInstanceOf(IllegalStateException.class);
 
-        verify(ruleReport, never()).report(any(), any());
+        verify(ruleReport, never()).reportToConsole(any(), any());
     }
 }
