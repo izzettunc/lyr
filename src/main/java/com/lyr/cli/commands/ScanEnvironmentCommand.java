@@ -4,6 +4,9 @@ import static picocli.CommandLine.Option;
 
 import com.lyr.cli.runners.ScanAwsEnvironmentRunner;
 import com.lyr.cli.util.VersionProvider;
+import com.lyr.config.Settings;
+import com.lyr.report.ReportType;
+import java.util.Optional;
 import picocli.CommandLine.Command;
 
 @Command(
@@ -20,9 +23,20 @@ public class ScanEnvironmentCommand {
             versionProvider = VersionProvider.class)
     void aws(
             @Option(
-                            names = {"-c", "-config"},
+                            names = {"-c", "--config"},
+                            description = "Path to user rule set config file that specifies the ruleset")
+                    final Optional<String> optionalUserRuleSetConfigFilePath,
+            @Option(
+                            names = {"-r", "--reportType"},
                             description = "Path to user config file that specifies the ruleset")
-                    final String userConfigFilePath) {
-        ScanAwsEnvironmentRunner.run(userConfigFilePath);
+                    final Optional<ReportType> optionalReportType) {
+
+        final var settingsBuilder = Settings.builder();
+        settingsBuilder.userRuleSetConfigPath(optionalUserRuleSetConfigFilePath);
+        optionalReportType.ifPresent(settingsBuilder::reportType);
+        final var settings = settingsBuilder.build();
+        Settings.setAppSettings(settings);
+
+        ScanAwsEnvironmentRunner.run();
     }
 }

@@ -14,7 +14,16 @@ import picocli.CommandLine.Command;
         versionProvider = VersionProvider.class)
 public class Lyr {
     static void main(final String... args) {
-        final int exitCode = new CommandLine(new Lyr()).execute(args);
+        // Instantiate cli app
+        final var commandLineApplication = new CommandLine(new Lyr());
+
+        // Settings
+        commandLineApplication.setCaseInsensitiveEnumValuesAllowed(true);
+
+        // Execute
+        final int exitCode = commandLineApplication.execute(args);
+
+        // Handle exit code
         System.exit(exitCode);
     }
 }
