@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lyr.com/schema/lyr-json-report-schema-0.0.0.json",
+  "title": "Report",
+  "description": "A findings report for Lyr",
+  "version": "0.0.0",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "The version of json schema used to generate this report",
+      "type": "string"
+    },
+    "report": {
+      "description": "A list of executed rules with their findings that makes the report",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "An object representing the result of a rule execution",
+        "properties": {
+          "code": {
+            "description": "Code of the rule that executed to generate this finding",
+            "type": "string"
+          },
+          "findings": {
+            "description": "A list of findings",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "identifier": {
+                  "description": "An identifier of the resource related to this finding",
+                  "type": "string"
+                },
+                "reason": {
+                  "description": "Optional reason for this finding",
+                  "type": "string"
+                }
+              },
+              "required": ["identifier"]
+            }
+          }
+        },
+        "required": ["code", "findings"]
+      }
+    }
+  },
+  "required": ["version", "report"]
+}
