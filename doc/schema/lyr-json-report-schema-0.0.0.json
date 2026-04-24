@@ -10,16 +10,27 @@
       "description": "The version of json schema used to generate this report",
       "type": "string"
     },
-    "report": {
+    "executions": {
       "description": "A list of executed rules with their findings that makes the report",
       "type": "array",
       "items": {
         "type": "object",
         "description": "An object representing the result of a rule execution",
         "properties": {
+          "name": {
+            "description": "Name of the rule that executed to generate this finding",
+            "type": "string"
+          },
           "code": {
             "description": "Code of the rule that executed to generate this finding",
             "type": "string"
+          },
+          "configuration": {
+            "description": "Configuration that effects the behaviour of the execution",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "findings": {
             "description": "A list of findings",
@@ -35,14 +46,11 @@
                   "description": "Optional reason for this finding",
                   "type": "string"
                 }
-              },
-              "required": ["identifier"]
+              }
             }
           }
-        },
-        "required": ["code", "findings"]
+        }
       }
     }
-  },
-  "required": ["version", "report"]
+  }
 }
