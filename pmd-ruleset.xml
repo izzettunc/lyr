@@ -10,7 +10,10 @@
     </description>
 
     <!-- Standard rulesets -->
-    <rule ref="category/java/bestpractices.xml"/>
+    <rule ref="category/java/bestpractices.xml">
+        <!-- Justification: Below rules leads to clashes with spotbugs leading to situation where you can't compile-->
+        <exclude name="LooseCoupling"/>
+    </rule>
     <rule ref="category/java/errorprone.xml">
         <!-- Justification: Below rules are already checked by and configured via checkstyle-->
         <exclude name="AvoidDuplicateLiterals"/>
