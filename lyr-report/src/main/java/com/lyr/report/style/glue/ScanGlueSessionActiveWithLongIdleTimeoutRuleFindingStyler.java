@@ -1,0 +1,28 @@
+package com.lyr.report.style.glue;
+
+import com.lyr.report.console.ConsoleReportStyler;
+import com.lyr.report.console.Sentiment;
+import com.lyr.report.model.Finding;
+import com.lyr.report.style.FindingStyler;
+import java.util.List;
+
+public class ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler implements FindingStyler {
+    @Override
+    public String styleForConsole(final List<Finding> findings) {
+        if (findings.isEmpty()) {
+            final var findingReport = "No active sessions found with idle timeout more than max idle timeout.";
+            final var styledFindingReport = ConsoleReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
+            return ConsoleReportStyler.toNewLine(styledFindingReport);
+        }
+
+        final var reportBuilder = new StringBuilder();
+        for (final Finding finding : findings) {
+            final var findingReport =
+                    String.format("Session '%s' has been active for more than max idle timeout.", finding.identifier());
+            final var styledFindingReport = ConsoleReportStyler.styleFindingReport(findingReport, Sentiment.NEGATIVE);
+            reportBuilder.append(ConsoleReportStyler.toNewLine(styledFindingReport));
+        }
+
+        return reportBuilder.toString();
+    }
+}
