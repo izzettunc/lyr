@@ -16,6 +16,8 @@ import lombok.NonNull;
 @Getter
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleConfig {
 
+    public static final String MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY = "maxIdleTimeoutInMinutes";
+
     @NonNull
     private final Integer maxIdleTimeoutInMinutes;
 
@@ -29,7 +31,8 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
 
         final var scanGlueSessionActiveWithLongIdleTimeoutRuleConfig =
                 ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                        .maxIdleTimeoutInMinutes(RuleConfig.getMandatoryAttribute("maxIdleTimeoutInMinutes", configMap))
+                        .maxIdleTimeoutInMinutes(
+                                RuleConfig.getMandatoryAttribute(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, configMap))
                         .build();
 
         if (scanGlueSessionActiveWithLongIdleTimeoutRuleConfig.getMaxIdleTimeoutInMinutes() < 0) {
@@ -39,5 +42,10 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
         }
 
         return scanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
+    }
+
+    @Override
+    public Map<String, String> getConfigAsStringMap() {
+        return Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, maxIdleTimeoutInMinutes.toString());
     }
 }

@@ -3,6 +3,7 @@ package com.lyr.rule;
 import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeException;
 import java.util.Map;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface RuleConfig {
     static <T> T getMandatoryAttribute(final String key, final Map<String, T> map) {
         if (!map.containsKey(key)) {
@@ -11,4 +12,6 @@ public interface RuleConfig {
 
         return map.get(key);
     }
+
+    Map<String, String> getConfigAsStringMap();
 }

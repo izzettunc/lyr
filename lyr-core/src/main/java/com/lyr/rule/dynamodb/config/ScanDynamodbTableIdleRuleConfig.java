@@ -15,6 +15,8 @@ import lombok.NonNull;
 @AllArgsConstructor
 @Getter
 public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
+    public static final String EXCLUDE_EMPTY_TABLES_CONFIG_KEY = "excludeEmptyTables";
+    public static final String MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY = "maxIdlePeriodInDays";
 
     @NonNull
     private final Integer maxIdlePeriodInDays;
@@ -31,8 +33,9 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
         final var configMap = (Map<String, Object>) config;
 
         final var scanDynamodbTableIdleRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays((Integer) RuleConfig.getMandatoryAttribute("maxIdlePeriodInDays", configMap))
-                .excludeEmptyTables((Boolean) configMap.getOrDefault("excludeEmptyTables", Boolean.FALSE))
+                .maxIdlePeriodInDays(
+                        (Integer) RuleConfig.getMandatoryAttribute(MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, configMap))
+                .excludeEmptyTables((Boolean) configMap.getOrDefault(EXCLUDE_EMPTY_TABLES_CONFIG_KEY, Boolean.FALSE))
                 .build();
 
         if (scanDynamodbTableIdleRuleConfig.getMaxIdlePeriodInDays() < 1) {
@@ -41,5 +44,12 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
         }
 
         return scanDynamodbTableIdleRuleConfig;
+    }
+
+    @Override
+    public Map<String, String> getConfigAsStringMap() {
+        return Map.of(
+                MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, maxIdlePeriodInDays.toString(),
+                EXCLUDE_EMPTY_TABLES_CONFIG_KEY, excludeEmptyTables.toString());
     }
 }
