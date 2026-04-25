@@ -8,8 +8,10 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 import com.lyr.report.model.Execution;
-import com.lyr.report.style.FindingStyler;
-import com.lyr.report.style.StylerFactory;
+import com.lyr.report.style.console.ConsoleReportStyler;
+import com.lyr.report.style.console.TitleLevel;
+import com.lyr.report.style.finding.FindingStyler;
+import com.lyr.report.style.finding.StylerFactory;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +40,7 @@ class ConsoleReporterTest {
         testObject.report(executions);
 
         // Then
-        verify(mockedConsoleReportStyler).buildTitleBlock(1, "LYR REPORT");
+        verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.PRIMARY, "LYR REPORT");
     }
 
     @Test
@@ -61,10 +63,10 @@ class ConsoleReporterTest {
         testObject.report(executions);
 
         // Then
-        verify(mockedConsoleReportStyler).buildTitleBlock(1, "LYR REPORT");
+        verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.PRIMARY, "LYR REPORT");
         for (int i = 0; i < executions.size(); i++) {
             final var execution = executions.get(i);
-            verify(mockedConsoleReportStyler).buildTitleBlock(2, "Report for dummy" + i);
+            verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.SECONDARY, "Report for dummy" + i);
             verify(mockedFindingStyler).styleForConsole(execution.findings());
         }
     }
