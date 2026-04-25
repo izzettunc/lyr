@@ -1,7 +1,7 @@
 package com.lyr.report;
 
-import com.lyr.report.console.ConsoleReportStyler;
 import com.lyr.report.console.ConsoleReporter;
+import com.lyr.report.style.console.ConsoleReportStyler;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

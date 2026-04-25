@@ -1,8 +1,9 @@
 package com.lyr.report.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.lyr.report.style.console.ConsoleReportStyler;
+import com.lyr.report.style.console.TitleLevel;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +25,7 @@ class ConsoleReportStylerTest {
                 """;
 
         // When
-        final var actualResult = testObject.buildTitleBlock(1, "DUMMY");
+        final var actualResult = testObject.buildTitleBlock(TitleLevel.PRIMARY, "DUMMY");
 
         // Then
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -39,20 +40,10 @@ class ConsoleReportStylerTest {
                   DUMMY
                 =======""";
         // When
-        final var actualResult = testObject.buildTitleBlock(2, "DUMMY");
+        final var actualResult = testObject.buildTitleBlock(TitleLevel.SECONDARY, "DUMMY");
 
         // Then
         assertThat(actualResult).isEqualTo(expectedResult);
-    }
-
-    @ParameterizedTest
-    @MethodSource("unsupportedDepthsForTitleBuilding")
-    void testThatConsoleReportStylerThrowsUnsupportedOperationExceptionWhenAnUnsupportedDepthIsProvided(int depth) {
-        // Given depth
-        // When && Then
-        assertThatThrownBy(() -> testObject.buildTitleBlock(depth, "DUMMY"))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("Console report styler only supports first and second level titles");
     }
 
     @ParameterizedTest
@@ -99,9 +90,5 @@ class ConsoleReportStylerTest {
                 Arguments.of("- [✅] DUMMY", "DUMMY", Sentiment.POSITIVE),
                 Arguments.of("- [⚠️] DUMMY", "DUMMY", Sentiment.NEUTRAL),
                 Arguments.of("- [❌] DUMMY", "DUMMY", Sentiment.NEGATIVE));
-    }
-
-    public static Stream<Arguments> unsupportedDepthsForTitleBuilding() {
-        return Stream.of(Arguments.of(0), Arguments.of(-1), Arguments.of(3));
     }
 }

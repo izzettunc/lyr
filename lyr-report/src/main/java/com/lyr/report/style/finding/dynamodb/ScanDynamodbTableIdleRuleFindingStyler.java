@@ -1,9 +1,9 @@
-package com.lyr.report.style.dynamodb;
+package com.lyr.report.style.finding.dynamodb;
 
-import com.lyr.report.console.ConsoleReportStyler;
 import com.lyr.report.console.Sentiment;
 import com.lyr.report.model.Finding;
-import com.lyr.report.style.FindingStyler;
+import com.lyr.report.style.console.ConsoleReportStyler;
+import com.lyr.report.style.finding.FindingStyler;
 import java.util.List;
 
 public class ScanDynamodbTableIdleRuleFindingStyler implements FindingStyler {

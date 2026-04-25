@@ -1,8 +1,8 @@
-package com.lyr.report.style;
+package com.lyr.report.style.finding;
 
-import com.lyr.report.style.dynamodb.ScanDynamodbTableIdleRuleFindingStyler;
-import com.lyr.report.style.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
-import com.lyr.report.style.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
+import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingStyler;
+import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

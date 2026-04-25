@@ -1,4 +1,4 @@
-package com.lyr.report.style.lambda;
+package com.lyr.report.style.finding.lambda;
 
 import static com.lyr.report.TestUtil.createImmutableListOfFindings;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
 import com.lyr.report.TestUtil;
-import com.lyr.report.console.ConsoleReportStyler;
 import com.lyr.report.console.Sentiment;
+import com.lyr.report.style.console.ConsoleReportStyler;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

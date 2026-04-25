@@ -1,4 +1,4 @@
-package com.lyr.report.style;
+package com.lyr.report.style.finding;
 
 import com.lyr.report.model.Finding;
 import java.util.List;
