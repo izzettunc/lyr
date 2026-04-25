@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.lyr.TestUtil;
 import com.lyr.report.model.Execution;
 import com.lyr.report.model.Finding;
@@ -41,6 +42,7 @@ class RuleTest {
                 .findings(expectedFindings)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
         assertThat(testObject.execution).isNull();
 
@@ -71,6 +73,7 @@ class RuleTest {
                 .findings(expectedFindings)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
 
         final var updatedFindings = ImmutableList.of(
@@ -122,6 +125,7 @@ class RuleTest {
                 .findings(expectedFindings)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
         assertThat(testObject.execution).isNull();
 
@@ -152,6 +156,7 @@ class RuleTest {
                 .findings(expectedFindings)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
 
         final var expectedUpdatedFindings = ImmutableList.of(
@@ -160,6 +165,7 @@ class RuleTest {
                 .findings(expectedUpdatedFindings)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
 
         final var expectedUpdatedFindingsLast = ImmutableList.of(
@@ -168,6 +174,7 @@ class RuleTest {
                 .findings(expectedUpdatedFindingsLast)
                 .name(testObject.ruleDefinition.getRuleName())
                 .code(testObject.ruleDefinition.getRuleCode())
+                .configuration(ImmutableMap.of())
                 .build();
 
         final var amountOfReevaluation = 3;
