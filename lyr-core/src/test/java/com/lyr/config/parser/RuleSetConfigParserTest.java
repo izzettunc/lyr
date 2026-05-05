@@ -1,16 +1,5 @@
 package com.lyr.config.parser;
 
-import com.lyr.TestUtil;
-import com.lyr.exception.config.RuleSetConfigLoadException;
-import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
-import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-
-import java.util.Map;
-
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
@@ -21,6 +10,16 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+
+import com.lyr.TestUtil;
+import com.lyr.exception.config.RuleSetConfigLoadException;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
+import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 class RuleSetConfigParserTest {
 
@@ -33,10 +32,17 @@ class RuleSetConfigParserTest {
     void testThatGivenNoCustomRuleSetConfigDefaultIsLoadedSuccessfully() {
         // Given
         final var expectedRuleDefToRuleConfigMap = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(30).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(15).build(),
-                SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY, ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build()
-        );
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(30)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(15)
+                                .build(),
+                SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
+                        ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
+                                .build());
 
         // When
         final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseDefaultRuleSetConfig();
@@ -52,14 +58,20 @@ class RuleSetConfigParserTest {
     void testThatGivenCustomRuleSetConfigIsLoadedCorrectly() {
         // Given
         final var expectedRuleDefToRuleConfigMap = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(11).excludeEmptyTables(true).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(22).build()
-        );
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(11)
+                                .excludeEmptyTables(true)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(22)
+                                .build());
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
 
         // When
         final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
-
 
         // Then
         assertThat(actualRuleDefToRuleConfigMap)
@@ -72,10 +84,16 @@ class RuleSetConfigParserTest {
     void testThatGivenCustomRuleSetThatOnlyUsesRuleNameConfigLoadsThoseRulesWithDefaultSettings() {
         // Given
         final var expectedRuleDefToRuleConfigMap = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(30).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(15).build()
-        );
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithOnlyNames.yaml");
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(30)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(15)
+                                .build());
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithOnlyNames.yaml");
 
         // When
         final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
@@ -90,12 +108,14 @@ class RuleSetConfigParserTest {
     @Test
     void testThatGivenCustomRuleSetContainsUnknownRuleRuleSetConfigThrowsRuleSetConfigLoadException() {
         // Given
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithUnknownRules.yaml");
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithUnknownRules.yaml");
 
         // When & Then
         assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath))
                 .isInstanceOf(RuleSetConfigLoadException.class)
-                .hasMessageContaining("Failed to generate rule set config. Exception: Given rule is not defined. Rule name:");
+                .hasMessageContaining(
+                        "Failed to generate rule set config. Exception: Given rule is not defined. Rule name:");
     }
 
     @Test
@@ -115,8 +135,11 @@ class RuleSetConfigParserTest {
         final var defaultRuleSetConfigPath = "a/path/that/does/not/exist";
 
         // When
-        try(MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser = mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)){
-            mockedRuleSetConfigParser.when(RuleSetConfigParser::getDefaultRulesetConfigPath).thenReturn(defaultRuleSetConfigPath);
+        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
+                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
+            mockedRuleSetConfigParser
+                    .when(RuleSetConfigParser::getDefaultRulesetConfigPath)
+                    .thenReturn(defaultRuleSetConfigPath);
 
             // Then
             assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(defaultRuleSetConfigPath))
@@ -128,7 +151,8 @@ class RuleSetConfigParserTest {
     @Test
     void testThatGivenEmptyRuleSetConfigAnEmptyRuleDefinitionToRuleConfigMapIsProduced() {
         // Given
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/emptyUserRuleSetConfig.yaml");
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/emptyUserRuleSetConfig.yaml");
 
         // When
         final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
@@ -143,8 +167,11 @@ class RuleSetConfigParserTest {
         final var badDefaultRuleSetConfigPath = "com/lyr/config/defaultRuleSetWithBadConfig.yaml";
 
         // When
-        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser = mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
-            mockedRuleSetConfigParser.when(RuleSetConfigParser::getDefaultRulesetConfigPath).thenReturn(badDefaultRuleSetConfigPath);
+        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
+                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
+            mockedRuleSetConfigParser
+                    .when(RuleSetConfigParser::getDefaultRulesetConfigPath)
+                    .thenReturn(badDefaultRuleSetConfigPath);
 
             // Then
             assertThatThrownBy(RuleSetConfigParser::parseDefaultRuleSetConfig)
@@ -154,29 +181,35 @@ class RuleSetConfigParserTest {
     }
 
     @Test
-    void testThatGivenCustomRuleSetThatOnlyUsesRuleNameRuleSetConfigParserThrowsRuleSetConfigLoadExceptionWhenThereIsNoDefaultConfigAvailableForARule() {
+    void
+            testThatGivenCustomRuleSetThatOnlyUsesRuleNameRuleSetConfigParserThrowsRuleSetConfigLoadExceptionWhenThereIsNoDefaultConfigAvailableForARule() {
         // Given
         final var alternativeDefaultRuleSetConfigPath = "com/lyr/config/alternativeDefaultRuleSet.yaml";
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithOnlyNames.yaml");
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithOnlyNames.yaml");
 
         // When
-        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser = mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
-            mockedRuleSetConfigParser.when(RuleSetConfigParser::getDefaultRulesetConfigPath).thenReturn(alternativeDefaultRuleSetConfigPath);
+        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
+                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
+            mockedRuleSetConfigParser
+                    .when(RuleSetConfigParser::getDefaultRulesetConfigPath)
+                    .thenReturn(alternativeDefaultRuleSetConfigPath);
 
             // Then
             assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath))
                     .isInstanceOf(RuleSetConfigLoadException.class)
                     .hasMessageContaining("Failed to generate rule set config. Exception:");
-
         }
     }
 
     @Test
-    void testThatDefaultConfigIsLoadedOnlyOnceLazilyDuringLoadingCustomRuleSet(){
+    void testThatDefaultConfigIsLoadedOnlyOnceLazilyDuringLoadingCustomRuleSet() {
         // Given
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
 
-        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser = mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
+        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
+                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
             // Ensure that it's a clean run
             mockedRuleSetConfigParser.verify(() -> RuleSetConfigParser.parseRuleSetConfig(any()), never());
             mockedRuleSetConfigParser.verify(RuleSetConfigParser::parseDefaultRuleSetConfig, never());
@@ -186,7 +219,7 @@ class RuleSetConfigParserTest {
             RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
 
             // Then
-            mockedRuleSetConfigParser.verify(()-> RuleSetConfigParser.parseRuleSetConfig(any()), times(2));
+            mockedRuleSetConfigParser.verify(() -> RuleSetConfigParser.parseRuleSetConfig(any()), times(2));
             mockedRuleSetConfigParser.verify(RuleSetConfigParser::parseDefaultRuleSetConfig, times(1));
         }
     }

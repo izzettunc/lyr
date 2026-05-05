@@ -1,5 +1,10 @@
 package com.lyr.config;
 
+import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
+import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.TestUtil;
 import com.lyr.exception.config.NotYetInitializedException;
@@ -9,18 +14,11 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.util.RuleDefinition;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
-import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
-import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 class RuleSetConfigTest {
 
@@ -34,29 +32,39 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigReturnsCorrectConfigWhenRuleDefinitionIsProvided() {
         // Given
-        var expectedConfig = ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(123).excludeEmptyTables(true).build();
+        var expectedConfig = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(123)
+                .excludeEmptyTables(true)
+                .build();
         Map<RuleDefinition, RuleConfig> configuration = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, expectedConfig,
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(456).build()
-        );
+                SCAN_DYNAMODB_TABLE_IDLE,
+                expectedConfig,
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(456)
+                        .build());
         testObject = new RuleSetConfig(configuration);
 
         // When
         var actualConfig = testObject.getConfig(SCAN_DYNAMODB_TABLE_IDLE);
 
         // Then
-        assertThat(actualConfig)
-                .usingRecursiveComparison()
-                .isEqualTo(expectedConfig);
+        assertThat(actualConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
     }
 
     @Test
     void testThatRuleWithNoConfigExceptionIsThrownWhenARuleThatIsNotPartOfConfigIsRequested() {
         // Given
         Map<RuleDefinition, RuleConfig> configuration = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(123).excludeEmptyTables(true).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(456).build()
-        );
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(123)
+                                .excludeEmptyTables(true)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(456)
+                                .build());
         testObject = new RuleSetConfig(configuration);
 
         // When & Then
@@ -68,11 +76,18 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigReturnsCorrectSetOfRuleDefinition() {
         // Given
-        var expectedRuleDefinitionSet = Set.of(SCAN_DYNAMODB_TABLE_IDLE, SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
+        var expectedRuleDefinitionSet =
+                Set.of(SCAN_DYNAMODB_TABLE_IDLE, SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
         Map<RuleDefinition, RuleConfig> configuration = Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(123).excludeEmptyTables(true).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(456).build()
-        );
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(123)
+                                .excludeEmptyTables(true)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(456)
+                                .build());
         testObject = new RuleSetConfig(configuration);
 
         // When
@@ -112,11 +127,18 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigIsParsedAndSetWhenLoadedGivenValidPath() {
         // Given
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
         final var expectedRuleSetConfig = new RuleSetConfig(Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(11).excludeEmptyTables(true).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(22).build()
-        ));
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(11)
+                                .excludeEmptyTables(true)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(22)
+                                .build()));
 
         // When
         final var actualRuleSetConfig = RuleSetConfig.loadUserRuleSetConfig(customRuleSetConfigPath);
@@ -129,10 +151,17 @@ class RuleSetConfigTest {
     void testThatRuleSetConfigIsParsedAndSetUsingDefaultConfigWhenLoadedWithoutAPath() {
         // Given
         final var expectedDefaultRuleSetConfig = new RuleSetConfig(Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(30).build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(15).build(),
-                SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY, ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build()
-        ));
+                SCAN_DYNAMODB_TABLE_IDLE,
+                        ScanDynamodbTableIdleRuleConfig.builder()
+                                .maxIdlePeriodInDays(30)
+                                .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                                .maxIdleTimeoutInMinutes(15)
+                                .build(),
+                SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
+                        ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
+                                .build()));
 
         // When
         final var actualRuleSetConfig = RuleSetConfig.loadUserRuleSetConfig();
@@ -140,5 +169,4 @@ class RuleSetConfigTest {
         // Then
         assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedDefaultRuleSetConfig);
     }
-
 }

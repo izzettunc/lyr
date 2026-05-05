@@ -19,8 +19,7 @@ public class Settings {
 
     public static Settings getAppSettings() {
         if (appSettings == null) {
-            throw new NotYetInitializedException(
-                    "App settings can not be accessed as it is not yet initialized.");
+            throw new NotYetInitializedException("App settings can not be accessed as it is not yet initialized.");
         }
 
         return appSettings;

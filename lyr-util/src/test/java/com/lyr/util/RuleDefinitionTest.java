@@ -1,16 +1,15 @@
 package com.lyr.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.util.exception.rule.UnknownRuleException;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 class RuleDefinitionTest {
 
     @Test
-    void testThatRuleDefinitionCanBeAcquiredUsingNameSuccessfully(){
+    void testThatRuleDefinitionCanBeAcquiredUsingNameSuccessfully() {
         // Given
         final var expectedRuleDefinition = RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 
@@ -22,7 +21,7 @@ class RuleDefinitionTest {
     }
 
     @Test
-    void testThatRuleDefinitionCanBeAcquiredUsingCodeSuccessfully(){
+    void testThatRuleDefinitionCanBeAcquiredUsingCodeSuccessfully() {
         // Given
         final var expectedRuleDefinition = RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 
@@ -34,7 +33,7 @@ class RuleDefinitionTest {
     }
 
     @Test
-    void testThatGivenUnknownRuleNameToAcquireRuleDefinitionUnknownRuleExceptionIsThrown(){
+    void testThatGivenUnknownRuleNameToAcquireRuleDefinitionUnknownRuleExceptionIsThrown() {
         // Given
         final var invalidName = "I am invalid";
 
@@ -45,7 +44,7 @@ class RuleDefinitionTest {
     }
 
     @Test
-    void testThatGivenUnknownRuleCodeToAcquireRuleDefinitionUnknownRuleExceptionIsThrown(){
+    void testThatGivenUnknownRuleCodeToAcquireRuleDefinitionUnknownRuleExceptionIsThrown() {
         // Given
         final var invalidCode = "I am invalid";
 

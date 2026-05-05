@@ -51,8 +51,8 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
 
     @Override
     public ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig copy() {
-       return ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-               .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
-               .build();
+        return ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
+                .build();
     }
 }

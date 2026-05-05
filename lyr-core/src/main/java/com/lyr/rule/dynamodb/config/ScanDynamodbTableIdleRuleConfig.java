@@ -5,9 +5,7 @@ import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
-
 import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

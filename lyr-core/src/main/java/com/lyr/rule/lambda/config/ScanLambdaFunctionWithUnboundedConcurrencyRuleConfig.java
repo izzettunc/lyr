@@ -13,8 +13,7 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements Rul
 
     public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(final Object ignored) {
         // No config available for this rule
-        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
-                .build();
+        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
     }
 
     @Override
@@ -24,7 +23,6 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements Rul
 
     @Override
     public RuleConfig copy() {
-        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
-                .build();
+        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
     }
 }

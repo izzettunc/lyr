@@ -9,7 +9,6 @@ import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeExceptio
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
@@ -72,30 +71,30 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsCopiedCorrectly() {
         // Given
-        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(123).build();
+        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                .maxIdleTimeoutInMinutes(123)
+                .build();
 
         // When
         final var actualCopiedConfig = expectedConfig.copy();
 
         // Then
-        assertThat(actualCopiedConfig)
-                .usingRecursiveComparison()
-                .isEqualTo(expectedConfig);
+        assertThat(actualCopiedConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
         assertThat(actualCopiedConfig).isNotSameAs(expectedConfig);
     }
 
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsConvertedToAMapSuccessfully() {
         // Given
-        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(123).build();
+        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                .maxIdleTimeoutInMinutes(123)
+                .build();
         final var expectedConfigMap = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, "123");
 
         // When
         final var actualConfigMap = expectedConfig.getConfigAsStringMap();
 
         // Then
-        assertThat(actualConfigMap)
-                .usingRecursiveComparison()
-                .isEqualTo(expectedConfigMap);
+        assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);
     }
 }

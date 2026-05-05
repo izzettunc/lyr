@@ -15,8 +15,7 @@ public class ScanAwsEnvironmentRunner {
                 .getUserRuleSetConfigPath()
                 .ifPresentOrElse(RuleSetConfig::loadUserRuleSetConfig, RuleSetConfig::loadUserRuleSetConfig);
 
-        final var rules =
-                RuleSetConfig.getUserRuleSetConfig().getAllAvailableRuleDefinition().stream()
+        final var rules = RuleSetConfig.getUserRuleSetConfig().getAllAvailableRuleDefinition().stream()
                 .map(RuleFactory::createRule)
                 .toList();
 

@@ -5,7 +5,6 @@ import com.lyr.exception.config.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.rule.RuleConfig;
 import com.lyr.util.RuleDefinition;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,7 @@ public class RuleSetConfig {
         ruleDefinitionToRuleConfigMap.putAll(definitionToConfigMap);
     }
 
-    public RuleConfig getConfig(RuleDefinition ruleDefinition) {
+    public RuleConfig getConfig(final RuleDefinition ruleDefinition) {
         if (!ruleDefinitionToRuleConfigMap.containsKey(ruleDefinition)) {
             throw new RuleWithNoConfigException("No config found for rule: " + ruleDefinition.getRuleName());
         }
@@ -45,7 +44,7 @@ public class RuleSetConfig {
         ruleSetConfig = userRuleSetConfig;
     }
 
-    public static RuleSetConfig getUserRuleSetConfig(){
+    public static RuleSetConfig getUserRuleSetConfig() {
         if (ruleSetConfig == null) {
             throw new NotYetInitializedException(
                     "Rule set configuration can not be accessed as it is not yet initialized.");
@@ -53,5 +52,4 @@ public class RuleSetConfig {
 
         return ruleSetConfig;
     }
-
 }

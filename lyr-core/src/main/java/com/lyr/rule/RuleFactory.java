@@ -14,11 +14,20 @@ public class RuleFactory {
     public static Rule createRule(final RuleDefinition ruleDefinition) {
         return switch (ruleDefinition) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
-                new Rule(ruleDefinition, RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition), new ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution());
+                new Rule(
+                        ruleDefinition,
+                        RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition),
+                        new ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution());
             case SCAN_DYNAMODB_TABLE_IDLE ->
-                new Rule(ruleDefinition, RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition), new ScanDynamodbTableIdleRuleExecution());
+                new Rule(
+                        ruleDefinition,
+                        RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition),
+                        new ScanDynamodbTableIdleRuleExecution());
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
-                new Rule(ruleDefinition, RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition), new ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution());
+                new Rule(
+                        ruleDefinition,
+                        RuleSetConfig.getUserRuleSetConfig().getConfig(ruleDefinition),
+                        new ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution());
         };
     }
 }

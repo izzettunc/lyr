@@ -14,9 +14,8 @@ import com.lyr.report.Reporter;
 import com.lyr.report.ReporterFactory;
 import com.lyr.rule.Rule;
 import com.lyr.rule.RuleFactory;
-import java.util.Optional;
-
 import com.lyr.util.RuleDefinition;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +55,8 @@ class ScanAwsEnvironmentRunnerTest {
 
         // Then
         mockedRuleFactory.verify(() -> RuleFactory.createRule(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE), times(1));
-        mockedRuleFactory.verify(() -> RuleFactory.createRule(RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT), times(1));
+        mockedRuleFactory.verify(
+                () -> RuleFactory.createRule(RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT), times(1));
         mockedRuleFactory.verify(
                 () -> RuleFactory.createRule(RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT), times(1));
         verify(mockedRule, times(numberOfDefaultRules)).evaluate();
@@ -66,7 +66,8 @@ class ScanAwsEnvironmentRunnerTest {
     @Test
     void thatThatGivenUserDefinedRuleSetUserDefinedRulesAreCreatedAndEvaluatedAndAReportIsCreated() {
         // Given
-        final var testUserRuleSetAbsolutePath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/cli/runners/testUserConfig.yaml");
+        final var testUserRuleSetAbsolutePath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/cli/runners/testUserConfig.yaml");
         final var numberOfRulesInTestUserRuleSet = 1;
         final var settings = Settings.builder()
                 .userRuleSetConfigPath(Optional.of(testUserRuleSetAbsolutePath))
