@@ -8,7 +8,7 @@ import com.lyr.rule.RuleConfigFactory;
 import com.lyr.util.RuleDefinition;
 import com.lyr.util.exception.rule.UnknownRuleException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -72,7 +72,7 @@ public final class RuleSetConfigParser {
 
     private static Map<RuleDefinition, RuleConfig> generateRuleToRuleConfigFromRawRuleSetMap(
             final Map<String, Object> rawRuleSetMap) {
-        final Map<RuleDefinition, RuleConfig> ruleConfigMap = new HashMap<>();
+        final Map<RuleDefinition, RuleConfig> ruleConfigMap = new EnumMap<>(RuleDefinition.class);
 
         if (rawRuleSetMap == null) {
             return ruleConfigMap;
@@ -86,7 +86,8 @@ public final class RuleSetConfigParser {
             } catch (final UnknownRuleException unknownRuleException) {
                 throw new RuleSetConfigLoadException(
                         String.format(
-                                "Failed to generate rule set config. Exception: %s", unknownRuleException.getMessage()),
+                                RuleSetConfigLoadException.FAILED_GENERATE_RULE_SET_CONFIG,
+                                unknownRuleException.getMessage()),
                         unknownRuleException);
             }
 
@@ -102,7 +103,8 @@ public final class RuleSetConfigParser {
                             exception);
                 } else if (!defaultRulesetConfig.containsKey(ruleDefinition)) {
                     throw new RuleSetConfigLoadException(
-                            String.format("Failed to generate rule set config. Exception: %s", exception.getMessage()),
+                            String.format(
+                                    RuleSetConfigLoadException.FAILED_GENERATE_RULE_SET_CONFIG, exception.getMessage()),
                             exception);
                 }
 

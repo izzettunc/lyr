@@ -14,7 +14,6 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.util.RuleDefinition;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -26,7 +25,7 @@ class RuleSetConfigTest {
 
     @AfterEach
     void afterEach() {
-        testObject = null;
+        testObject = new RuleSetConfig(Map.of());
     }
 
     @Test
@@ -114,7 +113,7 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigSetIsRuleSetConfigGot() {
         // Given
-        final var expectedRuleSetConfig = new RuleSetConfig(new HashMap<>());
+        final var expectedRuleSetConfig = new RuleSetConfig(Map.of());
 
         // When
         RuleSetConfig.setUserRuleSetConfig(expectedRuleSetConfig);

@@ -12,6 +12,7 @@ import com.lyr.report.style.console.ConsoleReportStyler;
 import com.lyr.report.style.console.TitleLevel;
 import com.lyr.report.style.finding.FindingStyler;
 import com.lyr.report.style.finding.StylerFactory;
+import com.lyr.util.RuleDefinition;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,15 +60,17 @@ class ConsoleReporterTest {
                         .build());
 
         // When
-        mockedStylerFactory.when(() -> StylerFactory.getStylerFor(any())).thenReturn(mockedFindingStyler);
-        testObject.report(executions);
+        try (MockedStatic<RuleDefinition> _ = mockStatic(RuleDefinition.class)) {
+            mockedStylerFactory.when(() -> StylerFactory.getStylerFor(any())).thenReturn(mockedFindingStyler);
+            testObject.report(executions);
 
-        // Then
-        verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.PRIMARY, "LYR REPORT");
-        for (int i = 0; i < executions.size(); i++) {
-            final var execution = executions.get(i);
-            verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.SECONDARY, "Report for dummy" + i);
-            verify(mockedFindingStyler).styleForConsole(execution.findings());
+            // Then
+            verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.PRIMARY, "LYR REPORT");
+            for (int i = 0; i < executions.size(); i++) {
+                final var execution = executions.get(i);
+                verify(mockedConsoleReportStyler).buildTitleBlock(TitleLevel.SECONDARY, "Report for dummy" + i);
+                verify(mockedFindingStyler).styleForConsole(execution.findings());
+            }
         }
     }
 }
