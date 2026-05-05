@@ -23,7 +23,6 @@ public class ConsoleReporter implements Reporter {
             final var findingStyler = StylerFactory.getStylerFor(RuleDefinition.definitionByName(execution.name()));
 
             System.out.println(styler.buildTitleBlock(TitleLevel.SECONDARY, "Report for " + execution.name()));
-            System.out.println("Execution configuration:");
             System.out.println(styler.styleExecutionConfiguration(execution.configuration()));
             System.out.println(findingStyler.styleForConsole(execution.findings()));
             System.out.println();

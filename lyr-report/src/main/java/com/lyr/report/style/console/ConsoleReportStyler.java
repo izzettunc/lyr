@@ -21,7 +21,12 @@ public class ConsoleReportStyler {
     }
 
     public String styleExecutionConfiguration(final ImmutableMap<String, String> configuration) {
+        if (configuration.isEmpty()) {
+            return "";
+        }
+
         final StringBuilder builder = new StringBuilder();
+        builder.append(toNewLine("Execution configuration:"));
         for (final Map.Entry<String, String> configEntry : configuration.entrySet()) {
             final var keyValuePair = String.format("%s: %s", configEntry.getKey(), configEntry.getValue());
             builder.append(toNewLine(keyValuePair));

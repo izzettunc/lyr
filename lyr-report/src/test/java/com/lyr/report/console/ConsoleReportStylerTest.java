@@ -2,6 +2,7 @@ package com.lyr.report.console;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableMap;
 import com.lyr.report.style.console.ConsoleReportStyler;
 import com.lyr.report.style.console.TitleLevel;
 import java.util.stream.Stream;
@@ -80,6 +81,37 @@ class ConsoleReportStylerTest {
 
         // When
         final var actualText = ConsoleReportStyler.toNewLine("DUMMY");
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    @Test
+    void testThatStyleExecutionConfigurationWorksCorrectlyGivenValidConfiguration() {
+        // Given
+        final var configuration = ImmutableMap.of("a", "1", "b", "2", "c", "3");
+        final var expectedText = """
+
+                Execution configuration:
+                a: 1
+                b: 2
+                c: 3""";
+
+        // When
+        final var actualText = testObject.styleExecutionConfiguration(configuration);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    @Test
+    void testThatStyleExecutionConfigurationReturnsEmptyStringGivenEmptyConfiguration() {
+        // Given
+        final ImmutableMap<String, String> configuration = ImmutableMap.of();
+        final var expectedText = "";
+
+        // When
+        final var actualText = testObject.styleExecutionConfiguration(configuration);
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);
