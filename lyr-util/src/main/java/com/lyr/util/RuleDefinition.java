@@ -2,6 +2,8 @@ package com.lyr.util;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.lyr.util.exception.rule.UnknownRuleException;
 import lombok.Getter;
 
 @Getter
@@ -31,10 +33,18 @@ public enum RuleDefinition {
     }
 
     public static RuleDefinition definitionByName(final String name) {
+        if (!NAME_TO_DEFINITION_MAP.containsKey(name)) {
+            throw new UnknownRuleException("Given rule is not defined. Rule name: " + name);
+        }
+
         return NAME_TO_DEFINITION_MAP.get(name);
     }
 
     public static RuleDefinition definitionByCode(final String code) {
+        if (!CODE_TO_DEFINITION_MAP.containsKey(code)) {
+            throw new UnknownRuleException("Given rule is not defined. Rule code: " + code);
+        }
+
         return CODE_TO_DEFINITION_MAP.get(code);
     }
 }
