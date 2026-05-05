@@ -14,4 +14,6 @@ public interface RuleConfig {
     }
 
     Map<String, String> getConfigAsStringMap();
+
+    RuleConfig copy();
 }

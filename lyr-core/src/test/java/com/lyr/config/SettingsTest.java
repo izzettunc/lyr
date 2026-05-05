@@ -3,7 +3,7 @@ package com.lyr.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.lyr.exception.config.AppSettingsNotYetInitializedException;
+import com.lyr.exception.config.NotYetInitializedException;
 import com.lyr.report.ReportType;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class SettingsTest {
 
         // When & Then
         assertThatThrownBy(Settings::getAppSettings)
-                .isInstanceOf(AppSettingsNotYetInitializedException.class)
+                .isInstanceOf(NotYetInitializedException.class)
                 .hasMessage("App settings can not be accessed as it is not yet initialized.");
     }
 

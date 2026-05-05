@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
@@ -64,5 +65,11 @@ public final class TestUtil {
         }
 
         return path.toString();
+    }
+
+    public static void resetUserRuleSetConfigByLoadingEmptyFile() {
+//        final var emptyUserRuleSetConfigAbsolutePath =
+//                TestUtil.getAbsoluteFilePathOfResource("com/lyr/emptyUserRuleSetConfig.yaml");
+//        RuleSetConfigLoader.loadUserRuleSetConfig(emptyUserRuleSetConfigAbsolutePath);
     }
 }

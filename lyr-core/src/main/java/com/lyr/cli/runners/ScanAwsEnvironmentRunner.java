@@ -11,9 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScanAwsEnvironmentRunner {
     public static void run() {
-        Settings.getAppSettings().getUserRuleSetConfigPath().ifPresent(RuleSetConfig::loadUserRuleSetConfig);
+        Settings.getAppSettings()
+                .getUserRuleSetConfigPath()
+                .ifPresentOrElse(RuleSetConfig::loadUserRuleSetConfig, RuleSetConfig::loadUserRuleSetConfig);
 
-        final var rules = RuleSetConfig.getInstance().getRuleToRuleConfigMap().keySet().stream()
+        final var rules =
+                RuleSetConfig.getUserRuleSetConfig().getAllAvailableRuleDefinition().stream()
                 .map(RuleFactory::createRule)
                 .toList();
 

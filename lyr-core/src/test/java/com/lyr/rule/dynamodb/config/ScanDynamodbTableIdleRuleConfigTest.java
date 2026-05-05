@@ -92,4 +92,51 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expectedRuleConfig);
     }
+
+    @Test
+    void testThatScanDynamodbTableIdleRuleConfigIsCopiedCorrectly() {
+        // Given
+        final var expectedConfig = ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(123).excludeEmptyTables(true).build();
+        final var expectedDefaultConfig = ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(111).build();
+
+        // When
+        final var actualCopiedConfig = expectedConfig.copy();
+        final var actualCopiedDefaultConfig = expectedDefaultConfig.copy();
+
+        // Then
+        assertThat(actualCopiedConfig)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConfig);
+        assertThat(actualCopiedConfig).isNotSameAs(expectedConfig);
+
+        assertThat(actualCopiedDefaultConfig)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedDefaultConfig);
+        assertThat(actualCopiedDefaultConfig).isNotSameAs(expectedDefaultConfig);
+    }
+
+    @Test
+    void testThatScanDynamodbTableIdleRuleConfigIsConvertedToAMapSuccessfully() {
+        // Given
+        final var expectedConfig = ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(123).excludeEmptyTables(true).build();
+        final var expectedDefaultConfig = ScanDynamodbTableIdleRuleConfig.builder().maxIdlePeriodInDays(111).build();
+        final var expectedConfigMap = Map.of(
+                MAX_IDLE_PERIOD_IN_DAYS, "123",
+                EXCLUDE_EMPTY_TABLES, "true");
+        final var expectedDefaultConfigMap = Map.of(
+                MAX_IDLE_PERIOD_IN_DAYS, "111",
+                EXCLUDE_EMPTY_TABLES, "false");
+
+        // When
+        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualDefaultConfigMap = expectedDefaultConfig.getConfigAsStringMap();
+
+        // Then
+        assertThat(actualConfigMap)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConfigMap);
+        assertThat(actualDefaultConfigMap)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedDefaultConfigMap);
+    }
 }

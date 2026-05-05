@@ -9,15 +9,18 @@ import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeExceptio
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
+
+    private static final String MAX_IDLE_TIMEOUT_IN_MINUTES = "maxIdleTimeoutInMinutes";
 
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsParsedCorrectly() {
         // Given
         final int maxIdleTimeoutInMinutes = 15;
-        final Map<String, Integer> config = Map.of("maxIdleTimeoutInMinutes", maxIdleTimeoutInMinutes);
+        final Map<String, Integer> config = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, maxIdleTimeoutInMinutes);
         final RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
                 .build();
@@ -58,9 +61,41 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     @Test
     void
             testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsBadConfigExceptionWhenMaxIdleTimeoutInMinutesIsNegative() {
-        final Map<String, Integer> config = Map.of("maxIdleTimeoutInMinutes", -1);
+        // Given
+        final Map<String, Integer> config = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, -1);
 
+        // When & Then
         assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config))
                 .isInstanceOf(BadRuleConfigException.class);
+    }
+
+    @Test
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsCopiedCorrectly() {
+        // Given
+        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(123).build();
+
+        // When
+        final var actualCopiedConfig = expectedConfig.copy();
+
+        // Then
+        assertThat(actualCopiedConfig)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConfig);
+        assertThat(actualCopiedConfig).isNotSameAs(expectedConfig);
+    }
+
+    @Test
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsConvertedToAMapSuccessfully() {
+        // Given
+        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().maxIdleTimeoutInMinutes(123).build();
+        final var expectedConfigMap = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, "123");
+
+        // When
+        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+
+        // Then
+        assertThat(actualConfigMap)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedConfigMap);
     }
 }

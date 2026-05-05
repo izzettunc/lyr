@@ -11,13 +11,20 @@ import lombok.Getter;
 @Getter
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements RuleConfig {
 
-    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(final Object ignore) {
+    public static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig parse(final Object ignored) {
         // No config available for this rule
-        return null;
+        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
+                .build();
     }
 
     @Override
     public Map<String, String> getConfigAsStringMap() {
         return Map.of();
+    }
+
+    @Override
+    public RuleConfig copy() {
+        return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder()
+                .build();
     }
 }

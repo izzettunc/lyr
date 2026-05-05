@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class FileUtilsTest {
 
-    private static final String resourceFilePath = "someResourceFile.txt";
+    private static final String resourceFilePath = "com/lyr/someResourceFile.txt";
     private static final String expectedFileContent = "Hello World!";
 
     @Test
@@ -48,7 +48,7 @@ class FileUtilsTest {
     @Test
     void testThatFileUtilReturnsAnInputStreamOfASystemFileGivenAnRelativePathSuccessfully() {
         // Given
-        final var resourceRelativePath = "src/test/resources/someResourceFile.txt";
+        final var resourceRelativePath = "src/test/resources/com/lyr/someResourceFile.txt";
         // When
         try (var inputStream = FileUtils.getInputStreamFromSystem(resourceRelativePath)) {
             var fileContents = IOUtils.toString(inputStream, StandardCharsets.UTF_8);

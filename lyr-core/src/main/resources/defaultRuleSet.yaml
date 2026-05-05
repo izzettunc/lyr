@@ -3,7 +3,6 @@
 # - validate.<service>.<resource>.<check>: <parameters>
 scan.dynamodb.table.idle:
   maxIdlePeriodInDays: 30
-  excludeEmptyTables: true
 scan.glue.session.activeWithLongIdleTimeout:
   maxIdleTimeoutInMinutes: 15
 scan.lambda.function.withUnboundedConcurrency:

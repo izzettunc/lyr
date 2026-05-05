@@ -48,4 +48,11 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
     public Map<String, String> getConfigAsStringMap() {
         return Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, maxIdleTimeoutInMinutes.toString());
     }
+
+    @Override
+    public ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig copy() {
+       return ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+               .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
+               .build();
+    }
 }

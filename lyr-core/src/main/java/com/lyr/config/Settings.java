@@ -1,6 +1,6 @@
 package com.lyr.config;
 
-import com.lyr.exception.config.AppSettingsNotYetInitializedException;
+import com.lyr.exception.config.NotYetInitializedException;
 import com.lyr.report.ReportType;
 import java.util.Optional;
 import lombok.Builder;
@@ -19,7 +19,7 @@ public class Settings {
 
     public static Settings getAppSettings() {
         if (appSettings == null) {
-            throw new AppSettingsNotYetInitializedException(
+            throw new NotYetInitializedException(
                     "App settings can not be accessed as it is not yet initialized.");
         }
 

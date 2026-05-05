@@ -5,7 +5,9 @@ import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
 import com.lyr.rule.RuleConfig;
+
 import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,5 +53,13 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
         return Map.of(
                 MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, maxIdlePeriodInDays.toString(),
                 EXCLUDE_EMPTY_TABLES_CONFIG_KEY, excludeEmptyTables.toString());
+    }
+
+    @Override
+    public ScanDynamodbTableIdleRuleConfig copy() {
+        return ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(maxIdlePeriodInDays)
+                .excludeEmptyTables(excludeEmptyTables)
+                .build();
     }
 }
