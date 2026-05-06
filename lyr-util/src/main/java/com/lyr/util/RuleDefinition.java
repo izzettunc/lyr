@@ -7,11 +7,11 @@ import lombok.Getter;
 
 @Getter
 public enum RuleDefinition {
-    SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT("scan.glue.session.activeWithLongIdleTimeout", "1"),
+    SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT("scan.glue.session.activeWithLongIdleTimeout", "WST-GLU-001"),
 
-    SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "2"),
+    SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "WST-DDB-001"),
 
-    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "3");
+    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "WST-LMD-001");
 
     private static final Map<String, RuleDefinition> NAME_TO_DEFINITION_MAP = new HashMap<>();
     private static final Map<String, RuleDefinition> CODE_TO_DEFINITION_MAP = new HashMap<>();
