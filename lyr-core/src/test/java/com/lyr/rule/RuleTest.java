@@ -34,7 +34,7 @@ class RuleTest {
     }
 
     @Test
-    void testThatEvaluatingScanRuleCachesAndReturnsTheOutcome() {
+    void testThatEvaluatingRuleCachesAndReturnsTheExecution() {
         // Given
         final var expectedFindings =
                 ImmutableList.of(Finding.byId(TestUtil.DUMMY_STRING), Finding.byId(TestUtil.DUMMY2_STRING));
@@ -65,7 +65,7 @@ class RuleTest {
     }
 
     @Test
-    void testThatEvaluatingScanRuleFiveTimesJustReturnsCachedOutcome() {
+    void testThatEvaluatingRuleFiveTimesJustReturnsCachedExecution() {
         // Given
         final var expectedFindings =
                 ImmutableList.of(Finding.byId(TestUtil.DUMMY_STRING), Finding.byId(TestUtil.DUMMY2_STRING));
@@ -83,14 +83,14 @@ class RuleTest {
         assertThat(testObject.execution).isNull();
 
         when(ruleExecutionStrategy.execute(ruleConfig)).thenReturn(expectedFindings);
-        final var initialOutcome = testObject.evaluate();
+        final var initialExecution = testObject.evaluate();
 
         assertThat(testObject.execution)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedExecution);
 
-        assertThat(initialOutcome)
+        assertThat(initialExecution)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedExecution);
@@ -117,7 +117,7 @@ class RuleTest {
     }
 
     @Test
-    void testThatReevaluateCachesAndReturnsTheOutcome() {
+    void testThatReevaluateCachesAndReturnsTheExecution() {
         // Given
         final var expectedFindings =
                 ImmutableList.of(Finding.byId(TestUtil.DUMMY_STRING), Finding.byId(TestUtil.DUMMY2_STRING));
@@ -148,7 +148,7 @@ class RuleTest {
     }
 
     @Test
-    void testThatReevaluatingScanRuleMultipleTimeChangesOutcomeEachTime() {
+    void testThatReevaluatingRuleMultipleTimeChangesExecutionEachTime() {
         // Given
         final var expectedFindings =
                 ImmutableList.of(Finding.byId(TestUtil.DUMMY_STRING), Finding.byId(TestUtil.DUMMY2_STRING));

@@ -34,16 +34,16 @@ public class ConsoleReportStyler {
         return builder.toString();
     }
 
-    public static String styleFindingReport(final String outcome, final Sentiment sentiment) {
+    public static String styleFindingReport(final String finding, final Sentiment sentiment) {
         return switch (sentiment) {
-            case POSITIVE -> String.format("- [✅] %s", outcome);
-            case NEUTRAL -> String.format("- [⚠️] %s", outcome);
-            case NEGATIVE -> String.format("- [❌] %s", outcome);
+            case POSITIVE -> String.format("- [✅] %s", finding);
+            case NEUTRAL -> String.format("- [⚠️] %s", finding);
+            case NEGATIVE -> String.format("- [❌] %s", finding);
         };
     }
 
-    public static String styleFindingReport(final String outcome, final boolean isPositive) {
-        return styleFindingReport(outcome, isPositive ? Sentiment.POSITIVE : Sentiment.NEGATIVE);
+    public static String styleFindingReport(final String finding, final boolean isPositive) {
+        return styleFindingReport(finding, isPositive ? Sentiment.POSITIVE : Sentiment.NEGATIVE);
     }
 
     public static String toNewLine(final String text) {

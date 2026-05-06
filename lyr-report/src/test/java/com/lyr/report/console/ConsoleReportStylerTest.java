@@ -48,30 +48,30 @@ class ConsoleReportStylerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("outcomeWithSentimentAndResultedStyledOutcomes")
-    void testThatOutcomeStyledCorrectlyDependingOnTheSentiment(
-            final String expectedOutcome, final String outcome, final Sentiment sentiment) {
-        // Given expectedOutcome, outcome and sentiment
+    @MethodSource("findingWithSentimentAndResultedStyledFindings")
+    void testThatFindingStyledCorrectlyDependingOnTheSentiment(
+            final String expectedFinding, final String finding, final Sentiment sentiment) {
+        // Given expectedFinding, finding and sentiment
         // When
-        final var actualOutcome = ConsoleReportStyler.styleFindingReport(outcome, sentiment);
+        final var actualFinding = ConsoleReportStyler.styleFindingReport(finding, sentiment);
 
         // Then
-        assertThat(actualOutcome).isEqualTo(expectedOutcome);
+        assertThat(actualFinding).isEqualTo(expectedFinding);
     }
 
     @Test
-    void testThatOutcomeStyledCorrectlyDependingOnBooleanPositivity() {
+    void testThatFindingStyledCorrectlyDependingOnBooleanPositivity() {
         // Given
-        final var expectedPositiveOutcome = "- [✅] DUMMY";
-        final var expectedNegativeOutcome = "- [❌] DUMMY";
+        final var expectedPositiveFinding = "- [✅] DUMMY";
+        final var expectedNegativeFinding = "- [❌] DUMMY";
 
         // When
-        final var actualPositiveOutcome = ConsoleReportStyler.styleFindingReport("DUMMY", true);
-        final var actualNegativeOutcome = ConsoleReportStyler.styleFindingReport("DUMMY", false);
+        final var actualPositiveFinding = ConsoleReportStyler.styleFindingReport("DUMMY", true);
+        final var actualNegativeFinding = ConsoleReportStyler.styleFindingReport("DUMMY", false);
 
         // Then
-        assertThat(actualPositiveOutcome).isEqualTo(expectedPositiveOutcome);
-        assertThat(actualNegativeOutcome).isEqualTo(expectedNegativeOutcome);
+        assertThat(actualPositiveFinding).isEqualTo(expectedPositiveFinding);
+        assertThat(actualNegativeFinding).isEqualTo(expectedNegativeFinding);
     }
 
     @Test
@@ -117,7 +117,7 @@ class ConsoleReportStylerTest {
         assertThat(actualText).isEqualTo(expectedText);
     }
 
-    public static Stream<Arguments> outcomeWithSentimentAndResultedStyledOutcomes() {
+    public static Stream<Arguments> findingWithSentimentAndResultedStyledFindings() {
         return Stream.of(
                 Arguments.of("- [✅] DUMMY", "DUMMY", Sentiment.POSITIVE),
                 Arguments.of("- [⚠️] DUMMY", "DUMMY", Sentiment.NEUTRAL),

@@ -73,7 +73,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         final var timeWindow = 1;
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
         final var optTable = createOptionalDescribeTableResponse(123L);
-        final var expectedOutcome = createImmutableListOfFindings(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -88,13 +88,13 @@ class ScanDynamodbTableIdleRuleImplTest {
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 
     @Test
@@ -106,7 +106,7 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .build();
         final var timeWindow = 1;
         final List<String> listOfTables = List.of();
-        final var expectedOutcome = ImmutableList.of();
+        final var expectedFindings = ImmutableList.of();
 
         // When
         mockedCloudWatchUtil
@@ -114,13 +114,13 @@ class ScanDynamodbTableIdleRuleImplTest {
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 
     @Test
@@ -138,7 +138,7 @@ class ScanDynamodbTableIdleRuleImplTest {
         final var listOfTables =
                 List.of(TABLE_1, tableNameWithReadCon, tableNameWithWriteCon, TABLE_4, tableNameWithBothCon);
         final var optTable = createOptionalDescribeTableResponse(123L);
-        final var expectedOutcome = createImmutableListOfFindings(TABLE_1, TABLE_4);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -159,13 +159,13 @@ class ScanDynamodbTableIdleRuleImplTest {
                         or(eq(tableNameWithWriteCon), eq(tableNameWithBothCon)), any(), any(), anyInt()))
                 .thenReturn(dataSize);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 
     @Test
@@ -181,7 +181,7 @@ class ScanDynamodbTableIdleRuleImplTest {
                 TABLE_WITH_DATA_OTHER, TABLE_4);
         final var optTableWithData = createOptionalDescribeTableResponse(123L);
         final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
-        final var expectedOutcome = createImmutableListOfFindings(TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
         // When
         mockedCloudWatchUtil
@@ -199,13 +199,13 @@ class ScanDynamodbTableIdleRuleImplTest {
         when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 
     @Test
@@ -221,7 +221,7 @@ class ScanDynamodbTableIdleRuleImplTest {
                 TABLE_WITH_DATA_OTHER, TABLE_4);
         final var optTableWithData = createOptionalDescribeTableResponse(123L);
         final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
-        final var expectedOutcome =
+        final var expectedFindings =
                 createImmutableListOfFindings(TABLE_1, TABLE_4, TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
         // When
@@ -240,13 +240,13 @@ class ScanDynamodbTableIdleRuleImplTest {
         when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 
     @Test
@@ -263,7 +263,7 @@ class ScanDynamodbTableIdleRuleImplTest {
                 TABLE_1, tableNameThatDoesntExist,
                 otherTableNameThatDoesntExists, TABLE_4);
         final var optTable = createOptionalDescribeTableResponse(0L);
-        final var expectedOutcome = createImmutableListOfFindings(TABLE_1, TABLE_4);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
         // When
         mockedCloudWatchUtil
@@ -281,12 +281,12 @@ class ScanDynamodbTableIdleRuleImplTest {
         when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTable);
 
-        final var actualOutcome = testObject.execute(config);
+        final var actualFindings = testObject.execute(config);
 
         // Then
-        assertThat(actualOutcome)
+        assertThat(actualFindings)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(expectedOutcome);
+                .isEqualTo(expectedFindings);
     }
 }
