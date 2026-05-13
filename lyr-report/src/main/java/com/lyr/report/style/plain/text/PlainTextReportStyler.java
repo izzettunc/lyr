@@ -1,11 +1,11 @@
-package com.lyr.report.style.console;
+package com.lyr.report.style.plain.text;
 
 import com.google.common.collect.ImmutableMap;
-import com.lyr.report.console.Sentiment;
+import com.lyr.report.plain.text.Sentiment;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
-public class ConsoleReportStyler {
+public class PlainTextReportStyler {
 
     private static final char FIRST_LEVEL_BLOCK_CHAR = '#';
     private static final char SECOND_LEVEL_BLOCK_CHAR = '=';

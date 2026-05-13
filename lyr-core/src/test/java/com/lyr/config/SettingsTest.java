@@ -17,7 +17,7 @@ class SettingsTest {
 
         // Then
         assertThat(actualSettings).hasNoNullFieldsOrProperties();
-        assertThat(actualSettings.getReportType()).isEqualTo(ReportType.CONSOLE);
+        assertThat(actualSettings.getReportType()).isEqualTo(ReportType.PLAIN_TEXT);
         assertThat(actualSettings.getUserRuleSetConfigPath()).isEmpty();
     }
 

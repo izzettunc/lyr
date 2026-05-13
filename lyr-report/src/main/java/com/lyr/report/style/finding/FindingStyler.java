@@ -6,5 +6,5 @@ import java.util.List;
 @SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface FindingStyler {
 
-    String styleForConsole(List<Finding> findings);
+    String styleForPlainText(List<Finding> findings);
 }

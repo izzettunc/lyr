@@ -15,7 +15,7 @@ public class Settings {
     final Optional<String> userRuleSetConfigPath = Optional.empty();
 
     @Builder.Default
-    final ReportType reportType = ReportType.CONSOLE;
+    final ReportType reportType = ReportType.PLAIN_TEXT;
 
     public static Settings getAppSettings() {
         if (appSettings == null) {

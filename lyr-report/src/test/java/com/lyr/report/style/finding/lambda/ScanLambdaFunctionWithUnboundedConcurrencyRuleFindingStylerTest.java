@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
 import com.lyr.report.TestUtil;
-import com.lyr.report.console.Sentiment;
-import com.lyr.report.style.console.ConsoleReportStyler;
+import com.lyr.report.plain.text.Sentiment;
+import com.lyr.report.style.plain.text.PlainTextReportStyler;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,19 +19,19 @@ import org.mockito.Mockito;
 
 class ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStylerTest {
 
-    static final MockedStatic<ConsoleReportStyler> mockedConsoleReportStyler =
-            mockStatic(ConsoleReportStyler.class, Mockito.CALLS_REAL_METHODS);
+    static final MockedStatic<PlainTextReportStyler> mockedPlainTextReportStyler =
+            mockStatic(PlainTextReportStyler.class, Mockito.CALLS_REAL_METHODS);
     ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler testObject;
 
     @BeforeEach
     public void beforeEach() {
         testObject = new ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler();
-        mockedConsoleReportStyler.reset();
+        mockedPlainTextReportStyler.reset();
     }
 
     @AfterAll
     static void afterAll() {
-        mockedConsoleReportStyler.closeOnDemand();
+        mockedPlainTextReportStyler.closeOnDemand();
     }
 
     @Test
@@ -43,15 +43,15 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStylerTest {
                 "Lambda function 'dummy2' has unbounded concurrency.");
 
         // When
-        final var actualResult = testObject.styleForConsole(findings);
+        final var actualResult = testObject.styleForPlainText(findings);
 
         // Then
         assertThat(actualResult).containsSubsequence(expectedRawLines);
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
                 times(expectedRawLines.size()));
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 
     @Test
@@ -61,14 +61,14 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStylerTest {
         final var expectedRawLines = List.of("No lambda found with unbounded concurrency.");
 
         // When
-        final var actualResult = testObject.styleForConsole(findings);
+        final var actualResult = testObject.styleForPlainText(findings);
 
         // Then
         assertThat(actualResult).containsSubsequence(expectedRawLines);
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
                 times(expectedRawLines.size()));
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 }

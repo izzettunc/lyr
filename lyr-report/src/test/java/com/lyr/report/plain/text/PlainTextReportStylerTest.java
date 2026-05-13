@@ -1,22 +1,22 @@
-package com.lyr.report.console;
+package com.lyr.report.plain.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
-import com.lyr.report.style.console.ConsoleReportStyler;
-import com.lyr.report.style.console.TitleLevel;
+import com.lyr.report.style.plain.text.PlainTextReportStyler;
+import com.lyr.report.style.plain.text.TitleLevel;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ConsoleReportStylerTest {
+class PlainTextReportStylerTest {
 
-    ConsoleReportStyler testObject = new ConsoleReportStyler();
+    PlainTextReportStyler testObject = new PlainTextReportStyler();
 
     @Test
-    void testThatConsoleReportStylerStylesFirstLevelTitleCorrectly() {
+    void testThatPlainTextReportStylerStylesFirstLevelTitleCorrectly() {
         // Given
         final var expectedResult = """
 
@@ -33,7 +33,7 @@ class ConsoleReportStylerTest {
     }
 
     @Test
-    void testThatConsoleReportStylerStylesSecondLevelTitleCorrectly() {
+    void testThatPlainTextReportStylerStylesSecondLevelTitleCorrectly() {
         // Given
         final var expectedResult = """
 
@@ -53,7 +53,7 @@ class ConsoleReportStylerTest {
             final String expectedFinding, final String finding, final Sentiment sentiment) {
         // Given expectedFinding, finding and sentiment
         // When
-        final var actualFinding = ConsoleReportStyler.styleFindingReport(finding, sentiment);
+        final var actualFinding = PlainTextReportStyler.styleFindingReport(finding, sentiment);
 
         // Then
         assertThat(actualFinding).isEqualTo(expectedFinding);
@@ -66,8 +66,8 @@ class ConsoleReportStylerTest {
         final var expectedNegativeFinding = "- [❌] DUMMY";
 
         // When
-        final var actualPositiveFinding = ConsoleReportStyler.styleFindingReport("DUMMY", true);
-        final var actualNegativeFinding = ConsoleReportStyler.styleFindingReport("DUMMY", false);
+        final var actualPositiveFinding = PlainTextReportStyler.styleFindingReport("DUMMY", true);
+        final var actualNegativeFinding = PlainTextReportStyler.styleFindingReport("DUMMY", false);
 
         // Then
         assertThat(actualPositiveFinding).isEqualTo(expectedPositiveFinding);
@@ -80,7 +80,7 @@ class ConsoleReportStylerTest {
         final var expectedText = "\nDUMMY";
 
         // When
-        final var actualText = ConsoleReportStyler.toNewLine("DUMMY");
+        final var actualText = PlainTextReportStyler.toNewLine("DUMMY");
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);

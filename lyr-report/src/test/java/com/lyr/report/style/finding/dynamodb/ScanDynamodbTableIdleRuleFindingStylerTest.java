@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mockStatic;
 
 import com.lyr.report.TestUtil;
-import com.lyr.report.console.Sentiment;
-import com.lyr.report.style.console.ConsoleReportStyler;
+import com.lyr.report.plain.text.Sentiment;
+import com.lyr.report.style.plain.text.PlainTextReportStyler;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,19 +17,19 @@ import org.mockito.Mockito;
 
 class ScanDynamodbTableIdleRuleFindingStylerTest {
 
-    static final MockedStatic<ConsoleReportStyler> mockedConsoleReportStyler =
-            mockStatic(ConsoleReportStyler.class, Mockito.CALLS_REAL_METHODS);
+    static final MockedStatic<PlainTextReportStyler> mockedPlainTextReportStyler =
+            mockStatic(PlainTextReportStyler.class, Mockito.CALLS_REAL_METHODS);
     ScanDynamodbTableIdleRuleFindingStyler testObject;
 
     @BeforeEach
     public void beforeEach() {
         testObject = new ScanDynamodbTableIdleRuleFindingStyler();
-        mockedConsoleReportStyler.reset();
+        mockedPlainTextReportStyler.reset();
     }
 
     @AfterAll
     static void afterAll() {
-        mockedConsoleReportStyler.closeOnDemand();
+        mockedPlainTextReportStyler.closeOnDemand();
     }
 
     @Test
@@ -41,15 +41,15 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
                 "DynamoDB table 'dummy2' has been idle longer than max idle period.");
 
         // When
-        final var actualResult = testObject.styleForConsole(findings);
+        final var actualResult = testObject.styleForPlainText(findings);
 
         // Then
         assertThat(actualResult).containsSubsequence(expectedRawLines);
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
                 Mockito.times(expectedRawLines.size()));
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
     }
 
     @Test
@@ -60,14 +60,14 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
                 List.of("No idle DynamoDB table found that has been idle longer than max idle period.");
 
         // When
-        final var actualResult = testObject.styleForConsole(findings);
+        final var actualResult = testObject.styleForPlainText(findings);
 
         // Then
         assertThat(actualResult).containsSubsequence(expectedRawLines);
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
                 Mockito.times(expectedRawLines.size()));
-        mockedConsoleReportStyler.verify(
-                () -> ConsoleReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
+        mockedPlainTextReportStyler.verify(
+                () -> PlainTextReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
     }
 }

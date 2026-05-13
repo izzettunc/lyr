@@ -1,4 +1,4 @@
-package com.lyr.report.console;
+package com.lyr.report.plain.text;
 
 public enum Sentiment {
     POSITIVE,

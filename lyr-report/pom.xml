@@ -19,6 +19,12 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- Parser dependencies -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Utility dependencies -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -62,5 +68,23 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+
+            <testResource>
+                <directory>${maven.multiModuleProjectDirectory}/doc/schema</directory>
+            </testResource>
+        </testResources>
+    </build>
 </project>

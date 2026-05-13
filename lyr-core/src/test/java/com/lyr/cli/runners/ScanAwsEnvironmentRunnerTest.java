@@ -1,6 +1,5 @@
 package com.lyr.cli.runners;
 
-import static com.lyr.TestUtil.resetUserRuleSetConfigByLoadingEmptyFile;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -33,13 +32,13 @@ class ScanAwsEnvironmentRunnerTest {
         reset(mockedRule, mockedReporter);
         mockedRuleFactory.reset();
         mockedReporterFactory.reset();
-        resetUserRuleSetConfigByLoadingEmptyFile();
         Settings.setAppSettings(null);
     }
 
     @AfterAll
     static void afterAll() {
         mockedRuleFactory.closeOnDemand();
+        mockedReporterFactory.closeOnDemand();
     }
 
     @Test

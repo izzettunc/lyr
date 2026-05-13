@@ -65,10 +65,4 @@ public final class TestUtil {
 
         return path.toString();
     }
-
-    public static void resetUserRuleSetConfigByLoadingEmptyFile() {
-        //        final var emptyUserRuleSetConfigAbsolutePath =
-        //                TestUtil.getAbsoluteFilePathOfResource("com/lyr/emptyUserRuleSetConfig.yaml");
-        //        RuleSetConfigLoader.loadUserRuleSetConfig(emptyUserRuleSetConfigAbsolutePath);
-    }
 }

@@ -1,4 +1,4 @@
-package com.lyr.report.style.console;
+package com.lyr.report.style.plain.text;
 
 public enum TitleLevel {
     PRIMARY,
