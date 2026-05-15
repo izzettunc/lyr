@@ -102,10 +102,10 @@ class RuleSetConfigTest {
     @Test
     void testThatNotYetInitializedExceptionThrownWhenRuleSetConfigGetRunBeforeSet() {
         // Given
-        RuleSetConfig.setUserRuleSetConfig(null);
+        RuleSetConfig.setRuleSetConfig(null);
 
         // When & Then
-        assertThatThrownBy(RuleSetConfig::getUserRuleSetConfig)
+        assertThatThrownBy(RuleSetConfig::getRuleSetConfig)
                 .isInstanceOf(NotYetInitializedException.class)
                 .hasMessage("Rule set configuration can not be accessed as it is not yet initialized.");
     }
@@ -116,8 +116,8 @@ class RuleSetConfigTest {
         final var expectedRuleSetConfig = new RuleSetConfig(Map.of());
 
         // When
-        RuleSetConfig.setUserRuleSetConfig(expectedRuleSetConfig);
-        final var actualRuleSetConfig = RuleSetConfig.getUserRuleSetConfig();
+        RuleSetConfig.setRuleSetConfig(expectedRuleSetConfig);
+        final var actualRuleSetConfig = RuleSetConfig.getRuleSetConfig();
 
         // Then
         assertThat(actualRuleSetConfig).isSameAs(expectedRuleSetConfig);
@@ -163,7 +163,7 @@ class RuleSetConfigTest {
                                 .build()));
 
         // When
-        final var actualRuleSetConfig = RuleSetConfig.loadUserRuleSetConfig();
+        final var actualRuleSetConfig = RuleSetConfig.loadDefaultRuleSetConfig();
 
         // Then
         assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedDefaultRuleSetConfig);

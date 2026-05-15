@@ -40,7 +40,7 @@ class RuleFactoryTest {
         // Given
         // ruleDefinition, expectedTypeOfRule, expectedTypeOfRuleImpl
         try (MockedStatic<RuleSetConfig> configMockedStatic = Mockito.mockStatic(RuleSetConfig.class)) {
-            configMockedStatic.when(RuleSetConfig::getUserRuleSetConfig).thenReturn(mockedRuleSetConfig);
+            configMockedStatic.when(RuleSetConfig::getRuleSetConfig).thenReturn(mockedRuleSetConfig);
             when(mockedRuleSetConfig.getConfig(ruleDefinition)).thenReturn(mockedRuleConfig);
 
             // When

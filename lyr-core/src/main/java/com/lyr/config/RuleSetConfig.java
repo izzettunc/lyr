@@ -31,20 +31,20 @@ public class RuleSetConfig {
     }
 
     public static RuleSetConfig loadUserRuleSetConfig(final String path) {
-        setUserRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseRuleSetConfig(path)));
-        return getUserRuleSetConfig();
+        setRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseRuleSetConfig(path)));
+        return getRuleSetConfig();
     }
 
-    public static RuleSetConfig loadUserRuleSetConfig() {
-        setUserRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseDefaultRuleSetConfig()));
-        return getUserRuleSetConfig();
+    public static RuleSetConfig loadDefaultRuleSetConfig() {
+        setRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseDefaultRuleSetConfig()));
+        return getRuleSetConfig();
     }
 
-    public static void setUserRuleSetConfig(final RuleSetConfig userRuleSetConfig) {
+    public static void setRuleSetConfig(final RuleSetConfig userRuleSetConfig) {
         configInstance = userRuleSetConfig;
     }
 
-    public static RuleSetConfig getUserRuleSetConfig() {
+    public static RuleSetConfig getRuleSetConfig() {
         if (configInstance == null) {
             throw new NotYetInitializedException(
                     "Rule set configuration can not be accessed as it is not yet initialized.");
