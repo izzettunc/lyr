@@ -1,0 +1,3 @@
+scan.glue.session.activeWithLongIdleTimeout:
+  maxIdleTimeoutInMinutes: 15
+scan.lambda.function.withUnboundedConcurrency:

@@ -1,0 +1,8 @@
+# Syntax:
+# - scan.<service>.<resource>.<check>: <parameters>
+# - validate.<service>.<resource>.<check>: <parameters>
+scan.dynamodb.table.idle:
+  maxIdlePeriodInDays: 30
+scan.glue.session.activeWithLongIdleTimeout:
+  maxIdleTimeoutInMinutes: 15
+scan.lambda.function.withUnboundedConcurrency:
