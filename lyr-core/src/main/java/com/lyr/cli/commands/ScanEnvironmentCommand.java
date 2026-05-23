@@ -3,9 +3,11 @@ package com.lyr.cli.commands;
 import static picocli.CommandLine.Option;
 
 import com.lyr.cli.runners.ScanAwsEnvironmentRunner;
+import com.lyr.cli.util.LyrLogLevel;
 import com.lyr.cli.util.VersionProvider;
 import com.lyr.config.Settings;
 import com.lyr.report.ReportType;
+import com.lyr.util.log.LogUtil;
 import java.util.Optional;
 import picocli.CommandLine.Command;
 
@@ -29,13 +31,20 @@ public class ScanEnvironmentCommand {
             @Option(
                             names = {"-r", "--reportType"},
                             description = "Path to user config file that specifies the ruleset")
-                    final Optional<ReportType> optionalReportType) {
+                    final Optional<ReportType> optionalReportType,
+            @Option(
+                            names = {"-l", "--logLevel"},
+                            description = "Log level that will be used while running the application")
+                    final Optional<LyrLogLevel> optionalLogLevel) {
 
         final var settingsBuilder = Settings.builder();
         settingsBuilder.userRuleSetConfigPath(optionalUserRuleSetConfigFilePath);
         optionalReportType.ifPresent(settingsBuilder::reportType);
+        optionalLogLevel.ifPresent(lyrLogLevel -> settingsBuilder.logLevel(lyrLogLevel.asLogbackLogLevel()));
         final var settings = settingsBuilder.build();
         Settings.setAppSettings(settings);
+
+        LogUtil.setLogLevelAtRoot(Settings.getAppSettings().getLogLevel());
 
         ScanAwsEnvironmentRunner.run();
     }
