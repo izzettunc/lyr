@@ -8,7 +8,9 @@ import com.lyr.util.RuleDefinition;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RuleSetConfig {
     private static RuleSetConfig configInstance;
 
@@ -31,13 +33,19 @@ public class RuleSetConfig {
     }
 
     public static RuleSetConfig loadUserRuleSetConfig(final String path) {
+        log.info("Started to load user rule set config. Path: {}.", path);
         setRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseRuleSetConfig(path)));
-        return getRuleSetConfig();
+        final var ruleSetConfig = getRuleSetConfig();
+        log.info("Finished loading user rule set config. Path: {}.", path);
+        return ruleSetConfig;
     }
 
     public static RuleSetConfig loadDefaultRuleSetConfig() {
+        log.info("Started to load default rule set config.");
         setRuleSetConfig(new RuleSetConfig(RuleSetConfigParser.parseDefaultRuleSetConfig()));
-        return getRuleSetConfig();
+        final var ruleSetConfig = getRuleSetConfig();
+        log.info("Finished loading default rule set config.");
+        return ruleSetConfig;
     }
 
     public static void setRuleSetConfig(final RuleSetConfig userRuleSetConfig) {

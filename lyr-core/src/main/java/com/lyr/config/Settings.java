@@ -1,5 +1,6 @@
 package com.lyr.config;
 
+import ch.qos.logback.classic.Level;
 import com.lyr.exception.config.NotYetInitializedException;
 import com.lyr.report.ReportType;
 import java.util.Optional;
@@ -16,6 +17,9 @@ public class Settings {
 
     @Builder.Default
     final ReportType reportType = ReportType.PLAIN_TEXT;
+
+    @Builder.Default
+    final Level logLevel = Level.INFO;
 
     public static Settings getAppSettings() {
         if (appSettings == null) {

@@ -6,7 +6,9 @@ import com.lyr.report.model.Execution;
 import com.lyr.report.model.Finding;
 import com.lyr.util.RuleDefinition;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 public class Rule {
     protected final RuleDefinition ruleDefinition;
@@ -31,15 +33,30 @@ public class Rule {
     }
 
     public Execution reevaluate() {
+        log.atInfo()
+                .setMessage("Started to execute {} rule.")
+                .addArgument(ruleDefinition::getRuleName)
+                .log();
+
         final ImmutableList<Finding> findings = ruleExecutionStrategy.execute(ruleConfig);
+        execution = buildExecutionFromFindings(findings);
+
+        log.atInfo()
+                .setMessage("Finished executing {} rule.")
+                .addArgument(ruleDefinition::getRuleName)
+                .log();
+
+        return execution;
+    }
+
+    private Execution buildExecutionFromFindings(final ImmutableList<Finding> findings) {
         final ImmutableMap<String, String> ruleConfigAsStringMap =
                 ruleConfig != null ? ImmutableMap.copyOf(ruleConfig.getConfigAsStringMap()) : ImmutableMap.of();
-        execution = Execution.builder()
+        return Execution.builder()
                 .name(ruleDefinition.getRuleName())
                 .code(ruleDefinition.getRuleCode())
                 .configuration(ruleConfigAsStringMap)
                 .findings(findings)
                 .build();
-        return execution;
     }
 }

@@ -8,11 +8,13 @@ import com.lyr.report.model.Execution;
 import com.lyr.report.model.Report;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 @AllArgsConstructor
+@Slf4j
 public class JsonReporter implements Reporter {
     public static final String REPORT_VERSION = "0.0.0";
 
@@ -26,13 +28,17 @@ public class JsonReporter implements Reporter {
 
     @Override
     public void report(final List<Execution> executions) {
+        log.info("Started to write json report.");
         final var report = Report.builder()
                 .version(REPORT_VERSION)
                 .executions(ImmutableList.copyOf(executions))
                 .build();
 
+        log.debug("Started to convert the report object to a json string.");
         final var reportAsJsonString = JSON_OBJECT_MAPPER.writeValueAsString(report);
+        log.debug("Finished converting the report object to a json string.");
 
         outputStrategy.write(reportAsJsonString);
+        log.info("Finished writing json report.");
     }
 }
