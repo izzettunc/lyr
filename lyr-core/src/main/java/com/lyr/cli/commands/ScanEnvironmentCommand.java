@@ -9,8 +9,10 @@ import com.lyr.config.Settings;
 import com.lyr.report.ReportType;
 import com.lyr.util.log.LogUtil;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine.Command;
 
+@Slf4j
 @Command(
         name = "scan-env",
         mixinStandardHelpOptions = true,
@@ -46,6 +48,13 @@ public class ScanEnvironmentCommand {
 
         LogUtil.setLogLevelAtRoot(Settings.getAppSettings().getLogLevel());
 
+        log.atInfo()
+                .setMessage(
+                        "Starting to scan aws environment. User rule set config path: {}, Report type: {}, Log level: {}.")
+                .addArgument(() -> LogUtil.optionalToString(optionalUserRuleSetConfigFilePath))
+                .addArgument(() -> LogUtil.optionalToString(optionalReportType, settings.getReportType()))
+                .addArgument(() -> LogUtil.optionalToString(optionalLogLevel, settings.getLogLevel()))
+                .log();
         ScanAwsEnvironmentRunner.run();
     }
 }
