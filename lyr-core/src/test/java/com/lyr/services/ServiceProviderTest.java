@@ -252,6 +252,72 @@ class ServiceProviderTest {
     }
 
     @Test
+    void testThatServiceProviderThrowsAnExceptionWhenCloudWatchClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildCloudWatchClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenDynamoDbClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildDynamoDbClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenGlueClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildGlueClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenLambdaClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildLambdaClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenSsmClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildSsmClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenStsClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildStsClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
     void testThatServiceProviderValidatesConfigurationByGettingCallerIdentityViaSts() {
         // Given
         mockedServiceProvider.when(ServiceProvider::validateConfiguration).thenCallRealMethod();
@@ -290,16 +356,5 @@ class ServiceProviderTest {
                     .isInstanceOf(BadAwsServiceConfigException.class)
                     .hasMessageContaining("Failed to create a service using configured credentials.");
         }
-    }
-
-    @Test
-    void testThatServiceProviderThrowsAnExceptionWhenServiceProviderIsUsedBeforeItsConfigured() {
-        // Given
-        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
-
-        // When & Then
-        assertThatThrownBy(ServiceProvider::getOrBuildDynamoDbClient)
-                .isInstanceOf(NotYetConfiguredException.class)
-                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
     }
 }
