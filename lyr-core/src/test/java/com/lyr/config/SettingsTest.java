@@ -3,7 +3,7 @@ package com.lyr.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.lyr.exception.config.NotYetInitializedException;
+import com.lyr.exception.NotYetInitializedException;
 import com.lyr.report.ReportType;
 import org.junit.jupiter.api.Test;
 

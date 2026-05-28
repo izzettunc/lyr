@@ -1,4 +1,4 @@
-package com.lyr.exception.config;
+package com.lyr.exception;
 
 import java.io.Serial;
 
