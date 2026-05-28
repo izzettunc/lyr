@@ -21,6 +21,9 @@ public class Settings {
     @Builder.Default
     final Level logLevel = Level.INFO;
 
+    @Builder.Default
+    final String profile = "default";
+
     public static Settings getAppSettings() {
         if (appSettings == null) {
             throw new NotYetInitializedException("App settings can not be accessed as it is not yet initialized.");

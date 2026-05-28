@@ -35,14 +35,21 @@ public class ScanEnvironmentCommand {
                             description = "Path to user config file that specifies the ruleset")
                     final Optional<ReportType> optionalReportType,
             @Option(
+                            names = {"-p", "--profile"},
+                            description = "AWS profile that defines desired credential or configuration to use")
+                    final Optional<String> optionalProfile,
+            @Option(
                             names = {"-l", "--logLevel"},
-                            description = "Log level that will be used while running the application")
+                            description = "Desired level of details for logs")
                     final Optional<LyrLogLevel> optionalLogLevel) {
 
         final var settingsBuilder = Settings.builder();
         settingsBuilder.userRuleSetConfigPath(optionalUserRuleSetConfigFilePath);
+
         optionalReportType.ifPresent(settingsBuilder::reportType);
+        optionalProfile.ifPresent(settingsBuilder::profile);
         optionalLogLevel.ifPresent(lyrLogLevel -> settingsBuilder.logLevel(lyrLogLevel.asLogbackLogLevel()));
+
         final var settings = settingsBuilder.build();
         Settings.setAppSettings(settings);
 
@@ -55,6 +62,15 @@ public class ScanEnvironmentCommand {
                 .addArgument(() -> LogUtil.optionalToString(optionalReportType, settings.getReportType()))
                 .addArgument(() -> LogUtil.optionalToString(optionalLogLevel, settings.getLogLevel()))
                 .log();
+
         ScanAwsEnvironmentRunner.run();
+
+        log.atInfo()
+                .setMessage(
+                        "Finished scanning aws environment. User rule set config path: {}, Report type: {}, Log level: {}.")
+                .addArgument(() -> LogUtil.optionalToString(optionalUserRuleSetConfigFilePath))
+                .addArgument(() -> LogUtil.optionalToString(optionalReportType, settings.getReportType()))
+                .addArgument(() -> LogUtil.optionalToString(optionalLogLevel, settings.getLogLevel()))
+                .log();
     }
 }
