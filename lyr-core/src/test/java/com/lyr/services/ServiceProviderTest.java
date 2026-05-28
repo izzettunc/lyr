@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.lyr.TestUtil;
+import com.lyr.exception.NotYetConfiguredException;
 import com.lyr.exception.services.BadAwsServiceConfigException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -289,5 +290,16 @@ class ServiceProviderTest {
                     .isInstanceOf(BadAwsServiceConfigException.class)
                     .hasMessageContaining("Failed to create a service using configured credentials.");
         }
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenServiceProviderIsUsedBeforeItsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildDynamoDbClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
     }
 }

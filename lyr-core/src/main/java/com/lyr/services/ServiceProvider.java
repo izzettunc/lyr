@@ -3,6 +3,7 @@ package com.lyr.services;
 import static com.lyr.exception.services.BadAwsServiceConfigException.BAD_AWS_SERVICE_CONFIG_EXCEPTION_MESSAGE;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.lyr.exception.NotYetConfiguredException;
 import com.lyr.exception.services.BadAwsServiceConfigException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
@@ -74,8 +75,16 @@ public class ServiceProvider {
     static String getAwsAccessKeyIdFromEnv() {
         return System.getenv(SdkSystemSetting.AWS_ACCESS_KEY_ID.environmentVariable());
     }
+
+    @VisibleForTesting
+    static String getAwsRegionFromEnv() {
+        return System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable());
+    }
+
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchClient getOrBuildCloudWatchClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (cloudWatchClient == null) {
             synchronized (ServiceProvider.class) {
                 if (cloudWatchClient == null) {
@@ -88,6 +97,8 @@ public class ServiceProvider {
 
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static DynamoDbClient getOrBuildDynamoDbClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (dynamoDbClient == null) {
             synchronized (ServiceProvider.class) {
                 if (dynamoDbClient == null) {
@@ -100,6 +111,8 @@ public class ServiceProvider {
 
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static GlueClient getOrBuildGlueClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (glueClient == null) {
             synchronized (ServiceProvider.class) {
                 if (glueClient == null) {
@@ -112,6 +125,8 @@ public class ServiceProvider {
 
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static LambdaClient getOrBuildLambdaClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (lambdaClient == null) {
             synchronized (ServiceProvider.class) {
                 if (lambdaClient == null) {
@@ -124,6 +139,8 @@ public class ServiceProvider {
 
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static SsmClient getOrBuildSsmClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (ssmClient == null) {
             synchronized (ServiceProvider.class) {
                 if (ssmClient == null) {
@@ -135,6 +152,8 @@ public class ServiceProvider {
     }
 
     public static StsClient getOrBuildStsClient() {
+        checkIfServiceProviderIsConfigured();
+
         if (stsClient == null) {
             synchronized (ServiceProvider.class) {
                 if (stsClient == null) {
@@ -217,7 +236,7 @@ public class ServiceProvider {
     static SsmClient buildSsmClient() {
         if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
             return SsmClient.builder()
-                    .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+                    .credentialsProvider(environmentVariableCredentialsProvider)
                     .region(Region.of(getAwsRegionFromEnv()))
                     .httpClientBuilder(UrlConnectionHttpClient.builder())
                     .build();
@@ -247,7 +266,9 @@ public class ServiceProvider {
         }
     }
 
-    static String getAwsRegionFromEnv() {
-        return System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable());
+    private static void checkIfServiceProviderIsConfigured() {
+        if (profile == null) {
+            throw new NotYetConfiguredException("Service provider can not be accessed as it is not yet configured.");
+        }
     }
 }
