@@ -48,6 +48,11 @@ public class ServiceProvider {
         awsProfileRegionProvider = new AwsProfileRegionProvider(ProfileFile::defaultProfileFile, profile);
 
         validateConfiguration();
+
+        log.atInfo()
+                .addArgument(profile)
+                .addArgument(() -> awsProfileRegionProvider.getRegion())
+                .log("Successfully configured AWS service provider. Profile: {}, Region: {}");
     }
 
     @VisibleForTesting
@@ -59,15 +64,16 @@ public class ServiceProvider {
 
         try {
             getOrBuildStsClient().getCallerIdentity();
-
-            log.atInfo()
-                    .addArgument(profile)
-                    .addArgument(() -> awsProfileRegionProvider.getRegion())
-                    .log("Successfully configured AWS service provider. Profile: {}, Region: {}");
         } catch (final SdkClientException sdkClientException) {
             throw new BadAwsServiceConfigException(
                     String.format(BAD_AWS_SERVICE_CONFIG_EXCEPTION_MESSAGE, sdkClientException.getMessage()),
                     sdkClientException);
+        }
+    }
+
+    private static void checkIfServiceProviderIsConfigured() {
+        if (profile == null) {
+            throw new NotYetConfiguredException("Service provider can not be accessed as it is not yet configured.");
         }
     }
 
@@ -266,9 +272,4 @@ public class ServiceProvider {
         }
     }
 
-    private static void checkIfServiceProviderIsConfigured() {
-        if (profile == null) {
-            throw new NotYetConfiguredException("Service provider can not be accessed as it is not yet configured.");
-        }
-    }
 }
