@@ -7,7 +7,7 @@ public class BadAwsServiceConfigException extends RuntimeException {
             "Failed to create a service using configured credentials. Exception: %s";
 
     @Serial
-    private static final long serialVersionUID = 6376451924690333285L;
+    private static final long serialVersionUID = 4905348737937216891L;
 
     public BadAwsServiceConfigException(final String message, final Throwable cause) {
         super(message, cause);
