@@ -7,6 +7,7 @@ import com.lyr.cli.util.LyrLogLevel;
 import com.lyr.cli.util.VersionProvider;
 import com.lyr.config.Settings;
 import com.lyr.report.ReportType;
+import com.lyr.services.ServiceProvider;
 import com.lyr.util.log.LogUtil;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,7 @@ public class ScanEnvironmentCommand {
         Settings.setAppSettings(settings);
 
         LogUtil.setLogLevelAtRoot(Settings.getAppSettings().getLogLevel());
+        ServiceProvider.configure(Settings.getAppSettings().getProfile());
 
         log.atInfo()
                 .setMessage(
