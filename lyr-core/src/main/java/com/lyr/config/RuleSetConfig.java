@@ -1,7 +1,7 @@
 package com.lyr.config;
 
 import com.lyr.config.parser.RuleSetConfigParser;
-import com.lyr.exception.config.NotYetInitializedException;
+import com.lyr.exception.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.rule.RuleConfig;
 import com.lyr.util.RuleDefinition;

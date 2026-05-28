@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.TestUtil;
-import com.lyr.exception.config.NotYetInitializedException;
+import com.lyr.exception.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.rule.RuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
