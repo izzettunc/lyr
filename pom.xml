@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <revision>Absolutno-0.0.0</revision>
+        <revision>0.0.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
