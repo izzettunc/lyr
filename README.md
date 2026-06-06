@@ -6,18 +6,24 @@ Lyr is a CLI tool that analyzes cloud health and security across live environmen
 
 ### Table of Contents
 
-* [Preview](#preview)
-* [Usage](#usage)
-  * [Execution](#execution)
-  * [Authentication](#authentication)
-    * [Environment variable credential provider](#environment-variable-credential-provider)
-    * [Profile credential provider](#profile-credential-provider)
-* [Installation](#installation)
-  * [Steps to install pre-built jar](#steps-to-install-pre-built-jar)
-  * [Steps to built it your self](#steps-to-built-it-your-self)
-* [Features](#features)
-    * [Rules](#rules)
-  * [Rule Set Configuration](#rule-set-configuration)
+<!-- TOC -->
+* [Lyr](#lyr)
+    * [Table of Contents](#table-of-contents)
+    * [Preview](#preview)
+    * [Usage](#usage)
+      * [Execution](#execution)
+      * [Authentication](#authentication)
+        * [Environment variable credential provider](#environment-variable-credential-provider)
+        * [Profile credential provider](#profile-credential-provider)
+    * [Installation](#installation)
+      * [Steps to install pre-built jar](#steps-to-install-pre-built-jar)
+      * [Steps to built it your self](#steps-to-built-it-your-self)
+    * [Features](#features)
+        * [Rules](#rules)
+      * [Rule Set Configuration](#rule-set-configuration)
+    * [Changelog](#changelog)
+    * [Contributing](#contributing)
+<!-- TOC -->
 
 ### Preview
 
@@ -87,7 +93,7 @@ aws login # Follow the login flow of aws cli
 
 #### Steps to install pre-built jar
 
-- Download the preferred version of the jar from [here](https://github.com/izzettunc/lyr/releases)
+- Download the preferred version of the jar from [releases].
 - [Start using it](#usage)
 
 #### Steps to built it your self
@@ -103,7 +109,7 @@ mvn clean install
 
 - Reporting in two format:
   - Human-readable plain text
-  - Actionable JSON following [the report schema](https://github.com/izzettunc/lyr/blob/release/0.0.0/doc/schema/lyr-json-report-schema-0.0.0.json)
+  - Actionable JSON following the [report schema]
 - Customizable rule sets allowing you to choose which rules to run
 
 ##### Rules
@@ -113,7 +119,7 @@ mvn clean install
 
 #### Rule Set Configuration
 
-Default rule set can be found [here](https://github.com/izzettunc/lyr/blob/release/0.0.0/lyr-core/src/main/resources/defaultRuleSet.yaml)
+To see what kind of rules with what kind of configuration we run by default, you can check [default rule set].
 
 A custom rule set can be created and provided as a configuration. Available rules and configuration can bee seen below.
 ```yaml
@@ -129,3 +135,17 @@ scan.glue.session.activeWithLongIdleTimeout:
 
 scan.lambda.function.withUnboundedConcurrency:
 ```
+
+### Changelog
+
+Change log can be found for each release under releases or collected all together at [CHANGELOG page].
+
+### Contributing
+
+Before contributing please read the [DEVELOPMENT page] to better understand the expectations and that is the workflow.
+
+[CHANGELOG page]: CHANGELOG.md
+[DEVELOPMENT page]: doc/DEVELOPMENT.md
+[default rule set]: lyr-core/src/main/resources/defaultRuleSet.yaml
+[report schema]: doc/schema/lyr-json-report-schema-0.0.0.json
+[releases]: https://github.com/izzettunc/lyr/releases

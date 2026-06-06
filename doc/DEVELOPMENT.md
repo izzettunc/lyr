@@ -1,7 +1,10 @@
 This document defines the conventions and workflow for contributing to Lyr, covering anything needed for a developer 
 such as versioning, branching, releases, code quality, testing practices, and the expected quality standards.
 
+## Table of Contents
+
 <!-- TOC -->
+  * [Table of Contents](#table-of-contents)
   * [Version](#version)
   * [Branching strategy](#branching-strategy)
     * [Type of branches](#type-of-branches)
@@ -114,7 +117,5 @@ only method of testing. Due to that, after each issue it's recommended to build 
 verify the behavior and also a quick sanity check that nothing else is broken. The time spending on manual testing 
 should be more and more thorough depending on test coverage on the packages that changed.
 
-
-[list of proper star names]: https://en.wikipedia.org/wiki/List_of_proper_names_of_stars
 [semver docs]: https://semver.org/spec/v2.0.0.html
 
