@@ -142,7 +142,7 @@ Change log can be found for each release under releases or collected all togethe
 
 ### Contributing
 
-Before contributing please read the [DEVELOPMENT page] to better understand the expectations and that is the workflow.
+Before contributing please read the [DEVELOPMENT page] to better understand the expectations and what is the workflow.
 
 [CHANGELOG page]: CHANGELOG.md
 [DEVELOPMENT page]: doc/DEVELOPMENT.md
