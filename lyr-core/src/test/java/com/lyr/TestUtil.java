@@ -38,6 +38,10 @@ public final class TestUtil {
     public static final String FUNCTION_2 = "function2";
     public static final String FUNCTION_3 = "function3";
     public static final String FUNCTION_4 = "function4";
+    public static final String LOG_GROUP_1 = "logGroup1";
+    public static final String LOG_GROUP_2 = "logGroup2";
+    public static final String LOG_GROUP_3 = "logGroup3";
+    public static final String LOG_GROUP_4 = "logGroup4";
 
     public static List<Finding> createImmutableListOfFindings(final String... identifiers) {
         return Stream.of(identifiers).map(Finding::byId).collect(ImmutableList.toImmutableList());
