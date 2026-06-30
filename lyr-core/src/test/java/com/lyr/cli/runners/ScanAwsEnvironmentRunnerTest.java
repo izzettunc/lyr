@@ -45,7 +45,7 @@ class ScanAwsEnvironmentRunnerTest {
     void testThatGivenNoUserDefinedRuleSetDefaultRulesAreCreatedAndEvaluatedAndAReportIsCreated() {
         // Given
         Settings.setAppSettings(Settings.builder().build());
-        final var numberOfDefaultRules = 3;
+        final var numberOfDefaultRules = 4;
         // When
         mockedRuleFactory.when(() -> RuleFactory.createRule(any())).thenReturn(mockedRule);
         mockedReporterFactory.when(() -> ReporterFactory.createReporter(any())).thenReturn(mockedReporter);
@@ -58,6 +58,9 @@ class ScanAwsEnvironmentRunnerTest {
                 () -> RuleFactory.createRule(RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT), times(1));
         mockedRuleFactory.verify(
                 () -> RuleFactory.createRule(RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT), times(1));
+        mockedRuleFactory.verify(
+                () -> RuleFactory.createRule(RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY),
+                times(1));
         verify(mockedRule, times(numberOfDefaultRules)).evaluate();
         verify(mockedReporter, times(1)).report(any());
     }
