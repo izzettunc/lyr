@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Added
 
-- Added scan cloud watch log group without retention policy rule
+- Added scan cloud watch log groups without retention policy rule
 
 ## [0.0.0]
 
