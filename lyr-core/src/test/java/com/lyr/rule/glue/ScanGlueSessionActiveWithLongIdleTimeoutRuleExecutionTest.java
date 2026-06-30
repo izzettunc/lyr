@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 import software.amazon.awssdk.services.glue.model.Session;
 import software.amazon.awssdk.services.glue.model.SessionStatus;
 
-class ScanGlueSessionActiveWithLongIdleTimeoutRuleImplTest {
+class ScanGlueSessionActiveWithLongIdleTimeoutRuleExecutionTest {
 
     static MockedStatic<GlueConnector> mockedGlueConnector = Mockito.mockStatic(GlueConnector.class);
     static GlueConnector mockedGlueConnectorInstance = Mockito.mock(GlueConnector.class);

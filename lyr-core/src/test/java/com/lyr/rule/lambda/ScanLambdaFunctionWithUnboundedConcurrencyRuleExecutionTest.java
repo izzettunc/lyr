@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.lambda.model.Concurrency;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 
-class ScanLambdaFunctionWithUnboundedConcurrencyRuleImplTest {
+class ScanLambdaFunctionWithUnboundedConcurrencyRuleExecutionTest {
 
     static MockedStatic<LambdaConnector> mockedLambdaConnector = Mockito.mockStatic(LambdaConnector.class);
     static LambdaConnector mockedLambdaConnectorInstance = Mockito.mock(LambdaConnector.class);

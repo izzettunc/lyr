@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-class ScanDynamodbTableIdleRuleImplTest {
+class ScanDynamodbTableIdleRuleExecutionTest {
 
     static MockedStatic<CloudWatchUtil> mockedCloudWatchUtil = Mockito.mockStatic(CloudWatchUtil.class);
     static MockedStatic<CloudWatchConnector> mockedCloudWatchConnector = Mockito.mockStatic(CloudWatchConnector.class);
