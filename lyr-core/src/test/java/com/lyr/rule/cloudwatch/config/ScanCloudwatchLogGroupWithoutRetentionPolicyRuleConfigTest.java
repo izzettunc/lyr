@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigTest {
 
     @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsParsedToNull() {
+    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsParsedSuccessfully() {
         // Given
         final Object configList = List.of(15);
         final Object configMap = Map.of("abc", 15, "def", 30);
