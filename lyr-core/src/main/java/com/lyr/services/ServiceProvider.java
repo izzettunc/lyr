@@ -19,6 +19,7 @@ import software.amazon.awssdk.profiles.ProfileFile;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.AwsProfileRegionProvider;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -34,6 +35,7 @@ public class ServiceProvider {
     private static volatile GlueClient glueClient;
     private static volatile DynamoDbClient dynamoDbClient;
     private static volatile CloudWatchClient cloudWatchClient;
+    private static volatile CloudWatchLogsClient cloudWatchLogsClient;
 
     private static EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider;
     private static ProfileCredentialsProvider profileCredentialsProvider;
@@ -99,6 +101,20 @@ public class ServiceProvider {
             }
         }
         return cloudWatchClient;
+    }
+
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
+    public static CloudWatchLogsClient getOrBuildCloudWatchLogsClient() {
+        checkIfServiceProviderIsConfigured();
+
+        if (cloudWatchLogsClient == null) {
+            synchronized (ServiceProvider.class) {
+                if (cloudWatchLogsClient == null) {
+                    cloudWatchLogsClient = buildCloudWatchLogsClient();
+                }
+            }
+        }
+        return cloudWatchLogsClient;
     }
 
     @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
@@ -180,6 +196,23 @@ public class ServiceProvider {
                     .build();
         } else {
             return CloudWatchClient.builder()
+                    .credentialsProvider(profileCredentialsProvider)
+                    .region(awsProfileRegionProvider.getRegion())
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        }
+    }
+
+    @VisibleForTesting
+    static CloudWatchLogsClient buildCloudWatchLogsClient() {
+        if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
+            return CloudWatchLogsClient.builder()
+                    .credentialsProvider(environmentVariableCredentialsProvider)
+                    .region(Region.of(getAwsRegionFromEnv()))
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        } else {
+            return CloudWatchLogsClient.builder()
                     .credentialsProvider(profileCredentialsProvider)
                     .region(awsProfileRegionProvider.getRegion())
                     .httpClientBuilder(UrlConnectionHttpClient.builder())

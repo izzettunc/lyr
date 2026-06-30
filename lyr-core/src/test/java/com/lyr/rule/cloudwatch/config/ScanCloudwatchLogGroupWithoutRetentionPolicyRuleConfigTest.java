@@ -1,4 +1,4 @@
-package com.lyr.rule.lambda.config;
+package com.lyr.rule.cloudwatch.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
+class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigTest {
 
     @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsParsedSuccessfully() {
+    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsParsedSuccessfully() {
         // Given
         final Object configList = List.of(15);
         final Object configMap = Map.of("abc", 15, "def", 30);
 
-        final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig expectedRuleConfig =
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+        final var expectedRuleConfig =
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
 
         // When
-        final var actualRuleConfigList = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configList);
-        final var actualRuleConfigMap = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(configMap);
-        final var actualRuleConfigNull = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(null);
+        final var actualRuleConfigList = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(configList);
+        final var actualRuleConfigMap = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(configMap);
+        final var actualRuleConfigNull = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(null);
 
         // Then
         assertThat(actualRuleConfigList).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
@@ -29,10 +29,10 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
     }
 
     @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsCopiedCorrectly() {
+    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsCopiedCorrectly() {
         // Given
         final var expectedConfig =
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
 
         // When
         final var actualCopiedConfig = expectedConfig.copy();
@@ -43,10 +43,10 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
     }
 
     @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsConvertedToAMapSuccessfully() {
+    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsConvertedToAMapSuccessfully() {
         // Given
         final var expectedConfig =
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
         final var expectedConfigMap = Map.of();
 
         // When

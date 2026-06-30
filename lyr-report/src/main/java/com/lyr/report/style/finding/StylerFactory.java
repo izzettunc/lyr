@@ -1,5 +1,6 @@
 package com.lyr.report.style.finding;
 
+import com.lyr.report.style.finding.cloudwatch.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler;
 import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingStyler;
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
@@ -16,6 +17,8 @@ public class StylerFactory {
                 new ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler();
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                 new ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler();
+            case SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY ->
+                new ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler();
         };
     }
 }

@@ -1,5 +1,6 @@
 package com.lyr.rule;
 
+import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -17,6 +18,8 @@ public class RuleConfigFactory {
             case SCAN_DYNAMODB_TABLE_IDLE -> ScanDynamodbTableIdleRuleConfig.parse(config);
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(config);
+            case SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY ->
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(config);
         };
     }
 }

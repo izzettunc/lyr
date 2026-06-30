@@ -45,6 +45,15 @@ class ServiceProviderTest {
     }
 
     @Test
+    void testThatServiceProviderBuildsOnlyOneCloudWatchLogsClient() {
+        try (final var firstClient = ServiceProvider.getOrBuildCloudWatchLogsClient();
+                final var secondClient = ServiceProvider.getOrBuildCloudWatchLogsClient()) {
+
+            assertThat(firstClient).isSameAs(secondClient);
+        }
+    }
+
+    @Test
     void testThatServiceProviderBuildsOnlyOneDynamoDbClient() {
         try (final var firstClient = ServiceProvider.getOrBuildDynamoDbClient();
                 final var secondClient = ServiceProvider.getOrBuildDynamoDbClient()) {
@@ -96,7 +105,21 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildCloudWatchClient()) {
+        try (final var _ = ServiceProvider.buildCloudWatchClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
+        }
+    }
+
+    @Test
+    void testThatCloudWatchLogsClientIsBuildWithEnvironmentVariableIfPresent() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+        mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+
+        // When
+        try (final var _ = ServiceProvider.buildCloudWatchLogsClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -109,7 +132,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildCloudWatchClient()) {
+        try (final var _ = ServiceProvider.buildCloudWatchClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -123,7 +146,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildDynamoDbClient()) {
+        try (final var _ = ServiceProvider.buildDynamoDbClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -136,7 +159,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildDynamoDbClient()) {
+        try (final var _ = ServiceProvider.buildDynamoDbClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -150,7 +173,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildGlueClient()) {
+        try (final var _ = ServiceProvider.buildGlueClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -163,7 +186,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildGlueClient()) {
+        try (final var _ = ServiceProvider.buildGlueClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -177,7 +200,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildLambdaClient()) {
+        try (final var _ = ServiceProvider.buildLambdaClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -190,7 +213,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildLambdaClient()) {
+        try (final var _ = ServiceProvider.buildLambdaClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -204,7 +227,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildSsmClient()) {
+        try (final var _ = ServiceProvider.buildSsmClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -217,7 +240,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildSsmClient()) {
+        try (final var _ = ServiceProvider.buildSsmClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -231,7 +254,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
 
         // When
-        try (final var ignored = ServiceProvider.buildStsClient()) {
+        try (final var _ = ServiceProvider.buildStsClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
@@ -244,7 +267,7 @@ class ServiceProviderTest {
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var ignored = ServiceProvider.buildStsClient()) {
+        try (final var _ = ServiceProvider.buildStsClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));

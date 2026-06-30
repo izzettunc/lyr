@@ -1,5 +1,6 @@
 package com.lyr.rule;
 
+import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import com.lyr.config.RuleSetConfig;
+import com.lyr.rule.cloudwatch.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleExecution;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
@@ -63,6 +65,10 @@ class RuleFactoryTest {
                         Rule.class,
                         ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution.class),
                 Arguments.of(SCAN_DYNAMODB_TABLE_IDLE, Rule.class, ScanDynamodbTableIdleRuleExecution.class),
+                Arguments.of(
+                        SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
+                        Rule.class,
+                        ScanCloudwatchLogGroupWithoutRetentionPolicyRuleExecution.class),
                 Arguments.of(
                         SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         Rule.class,
