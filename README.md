@@ -113,9 +113,10 @@ mvn clean install
 - Customizable rule sets allowing you to choose which rules to run
 
 ##### Rules
-- Detect idle DynamoDB tables
-- Identify active Glue sessions with long idle timeouts
-- Flag Lambda functions with unbounded concurrency
+- Flag idle DynamoDB tables
+- Flag active Glue sessions with long idle timeouts
+- Flag lambda functions with unbounded concurrency
+- Flag cloudwatch log groups without a retention policy
 
 #### Rule Set Configuration
 
@@ -134,6 +135,8 @@ scan.glue.session.activeWithLongIdleTimeout:
   maxIdleTimeoutInMinutes: 15
 
 scan.lambda.function.withUnboundedConcurrency:
+
+scan.cloudwatch.logGroup.withoutRetentionPolicy:
 ```
 
 ### Changelog
