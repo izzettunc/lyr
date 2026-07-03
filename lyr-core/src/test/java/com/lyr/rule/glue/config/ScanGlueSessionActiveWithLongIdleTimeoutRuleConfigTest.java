@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
-import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
-import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +16,49 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
     @Test
     void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsParsedCorrectly() {
         // Given
-        final int maxIdleTimeoutInMinutes = 15;
+        final int maxIdleTimeoutInMinutes = 123;
         final Map<String, Integer> config = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, maxIdleTimeoutInMinutes);
         final RuleConfig expectedRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
                 .build();
 
         // When
-        final var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);
+        final var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(config);
+
+        // Then
+        assertThat(actualRuleConfig)
+                .isInstanceOf(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.class)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedRuleConfig);
+    }
+
+    @Test
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatesDefaultOneWhenParsingFails() {
+        // Given
+        final RuleConfig expectedRuleConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+
+        final List<Integer> invalidConfig = List.of(123);
+
+        // When
+        final var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(invalidConfig);
+
+        // Then
+        assertThat(actualRuleConfig)
+                .isInstanceOf(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.class)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedRuleConfig);
+    }
+
+    @Test
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsParsedCorrectlyWithoutAnyAttribute() {
+        // Given
+        final Map<String, Object> configWithoutAttributes = Map.of();
+        final RuleConfig expectedRuleConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+
+        // When
+        final var actualRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(configWithoutAttributes);
 
         // Then
         assertThat(actualRuleConfig)
@@ -36,35 +69,12 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
 
     @Test
     void
-            testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsInvalidRuleConfigTypeExceptionWhenInvalidConfigTypeIsProvided() {
-        // Given
-        final List<Integer> invalidConfig = List.of(15);
-
-        // When & Then
-        assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(invalidConfig))
-                .isInstanceOf(InvalidRuleConfigTypeException.class);
-    }
-
-    @Test
-    void
-            testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsMissingMandatoryRuleConfigAttributeExceptionWhenConfigHasMissingValues() {
-        // Given
-        final Map<String, Integer> configWithoutMandatoryAttributes = Map.of();
-
-        // When & Then
-        assertThatThrownBy(() ->
-                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(configWithoutMandatoryAttributes))
-                .isInstanceOf(MissingMandatoryRuleConfigAttributeException.class);
-    }
-
-    @Test
-    void
             testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigThrowsBadConfigExceptionWhenMaxIdleTimeoutInMinutesIsNegative() {
         // Given
         final Map<String, Integer> config = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES, -1);
 
         // When & Then
-        assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config))
+        assertThatThrownBy(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(config))
                 .isInstanceOf(BadRuleConfigException.class);
     }
 
@@ -96,5 +106,20 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);
+    }
+
+    @Test
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigHasDefaultValues() {
+        // Given
+        final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                .maxIdleTimeoutInMinutes(15)
+                .build();
+
+        // When
+        final var actualConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+
+        // Then
+        assertThat(actualConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
     }
 }

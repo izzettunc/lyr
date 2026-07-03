@@ -2,30 +2,22 @@ package com.lyr.rule.cloudwatch.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigTest {
 
     @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsParsedSuccessfully() {
+    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsCreatedSuccessfully() {
         // Given
-        final Object configList = List.of(15);
-        final Object configMap = Map.of("abc", 15, "def", 30);
-
         final var expectedRuleConfig =
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
 
         // When
-        final var actualRuleConfigList = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(configList);
-        final var actualRuleConfigMap = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(configMap);
-        final var actualRuleConfigNull = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(null);
+        final var actualRuleConfig = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.create();
 
         // Then
-        assertThat(actualRuleConfigList).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
-        assertThat(actualRuleConfigMap).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
-        assertThat(actualRuleConfigNull).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
+        assertThat(actualRuleConfig).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
     }
 
     @Test

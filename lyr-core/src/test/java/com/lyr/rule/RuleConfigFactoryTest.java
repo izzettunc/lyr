@@ -23,7 +23,7 @@ class RuleConfigFactoryTest {
                 mockStatic(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.class)) {
             RuleConfigFactory.createRuleConfig(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, null);
 
-            mockedStaticConfig.verify(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(any()), times(1));
+            mockedStaticConfig.verify(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(any()), times(1));
         }
     }
 
@@ -33,7 +33,7 @@ class RuleConfigFactoryTest {
                 mockStatic(ScanDynamodbTableIdleRuleConfig.class)) {
             RuleConfigFactory.createRuleConfig(SCAN_DYNAMODB_TABLE_IDLE, null);
 
-            mockedStaticConfig.verify(() -> ScanDynamodbTableIdleRuleConfig.parse(any()), times(1));
+            mockedStaticConfig.verify(() -> ScanDynamodbTableIdleRuleConfig.create(any()), times(1));
         }
     }
 
@@ -43,8 +43,7 @@ class RuleConfigFactoryTest {
                 mockStatic(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.class)) {
             RuleConfigFactory.createRuleConfig(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY, null);
 
-            mockedStaticConfig.verify(
-                    () -> ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(any()), times(1));
+            mockedStaticConfig.verify(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig::create, times(1));
         }
     }
 
@@ -54,8 +53,7 @@ class RuleConfigFactoryTest {
                 mockStatic(ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.class)) {
             RuleConfigFactory.createRuleConfig(SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY, null);
 
-            mockedStaticConfig.verify(
-                    () -> ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(any()), times(1));
+            mockedStaticConfig.verify(ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig::create, times(1));
         }
     }
 }

@@ -11,8 +11,7 @@ import lombok.Getter;
 @Getter
 public class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig implements RuleConfig {
 
-    public static ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig parse(final Object ignored) {
-        // No config available for this rule
+    public static ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig create() {
         return ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
     }
 

@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
-import com.lyr.exception.rule.config.InvalidRuleConfigTypeException;
-import com.lyr.exception.rule.config.MissingMandatoryRuleConfigAttributeException;
 import com.lyr.rule.RuleConfig;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,7 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 .build();
 
         // When
-        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(config);
+        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.create(config);
 
         // Then
         assertThat(actualRuleConfig)
@@ -39,24 +37,16 @@ class ScanDynamodbTableIdleRuleConfigTest {
     }
 
     @Test
-    void testThatScanDynamodbTableIdleRuleConfigThrowsInvalidRuleConfigTypeExceptionWhenInvalidConfigTypeIsProvided() {
+    void testThatScanDynamodbTableIdleRuleConfigCreatesDefaultOneWhenParsingFails() {
         // Given
         final List<Integer> invalidConfig = List.of(15);
+        final var expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder().build();
 
-        // When & Then
-        assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(invalidConfig))
-                .isInstanceOf(InvalidRuleConfigTypeException.class);
-    }
+        // When
+        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.create(invalidConfig);
 
-    @Test
-    void
-            testThatScanDynamodbTableIdleRuleConfigThrowsMissingMandatoryRuleConfigAttributeExceptionWhenConfigHasMissingValues() {
-        // Given
-        final Map<String, Object> configMissingMandatoryAttributes = Map.of();
-
-        // When & Then
-        assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(configMissingMandatoryAttributes))
-                .isInstanceOf(MissingMandatoryRuleConfigAttributeException.class);
+        // Then
+        assertThat(actualRuleConfig).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
     }
 
     @Test
@@ -68,23 +58,19 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 Map.of(MAX_IDLE_PERIOD_IN_DAYS, maxIdlePeriodInDays, EXCLUDE_EMPTY_TABLES, excludeEmptyTables);
 
         // When & Then
-        assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.parse(configWithBadAttribute))
+        assertThatThrownBy(() -> ScanDynamodbTableIdleRuleConfig.create(configWithBadAttribute))
                 .isInstanceOf(BadRuleConfigException.class);
     }
 
     @Test
-    void testThatScanDynamodbTableIdleRuleConfigIsParsedCorrectlyWithoutOptionalAttributes() {
+    void testThatScanDynamodbTableIdleRuleConfigIsParsedCorrectlyWithoutAnyAttribute() {
         // Given
-        final int maxIdlePeriodInDays = 180;
-        final Map<String, Object> configWithOnlyMandatoryAttributes =
-                Map.of(MAX_IDLE_PERIOD_IN_DAYS, maxIdlePeriodInDays);
-        final RuleConfig expectedRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(maxIdlePeriodInDays)
-                .excludeEmptyTables(false)
-                .build();
+        final Map<String, Object> configWithoutAttributes = Map.of();
+        final RuleConfig expectedRuleConfig =
+                ScanDynamodbTableIdleRuleConfig.builder().build();
 
         // When
-        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.parse(configWithOnlyMandatoryAttributes);
+        final var actualRuleConfig = ScanDynamodbTableIdleRuleConfig.create(configWithoutAttributes);
 
         // Then
         assertThat(actualRuleConfig)
@@ -100,20 +86,13 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 .maxIdlePeriodInDays(123)
                 .excludeEmptyTables(true)
                 .build();
-        final var expectedDefaultConfig = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(111)
-                .build();
 
         // When
         final var actualCopiedConfig = expectedConfig.copy();
-        final var actualCopiedDefaultConfig = expectedDefaultConfig.copy();
 
         // Then
         assertThat(actualCopiedConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
         assertThat(actualCopiedConfig).isNotSameAs(expectedConfig);
-
-        assertThat(actualCopiedDefaultConfig).usingRecursiveComparison().isEqualTo(expectedDefaultConfig);
-        assertThat(actualCopiedDefaultConfig).isNotSameAs(expectedDefaultConfig);
     }
 
     @Test
@@ -123,22 +102,29 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 .maxIdlePeriodInDays(123)
                 .excludeEmptyTables(true)
                 .build();
-        final var expectedDefaultConfig = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(111)
-                .build();
         final var expectedConfigMap = Map.of(
                 MAX_IDLE_PERIOD_IN_DAYS, "123",
                 EXCLUDE_EMPTY_TABLES, "true");
-        final var expectedDefaultConfigMap = Map.of(
-                MAX_IDLE_PERIOD_IN_DAYS, "111",
-                EXCLUDE_EMPTY_TABLES, "false");
 
         // When
         final var actualConfigMap = expectedConfig.getConfigAsStringMap();
-        final var actualDefaultConfigMap = expectedDefaultConfig.getConfigAsStringMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);
-        assertThat(actualDefaultConfigMap).usingRecursiveComparison().isEqualTo(expectedDefaultConfigMap);
+    }
+
+    @Test
+    void testThatScanDynamodbTableIdleRuleConfigHasDefaultValues() {
+        // Given
+        final var expectedConfig = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(30)
+                .excludeEmptyTables(false)
+                .build();
+
+        // When
+        final var actualConfig = ScanDynamodbTableIdleRuleConfig.builder().build();
+
+        // Then
+        assertThat(actualConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
     }
 }

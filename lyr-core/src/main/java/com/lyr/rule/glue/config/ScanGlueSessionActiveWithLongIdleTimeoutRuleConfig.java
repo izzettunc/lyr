@@ -18,10 +18,26 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
 
     public static final String MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY = "maxIdleTimeoutInMinutes";
 
+    @Builder.Default
     @NonNull
-    private final Integer maxIdleTimeoutInMinutes;
+    private final Integer maxIdleTimeoutInMinutes = 15;
 
-    public static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parse(final Object config) {
+    public static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig create(final Object config) {
+        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig;
+
+        try {
+            ruleConfig = parse(config);
+        } catch (final Exception exception) {
+            ruleConfig =
+                    ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+        }
+
+        validate(ruleConfig);
+
+        return ruleConfig;
+    }
+
+    private static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new InvalidRuleConfigTypeException(
                     SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT.getRuleName(), "map");
@@ -29,19 +45,19 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
 
         final var configMap = (Map<String, Integer>) config;
 
-        final var scanGlueSessionActiveWithLongIdleTimeoutRuleConfig =
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                        .maxIdleTimeoutInMinutes(
-                                RuleConfig.getMandatoryAttribute(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, configMap))
-                        .build();
+        final var ruleConfigBuilder = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder();
+        RuleConfig.setConfigIfAttributePresent(
+                MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, configMap, ruleConfigBuilder::maxIdleTimeoutInMinutes);
 
-        if (scanGlueSessionActiveWithLongIdleTimeoutRuleConfig.getMaxIdleTimeoutInMinutes() < 0) {
+        return ruleConfigBuilder.build();
+    }
+
+    private static void validate(final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig) {
+        if (ruleConfig.getMaxIdleTimeoutInMinutes() < 0) {
             throw new BadRuleConfigException("Max idle timeout in minutes attribute of "
                     + SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT.getRuleName()
                     + " rule config, must be equal or greater than 0");
         }
-
-        return scanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
     }
 
     @Override

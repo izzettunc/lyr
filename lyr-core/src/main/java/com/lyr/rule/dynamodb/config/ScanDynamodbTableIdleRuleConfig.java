@@ -18,32 +18,49 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
     public static final String EXCLUDE_EMPTY_TABLES_CONFIG_KEY = "excludeEmptyTables";
     public static final String MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY = "maxIdlePeriodInDays";
 
+    @Builder.Default
     @NonNull
-    private final Integer maxIdlePeriodInDays;
+    private final Integer maxIdlePeriodInDays = 30;
 
     @NonNull
     @Builder.Default
     private final Boolean excludeEmptyTables = Boolean.FALSE;
 
-    public static ScanDynamodbTableIdleRuleConfig parse(final Object config) {
+    public static ScanDynamodbTableIdleRuleConfig create(final Object config) {
+        ScanDynamodbTableIdleRuleConfig ruleConfig;
+
+        try {
+            ruleConfig = parse(config);
+        } catch (final Exception exception) {
+            ruleConfig = ScanDynamodbTableIdleRuleConfig.builder().build();
+        }
+
+        validate(ruleConfig);
+
+        return ruleConfig;
+    }
+
+    private static ScanDynamodbTableIdleRuleConfig parse(final Object config) {
         if (!(config instanceof Map)) {
             throw new InvalidRuleConfigTypeException(SCAN_DYNAMODB_TABLE_IDLE.getRuleName(), "map");
         }
 
         final var configMap = (Map<String, Object>) config;
 
-        final var scanDynamodbTableIdleRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
-                .maxIdlePeriodInDays(
-                        (Integer) RuleConfig.getMandatoryAttribute(MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, configMap))
-                .excludeEmptyTables((Boolean) configMap.getOrDefault(EXCLUDE_EMPTY_TABLES_CONFIG_KEY, Boolean.FALSE))
-                .build();
+        final var ruleConfigBuilder = ScanDynamodbTableIdleRuleConfig.builder();
+        RuleConfig.setConfigIfAttributePresent(
+                MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, configMap, ruleConfigBuilder::maxIdlePeriodInDays);
+        RuleConfig.setConfigIfAttributePresent(
+                EXCLUDE_EMPTY_TABLES_CONFIG_KEY, configMap, ruleConfigBuilder::excludeEmptyTables);
 
-        if (scanDynamodbTableIdleRuleConfig.getMaxIdlePeriodInDays() < 1) {
+        return ruleConfigBuilder.build();
+    }
+
+    private static void validate(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
+        if (ruleConfig.getMaxIdlePeriodInDays() < 1) {
             throw new BadRuleConfigException("Max idle period attribute of " + SCAN_DYNAMODB_TABLE_IDLE.getRuleName()
                     + " rule config, must be longer than a day");
         }
-
-        return scanDynamodbTableIdleRuleConfig;
     }
 
     @Override

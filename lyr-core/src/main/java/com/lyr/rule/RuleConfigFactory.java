@@ -14,12 +14,12 @@ public class RuleConfigFactory {
     public static RuleConfig createRuleConfig(final RuleDefinition ruleDefinition, final Object config) {
         return switch (ruleDefinition) {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.parse(config);
-            case SCAN_DYNAMODB_TABLE_IDLE -> ScanDynamodbTableIdleRuleConfig.parse(config);
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(config);
+            case SCAN_DYNAMODB_TABLE_IDLE -> ScanDynamodbTableIdleRuleConfig.create(config);
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.parse(config);
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.create();
             case SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY ->
-                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.parse(config);
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.create();
         };
     }
 }
