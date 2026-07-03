@@ -20,21 +20,9 @@ import org.yaml.snakeyaml.Yaml;
 public final class RuleSetConfigParser {
     private static final String DEFAULT_RULESET_CONFIG_PATH = "defaultRuleSet.yaml";
 
-    private static Map<RuleDefinition, RuleConfig> defaultRulesetConfig;
-    private static boolean isDefaultLoaded;
-
     public static Map<RuleDefinition, RuleConfig> parseRuleSetConfig(final String path) {
-        if (!isDefaultLoaded) {
-            loadDefaultRuleSet();
-        }
-
         final var rawRuleSetConfigMap = parseRawRuleSetConfigFromSystem(path);
         return generateRuleToRuleConfigFromRawRuleSetMap(rawRuleSetConfigMap);
-    }
-
-    private static void loadDefaultRuleSet() {
-        defaultRulesetConfig = parseDefaultRuleSetConfig();
-        isDefaultLoaded = true;
     }
 
     public static Map<RuleDefinition, RuleConfig> parseDefaultRuleSetConfig() {
@@ -48,8 +36,8 @@ public final class RuleSetConfigParser {
         } catch (final Exception exception) {
             throw new RuleSetConfigLoadException(
                     String.format(
-                            "Failed to load ruleset from resource. Exception: %s Path: %s",
-                            exception.getMessage(), path),
+                            "Failed to load ruleset from resource. ExceptionType: %s, Exception: %s, Path: %s",
+                            exception.getClass().getName(), exception.getMessage(), path),
                     exception);
         }
     }
@@ -60,7 +48,8 @@ public final class RuleSetConfigParser {
         } catch (final Exception exception) {
             throw new RuleSetConfigLoadException(
                     String.format(
-                            "Failed to load ruleset from system. Exception: %s Path: %s", exception.getMessage(), path),
+                            "Failed to load ruleset from system. ExceptionType: %s, Exception: %s, Path: %s",
+                            exception.getClass().getName(), exception.getMessage(), path),
                     exception);
         }
     }
@@ -91,27 +80,8 @@ public final class RuleSetConfigParser {
                         unknownRuleException);
             }
 
-            RuleConfig ruleConfig;
-            try {
-                ruleConfig = RuleConfigFactory.createRuleConfig(ruleDefinition, ruleNameToRuleConfigEntry.getValue());
-            } catch (final Exception exception) {
-                if (!isDefaultLoaded) {
-                    throw new RuleSetConfigLoadException(
-                            String.format(
-                                    "Failed to generate default rule set config. Exception: %s",
-                                    exception.getMessage()),
-                            exception);
-                } else if (!defaultRulesetConfig.containsKey(ruleDefinition)) {
-                    throw new RuleSetConfigLoadException(
-                            String.format(
-                                    RuleSetConfigLoadException.FAILED_GENERATE_RULE_SET_CONFIG, exception.getMessage()),
-                            exception);
-                }
-
-                // Opposite of above statement.
-                // If default is loaded and default ruleset has the key, then pull it from the default
-                ruleConfig = defaultRulesetConfig.get(ruleDefinition);
-            }
+            final var ruleConfig =
+                    RuleConfigFactory.createRuleConfig(ruleDefinition, ruleNameToRuleConfigEntry.getValue());
 
             ruleConfigMap.put(ruleDefinition, ruleConfig);
         }
@@ -122,10 +92,5 @@ public final class RuleSetConfigParser {
     @VisibleForTesting
     static String getDefaultRulesetConfigPath() {
         return DEFAULT_RULESET_CONFIG_PATH;
-    }
-
-    @VisibleForTesting
-    static void setIsDefaultLoaded(final boolean isDefaultConfigLoaded) {
-        RuleSetConfigParser.isDefaultLoaded = isDefaultConfigLoaded;
     }
 }
