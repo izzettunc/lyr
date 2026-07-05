@@ -1,0 +1,2 @@
+scan.dynamodb.table.idle:
+  excludeEmptyTables: true

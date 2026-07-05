@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.2.0]
+
+### Added
+
+- Added a logic that alternates to default values of that rule config, if parsing fails.
+
+### Removed
+
+- Removed mandatory rule config attributes
+
+### Fixed
+
+- Fixed the issue where a rule config must be defined in default rule set to have default values.
+
+### Enhancements
+
+- Introduced config creator class and implementations to standardize config creation
+
 ## [0.1.0]
 
 ### Added
@@ -50,5 +68,6 @@ and this project adheres to [Semantic Versioning].
 
 [0.0.0]: https://github.com/izzettunc/lyr/releases/tag/0.0.0
 [0.1.0]: https://github.com/izzettunc/lyr/releases/tag/0.1.0
+[0.2.0]: https://github.com/izzettunc/lyr/releases/tag/0.2.0
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html

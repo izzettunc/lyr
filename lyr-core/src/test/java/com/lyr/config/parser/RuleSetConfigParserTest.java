@@ -6,11 +6,8 @@ import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDL
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 
 import com.lyr.TestUtil;
 import com.lyr.exception.config.RuleSetConfigLoadException;
@@ -19,19 +16,13 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 class RuleSetConfigParserTest {
 
-    @BeforeEach
-    void beforeEach() {
-        RuleSetConfigParser.setIsDefaultLoaded(false);
-    }
-
     @Test
-    void testThatGivenNoCustomRuleSetConfigDefaultIsLoadedSuccessfully() {
+    void testThatDefaultRuleSetConfigIsLoadedSuccessfully() {
         // Given
         final var expectedRuleDefToRuleConfigMap = Map.of(
                 SCAN_DYNAMODB_TABLE_IDLE,
@@ -109,6 +100,29 @@ class RuleSetConfigParserTest {
     }
 
     @Test
+    void
+            testThatGivenCustomRuleSetThatDefinesTheRuleConfigPartiallyRuleSetConfigParserLoadsThoseRulesWithUserDefinedAndDefaultMixed() {
+        // Given
+        final var expectedRuleDefToRuleConfigMap = Map.of(
+                SCAN_DYNAMODB_TABLE_IDLE,
+                ScanDynamodbTableIdleRuleConfig.builder()
+                        .maxIdlePeriodInDays(30)
+                        .excludeEmptyTables(true)
+                        .build());
+        final var customRuleSetConfigPath =
+                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/partialUserRuleSetConfig.yaml");
+
+        // When
+        final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
+
+        // Then
+        assertThat(actualRuleDefToRuleConfigMap)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedRuleDefToRuleConfigMap);
+    }
+
+    @Test
     void testThatGivenCustomRuleSetContainsUnknownRuleRuleSetConfigThrowsRuleSetConfigLoadException() {
         // Given
         final var customRuleSetConfigPath =
@@ -129,7 +143,7 @@ class RuleSetConfigParserTest {
         // When & Then
         assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath))
                 .isInstanceOf(RuleSetConfigLoadException.class)
-                .hasMessageContaining("Failed to load ruleset from system. Exception:");
+                .hasMessageContaining("Failed to load ruleset from system. ExceptionType:");
     }
 
     @Test
@@ -145,9 +159,9 @@ class RuleSetConfigParserTest {
                     .thenReturn(defaultRuleSetConfigPath);
 
             // Then
-            assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(defaultRuleSetConfigPath))
+            assertThatThrownBy(RuleSetConfigParser::parseDefaultRuleSetConfig)
                     .isInstanceOf(RuleSetConfigLoadException.class)
-                    .hasMessageContaining("Failed to load ruleset from resource. Exception:");
+                    .hasMessageContaining("Failed to load ruleset from resource. ExceptionType:");
         }
     }
 
@@ -167,7 +181,7 @@ class RuleSetConfigParserTest {
     @Test
     void testThatGivenInvalidDefaultRuleSetProvidedRuleSetConfigLoadExceptionIsThrown() {
         // Given
-        final var badDefaultRuleSetConfigPath = "com/lyr/config/defaultRuleSetWithBadConfig.yaml";
+        final var badDefaultRuleSetConfigPath = "com/lyr/config/invalidDefaultRuleSet.json";
 
         // When
         try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
@@ -179,51 +193,7 @@ class RuleSetConfigParserTest {
             // Then
             assertThatThrownBy(RuleSetConfigParser::parseDefaultRuleSetConfig)
                     .isInstanceOf(RuleSetConfigLoadException.class)
-                    .hasMessageContaining("Failed to generate default rule set config. Exception:");
-        }
-    }
-
-    @Test
-    void
-            testThatGivenCustomRuleSetThatOnlyUsesRuleNameRuleSetConfigParserThrowsRuleSetConfigLoadExceptionWhenThereIsNoDefaultConfigAvailableForARule() {
-        // Given
-        final var alternativeDefaultRuleSetConfigPath = "com/lyr/config/alternativeDefaultRuleSet.yaml";
-        final var customRuleSetConfigPath =
-                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfigWithOnlyNames.yaml");
-
-        // When
-        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
-                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
-            mockedRuleSetConfigParser
-                    .when(RuleSetConfigParser::getDefaultRulesetConfigPath)
-                    .thenReturn(alternativeDefaultRuleSetConfigPath);
-
-            // Then
-            assertThatThrownBy(() -> RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath))
-                    .isInstanceOf(RuleSetConfigLoadException.class)
-                    .hasMessageContaining("Failed to generate rule set config. Exception:");
-        }
-    }
-
-    @Test
-    void testThatDefaultConfigIsLoadedOnlyOnceLazilyDuringLoadingCustomRuleSet() {
-        // Given
-        final var customRuleSetConfigPath =
-                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
-
-        try (MockedStatic<RuleSetConfigParser> mockedRuleSetConfigParser =
-                mockStatic(RuleSetConfigParser.class, CALLS_REAL_METHODS)) {
-            // Ensure that it's a clean run
-            mockedRuleSetConfigParser.verify(() -> RuleSetConfigParser.parseRuleSetConfig(any()), never());
-            mockedRuleSetConfigParser.verify(RuleSetConfigParser::parseDefaultRuleSetConfig, never());
-
-            // When
-            RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
-            RuleSetConfigParser.parseRuleSetConfig(customRuleSetConfigPath);
-
-            // Then
-            mockedRuleSetConfigParser.verify(() -> RuleSetConfigParser.parseRuleSetConfig(any()), times(2));
-            mockedRuleSetConfigParser.verify(RuleSetConfigParser::parseDefaultRuleSetConfig, times(1));
+                    .hasMessageContaining("Failed to load ruleset from resource. ExceptionType:");
         }
     }
 }
