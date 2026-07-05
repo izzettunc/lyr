@@ -2,18 +2,12 @@ package com.lyr.rule.cloudwatch.config;
 
 import com.lyr.rule.RuleConfig;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
 @Builder
-@AllArgsConstructor
-@Getter
+@Value
 public class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig implements RuleConfig {
-
-    public static ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig create() {
-        return ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
-    }
 
     @Override
     public Map<String, String> getConfigAsStringMap() {

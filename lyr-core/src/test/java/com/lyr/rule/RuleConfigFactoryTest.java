@@ -4,56 +4,79 @@ import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETE
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
-import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
-import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
-import org.junit.jupiter.api.Test;
+import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfigCreator;
+import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator;
+import com.lyr.util.RuleDefinition;
+import java.util.Map;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 
 class RuleConfigFactoryTest {
 
-    @Test
-    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsCreatedCorrectly() {
-        try (MockedStatic<ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig> mockedStaticConfig =
-                mockStatic(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.class)) {
-            RuleConfigFactory.createRuleConfig(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, null);
+    static MockedStatic<RuleConfigFactory> mockedRuleConfigFactory =
+            mockStatic(RuleConfigFactory.class, CALLS_REAL_METHODS);
+    static ScanDynamodbTableIdleRuleConfigCreator mockedScanDynamodbTableIdleRuleConfigCreator =
+            mock(ScanDynamodbTableIdleRuleConfigCreator.class);
+    static ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator
+            mockedScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator =
+                    mock(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator.class);
+    static ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator
+            mockedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator =
+                    mock(ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator.class);
+    static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator
+            mockedScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator =
+                    mock(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator.class);
 
-            mockedStaticConfig.verify(() -> ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.create(any()), times(1));
-        }
+    @BeforeEach
+    void beforeEach() {
+        mockedRuleConfigFactory.reset();
     }
 
-    @Test
-    void testThatScanDynamodbTableIdleRuleConfigIsCreatedCorrectly() {
-        try (MockedStatic<ScanDynamodbTableIdleRuleConfig> mockedStaticConfig =
-                mockStatic(ScanDynamodbTableIdleRuleConfig.class)) {
-            RuleConfigFactory.createRuleConfig(SCAN_DYNAMODB_TABLE_IDLE, null);
-
-            mockedStaticConfig.verify(() -> ScanDynamodbTableIdleRuleConfig.create(any()), times(1));
-        }
+    @AfterAll
+    static void beforeAll() {
+        mockedRuleConfigFactory.close();
     }
 
-    @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsCreatedCorrectly() {
-        try (MockedStatic<ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig> mockedStaticConfig =
-                mockStatic(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.class)) {
-            RuleConfigFactory.createRuleConfig(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY, null);
+    @ParameterizedTest
+    @MethodSource("ruleDefinitionAndRespectiveRuleConfigCreator")
+    void testThatScanGlueSessionActiveWithLongIdleTimeoutRuleConfigIsCreatedCorrectly(
+            final RuleDefinition ruleDefinition, final RuleConfigCreator<? extends RuleConfig> ruleConfigCreator) {
+        // Given
+        final Object input = null;
 
-            mockedStaticConfig.verify(ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig::create, times(1));
-        }
+        // When
+        when(RuleConfigFactory.getRuleConfigCreatorMap()).thenReturn(Map.of(ruleDefinition, ruleConfigCreator));
+        RuleConfigFactory.createRuleConfig(ruleDefinition, input);
+
+        // Then
+        verify(ruleConfigCreator, times(1)).create(input);
     }
 
-    @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsCreatedCorrectly() {
-        try (MockedStatic<ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig> mockedStaticConfig =
-                mockStatic(ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.class)) {
-            RuleConfigFactory.createRuleConfig(SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY, null);
-
-            mockedStaticConfig.verify(ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig::create, times(1));
-        }
+    public static Stream<Arguments> ruleDefinitionAndRespectiveRuleConfigCreator() {
+        return Stream.of(
+                Arguments.of(SCAN_DYNAMODB_TABLE_IDLE, mockedScanDynamodbTableIdleRuleConfigCreator),
+                Arguments.of(
+                        SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
+                        mockedScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator),
+                Arguments.of(
+                        SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        mockedScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator),
+                Arguments.of(
+                        SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
+                        mockedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator));
     }
 }

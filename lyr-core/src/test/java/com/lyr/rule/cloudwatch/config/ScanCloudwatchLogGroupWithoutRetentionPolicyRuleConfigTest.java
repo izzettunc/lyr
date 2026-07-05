@@ -8,20 +8,7 @@ import org.junit.jupiter.api.Test;
 class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigTest {
 
     @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsCreatedSuccessfully() {
-        // Given
-        final var expectedRuleConfig =
-                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
-
-        // When
-        final var actualRuleConfig = ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.create();
-
-        // Then
-        assertThat(actualRuleConfig).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
-    }
-
-    @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsCopiedCorrectly() {
+    void testThatRuleConfigIsCopiedCorrectly() {
         // Given
         final var expectedConfig =
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
@@ -35,7 +22,7 @@ class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigTest {
     }
 
     @Test
-    void testThatScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigIsConvertedToAMapSuccessfully() {
+    void testThatRuleConfigIsConvertedToAMapSuccessfully() {
         // Given
         final var expectedConfig =
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();

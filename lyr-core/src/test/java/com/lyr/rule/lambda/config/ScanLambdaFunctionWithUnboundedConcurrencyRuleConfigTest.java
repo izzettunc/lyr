@@ -8,20 +8,7 @@ import org.junit.jupiter.api.Test;
 class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
 
     @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsCreatedSuccessfully() {
-        // Given
-        final ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig expectedRuleConfig =
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
-
-        // When
-        final var actualRuleConfig = ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.create();
-
-        // Then
-        assertThat(actualRuleConfig).usingRecursiveComparison().isEqualTo(expectedRuleConfig);
-    }
-
-    @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsCopiedCorrectly() {
+    void testThatRuleConfigIsCopiedCorrectly() {
         // Given
         final var expectedConfig =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
@@ -35,7 +22,7 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
     }
 
     @Test
-    void testThatScanLambdaFunctionWithUnboundedConcurrencyRuleConfigIsConvertedToAMapSuccessfully() {
+    void testThatRuleConfigIsConvertedToAMapSuccessfully() {
         // Given
         final var expectedConfig =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
