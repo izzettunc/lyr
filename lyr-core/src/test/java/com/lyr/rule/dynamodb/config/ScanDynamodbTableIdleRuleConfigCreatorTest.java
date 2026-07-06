@@ -5,20 +5,35 @@ import static com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig.MAX_I
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 class ScanDynamodbTableIdleRuleConfigCreatorTest {
 
     ScanDynamodbTableIdleRuleConfigCreator testObject;
+    static MockedStatic<BadRuleConfigException> mockedBadRuleConfigExceptionStatic =
+            mockStatic(BadRuleConfigException.class, CALLS_REAL_METHODS);
 
     @BeforeEach
     void beforeEach() {
         testObject = new ScanDynamodbTableIdleRuleConfigCreator();
+        mockedBadRuleConfigExceptionStatic.reset();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedBadRuleConfigExceptionStatic.closeOnDemand();
     }
 
     @Test
@@ -92,9 +107,9 @@ class ScanDynamodbTableIdleRuleConfigCreatorTest {
         final ScanDynamodbTableIdleRuleConfig ruleConfig = null;
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage("Rule config must not be null");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(() -> BadRuleConfigException.forNull(anyString()), times(1));
     }
 
     @Test
@@ -105,9 +120,9 @@ class ScanDynamodbTableIdleRuleConfigCreatorTest {
                 .build();
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage(
-                        "Max idle period attribute of scan.dynamodb.table.idle rule config, must be longer than a day");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(
+                () -> BadRuleConfigException.forLessThanLimit(anyString(), anyString(), anyInt()), times(1));
     }
 }

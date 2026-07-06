@@ -42,12 +42,12 @@ public class ScanDynamodbTableIdleRuleConfigCreator extends RuleConfigCreator<Sc
     @Override
     protected void validate(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
         if (ruleConfig == null) {
-            throw new BadRuleConfigException("Rule config must not be null");
+            throw BadRuleConfigException.forNull(SCAN_DYNAMODB_TABLE_IDLE.getRuleName());
         }
 
         if (ruleConfig.getMaxIdlePeriodInDays() < 1) {
-            throw new BadRuleConfigException("Max idle period attribute of " + SCAN_DYNAMODB_TABLE_IDLE.getRuleName()
-                    + " rule config, must be longer than a day");
+            throw BadRuleConfigException.forLessThanLimit(
+                    MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, SCAN_DYNAMODB_TABLE_IDLE.getRuleName(), 1);
         }
     }
 }

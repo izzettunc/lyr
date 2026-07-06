@@ -40,13 +40,14 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator
     @Override
     protected void validate(final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig) {
         if (ruleConfig == null) {
-            throw new BadRuleConfigException("Rule config must not be null");
+            throw BadRuleConfigException.forNull(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT.getRuleName());
         }
 
         if (ruleConfig.getMaxIdleTimeoutInMinutes() < 0) {
-            throw new BadRuleConfigException("Max idle timeout in minutes attribute of "
-                    + SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT.getRuleName()
-                    + " rule config, must be equal or greater than 0");
+            throw BadRuleConfigException.forLessThanLimit(
+                    MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY,
+                    SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT.getRuleName(),
+                    0);
         }
     }
 }

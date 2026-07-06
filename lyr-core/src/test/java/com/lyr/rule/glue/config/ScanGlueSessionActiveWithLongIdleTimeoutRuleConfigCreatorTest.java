@@ -4,20 +4,35 @@ import static com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutR
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
 
     ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator testObject;
+    static MockedStatic<BadRuleConfigException> mockedBadRuleConfigExceptionStatic =
+            mockStatic(BadRuleConfigException.class, CALLS_REAL_METHODS);
 
     @BeforeEach
     void beforeEach() {
         testObject = new ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator();
+        mockedBadRuleConfigExceptionStatic.reset();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedBadRuleConfigExceptionStatic.closeOnDemand();
     }
 
     @Test
@@ -91,9 +106,9 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
         final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig = null;
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage("Rule config must not be null");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(() -> BadRuleConfigException.forNull(anyString()), times(1));
     }
 
     @Test
@@ -105,9 +120,9 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
                         .build();
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage(
-                        "Max idle timeout in minutes attribute of scan.glue.session.activeWithLongIdleTimeout rule config, must be equal or greater than 0");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(
+                () -> BadRuleConfigException.forLessThanLimit(anyString(), anyString(), anyInt()), times(1));
     }
 }
