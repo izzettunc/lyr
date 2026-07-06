@@ -39,9 +39,10 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreatorTest {
     void testThatRuleConfigCreatorParsesInputCorrectly() {
         // Given
         final Object input = Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, "arm64");
-        final var expectOptionalRuleConfig = Optional.of(ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
-                .disallowedArchitecture("arm64")
-                .build());
+        final var expectOptionalRuleConfig =
+                Optional.of(ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
+                        .disallowedArchitecture("arm64")
+                        .build());
 
         // When
         final var actualOptionalRuleConfig = testObject.parse(input);

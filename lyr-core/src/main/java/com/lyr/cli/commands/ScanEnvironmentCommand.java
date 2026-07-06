@@ -33,7 +33,7 @@ public class ScanEnvironmentCommand {
                     final Optional<String> optionalUserRuleSetConfigFilePath,
             @Option(
                             names = {"-r", "--reportType"},
-                            description = "Path to user config file that specifies the ruleset")
+                            description = "Type of report that specifies the output format")
                     final Optional<ReportType> optionalReportType,
             @Option(
                             names = {"-p", "--profile"},
