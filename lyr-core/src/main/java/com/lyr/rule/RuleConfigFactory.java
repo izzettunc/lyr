@@ -3,11 +3,13 @@ package com.lyr.rule;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfigCreator;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator;
 import com.lyr.util.RuleDefinition;
 import java.util.Map;
@@ -24,7 +26,9 @@ public class RuleConfigFactory {
             SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                     new ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator(),
             SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
-                    new ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator());
+                    new ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator(),
+            SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
+                    new ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator());
 
     static Map<RuleDefinition, RuleConfigCreator<? extends RuleConfig>> getRuleConfigCreatorMap() {
         return RULE_CONFIG_CREATOR_MAP;
@@ -35,7 +39,8 @@ public class RuleConfigFactory {
             case SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
                     SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                     SCAN_DYNAMODB_TABLE_IDLE,
-                    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
+                    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
+                    SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                 getRuleConfigCreatorMap().get(ruleDefinition).create(config);
         };
     }

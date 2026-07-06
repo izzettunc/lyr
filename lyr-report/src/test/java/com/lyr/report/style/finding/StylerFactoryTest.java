@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.lyr.report.style.finding.cloudwatch.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler;
 import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingStyler;
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
@@ -33,6 +34,9 @@ class StylerFactoryTest {
                 Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler.class),
+                Arguments.of(
+                        RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
+                        ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler.class),
                 Arguments.of(
                         RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
                         ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler.class),
