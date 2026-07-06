@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.Architecture;
 import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
@@ -62,7 +63,7 @@ class LambdaConnectorTest {
     @Test
     void testThatLambdaConnectorListLambdaFunctionsReturnsListOfFunctionNames() {
         // Given
-        final var listOfLisFunctionsResponse = List.of(
+        final var listOfListFunctionsResponse = List.of(
                 ListFunctionsResponse.builder()
                         .functions(
                                 FunctionConfiguration.builder()
@@ -87,7 +88,7 @@ class LambdaConnectorTest {
         final var expectedListOfFunctionNames = List.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4);
 
         // When
-        when(mockedListFunctionsIterable.stream()).thenReturn(listOfLisFunctionsResponse.stream());
+        when(mockedListFunctionsIterable.stream()).thenReturn(listOfListFunctionsResponse.stream());
         when(mockedLambdaClient.listFunctionsPaginator()).thenReturn(mockedListFunctionsIterable);
 
         final var actualResult = testObject.listLambdaFunctionNames();
@@ -97,6 +98,44 @@ class LambdaConnectorTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedListOfFunctionNames);
+    }
+
+    @Test
+    void testThatLambdaConnectorListLambdaFunctionConfigurationsReturnsListOfFunctionConfigurations() {
+        // Given
+        final var functionConfig1 = FunctionConfiguration.builder()
+                .functionName(FUNCTION_1)
+                .architectures(Architecture.X86_64)
+                .build();
+        final var functionConfig2 = FunctionConfiguration.builder()
+                .functionName(FUNCTION_2)
+                .architectures(Architecture.ARM64)
+                .codeSize(123L)
+                .build();
+        final var functionConfig3 =
+                FunctionConfiguration.builder().functionName(FUNCTION_3).build();
+
+        final var listOfListFunctionsResponse = List.of(
+                ListFunctionsResponse.builder().functions(functionConfig1).build(),
+                ListFunctionsResponse.builder()
+                        .functions(functionConfig2, functionConfig3)
+                        .build());
+
+        final var mockedListFunctionsIterable = mock(ListFunctionsIterable.class);
+
+        final var expectedListOfFunctionConfigs = List.of(functionConfig1, functionConfig2, functionConfig3);
+
+        // When
+        when(mockedListFunctionsIterable.stream()).thenReturn(listOfListFunctionsResponse.stream());
+        when(mockedLambdaClient.listFunctionsPaginator()).thenReturn(mockedListFunctionsIterable);
+
+        final var actualResult = testObject.listLambdaFunctionConfigurations();
+
+        // Then
+        assertThat(actualResult)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedListOfFunctionConfigs);
     }
 
     @Test

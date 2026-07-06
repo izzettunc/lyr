@@ -37,10 +37,15 @@ public final class LambdaConnector {
     }
 
     public List<String> listLambdaFunctionNames() {
+        return listLambdaFunctionConfigurations().stream()
+                .map(FunctionConfiguration::functionName)
+                .toList();
+    }
+
+    public List<FunctionConfiguration> listLambdaFunctionConfigurations() {
         return client.listFunctionsPaginator().stream()
                 .map(ListFunctionsResponse::functions)
                 .flatMap(List::stream)
-                .map(FunctionConfiguration::functionName)
                 .toList();
     }
 
