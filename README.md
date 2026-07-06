@@ -36,13 +36,13 @@ Lyr is a CLI tool that analyzes cloud health and security across live environmen
 Lyr is being developed user in mind, if you have no preference you can simply run it with all default options like below:
 
 ```bash
-java -jar lyr-0.2.0.jar scan-env aws
+java -jar lyr-1.0.0.jar scan-env aws
 ```
 
 Or, if you are a power user and would like to configure the tool based on your needs you can provide all kinds of options
 
 ```bash
-java -jar lyr-0.2.0.jar scan-env aws \
+java -jar lyr-1.0.0.jar scan-env aws \
     --config "path/to/rule/set/config/file.yaml" \
     --profile "my-aws-profile" \
     --reportType "json" \
@@ -51,7 +51,7 @@ java -jar lyr-0.2.0.jar scan-env aws \
 
 All available options can be found by running help function
 ```console
-lyr@lyr:~$ java -jar lyr-0.2.0.jar scan-env aws --help
+lyr@lyr:~$ java -jar lyr-1.0.0.jar scan-env aws --help
 Usage: lyr scan-env aws [-hV] [-c=<arg0>] [-l=<arg3>] [-p=<arg2>] [-r=<arg1>]
 Scans you aws environment using relative rulest and credentials
   -c, --config=<arg0>       Path to user rule set config file that specifies
@@ -60,7 +60,7 @@ Scans you aws environment using relative rulest and credentials
   -l, --logLevel=<arg3>     Desired level of details for logs
   -p, --profile=<arg2>      AWS profile that defines desired credential or
                               configuration to use
-  -r, --reportType=<arg1>   Path to user config file that specifies the ruleset
+  -r, --reportType=<arg1>   Type of report that specifies the output format
   -V, --version             Print version information and exit.
 ```
 
@@ -116,6 +116,7 @@ mvn clean install
 - Flag idle DynamoDB tables
 - Flag active Glue sessions with long idle timeouts
 - Flag lambda functions with unbounded concurrency
+- Flag lambda functions that uses disallowed architecture
 - Flag cloudwatch log groups without a retention policy
 
 #### Rule Set Configuration
@@ -135,6 +136,9 @@ scan.glue.session.activeWithLongIdleTimeout:
   maxIdleTimeoutInMinutes: 15
 
 scan.lambda.function.withUnboundedConcurrency:
+
+scan.lambda.function.withDisallowedArchitecture:
+  disallowedArchitecture: x86_64
 
 scan.cloudwatch.logGroup.withoutRetentionPolicy:
 ```
