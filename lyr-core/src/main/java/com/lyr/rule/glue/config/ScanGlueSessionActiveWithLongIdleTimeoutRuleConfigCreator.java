@@ -37,7 +37,7 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator
                     .addArgument(exception.getClass().getName())
                     .addArgument(exception.getMessage())
                     .log(
-                            "Provided config for {} rule is can not be parsed due to an error. Alternating to default config for this rule. ErrorType: {}, Error: {}");
+                            "Provided config for {} rule can not be parsed due to an error. Alternating to default config for this rule. ErrorType: {}, Error: {}");
             return Optional.empty();
         }
     }
