@@ -26,13 +26,24 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator
             return Optional.empty();
         }
 
-        final var configMap = (Map<String, String>) input;
+        try {
+            final var configMap = (Map<String, String>) input;
 
-        final var ruleConfigBuilder = ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder();
-        RuleConfig.setConfigIfAttributePresent(
-                DISALLOWED_ARCHITECTURE_CONFIG_KEY, configMap, ruleConfigBuilder::disallowedArchitecture);
+            final var ruleConfigBuilder = ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder();
 
-        return Optional.of(ruleConfigBuilder.build());
+            RuleConfig.setConfigIfAttributePresent(
+                    DISALLOWED_ARCHITECTURE_CONFIG_KEY, configMap, ruleConfigBuilder::disallowedArchitecture);
+
+            return Optional.of(ruleConfigBuilder.build());
+        } catch (final Exception exception) {
+            log.atWarn()
+                    .addArgument(SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE::getRuleName)
+                    .addArgument(exception.getClass().getName())
+                    .addArgument(exception.getMessage())
+                    .log(
+                            "Provided config for {} rule is can not be parsed due to an error. Alternating to default config for this rule. ErrorType: {}, Error: {}");
+            return Optional.empty();
+        }
     }
 
     @Override

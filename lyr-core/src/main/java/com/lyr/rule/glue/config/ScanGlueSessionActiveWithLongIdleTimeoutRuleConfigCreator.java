@@ -23,13 +23,23 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator
             return Optional.empty();
         }
 
-        final var configMap = (Map<String, Integer>) input;
+        try {
+            final var configMap = (Map<String, Integer>) input;
 
-        final var ruleConfigBuilder = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder();
-        RuleConfig.setConfigIfAttributePresent(
-                MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, configMap, ruleConfigBuilder::maxIdleTimeoutInMinutes);
+            final var ruleConfigBuilder = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder();
+            RuleConfig.setConfigIfAttributePresent(
+                    MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, configMap, ruleConfigBuilder::maxIdleTimeoutInMinutes);
 
-        return Optional.of(ruleConfigBuilder.build());
+            return Optional.of(ruleConfigBuilder.build());
+        } catch (final Exception exception) {
+            log.atWarn()
+                    .addArgument(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT::getRuleName)
+                    .addArgument(exception.getClass().getName())
+                    .addArgument(exception.getMessage())
+                    .log(
+                            "Provided config for {} rule is can not be parsed due to an error. Alternating to default config for this rule. ErrorType: {}, Error: {}");
+            return Optional.empty();
+        }
     }
 
     @Override

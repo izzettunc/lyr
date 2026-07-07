@@ -13,9 +13,13 @@ import static org.mockito.Mockito.times;
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 
 class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreatorTest {
@@ -51,11 +55,10 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreatorTest {
         assertThat(actualOptionalRuleConfig).isEqualTo(expectOptionalRuleConfig);
     }
 
-    @Test
-    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid() {
-        // Given
-        final Object input = "This can be null or something invalid";
-
+    @ParameterizedTest
+    @MethodSource("invalidInputsForRuleCreatorToParse")
+    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid(final Object input) {
+        // Given input
         // When
         final var actualOptionalRuleConfig = testObject.parse(input);
 
@@ -125,5 +128,12 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreatorTest {
 
         mockedBadRuleConfigExceptionStatic.verify(
                 () -> BadRuleConfigException.forUnsupportedValues(anyString(), anyString(), anyCollection()), times(1));
+    }
+
+    private static Stream<Arguments> invalidInputsForRuleCreatorToParse() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of("An input that is not even a map"),
+                Arguments.of(Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, 123)));
     }
 }

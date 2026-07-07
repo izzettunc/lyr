@@ -13,9 +13,13 @@ import static org.mockito.Mockito.times;
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 
 class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
@@ -50,11 +54,10 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
         assertThat(actualOptionalRuleConfig).isEqualTo(expectOptionalRuleConfig);
     }
 
-    @Test
-    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid() {
-        // Given
-        final Object input = "This can be null or something invalid";
-
+    @ParameterizedTest
+    @MethodSource("invalidInputsForRuleCreatorToParse")
+    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid(final Object input) {
+        // Given input
         // When
         final var actualOptionalRuleConfig = testObject.parse(input);
 
@@ -124,5 +127,12 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
 
         mockedBadRuleConfigExceptionStatic.verify(
                 () -> BadRuleConfigException.forLessThanLimit(anyString(), anyString(), anyInt()), times(1));
+    }
+
+    private static Stream<Arguments> invalidInputsForRuleCreatorToParse() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of("An input that is not even a map"),
+                Arguments.of(Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, "badValue")));
     }
 }
