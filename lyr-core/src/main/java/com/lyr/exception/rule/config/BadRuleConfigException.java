@@ -28,15 +28,16 @@ public class BadRuleConfigException extends RuntimeException {
     }
 
     public static BadRuleConfigException forUnsupportedValues(
-            final String configName, final String ruleName, final Collection<String> allowedValues) {
+            final String configName, final String ruleName, final Collection<?> allowedValues) {
         final var allowedValuesAsString = formatCollectionToString(allowedValues);
         final var message = configName + FOR + ruleName + " rule config must be one of " + allowedValuesAsString;
         return new BadRuleConfigException(message);
     }
 
-    private static String formatCollectionToString(final Collection<String> allowedValues) {
+    private static String formatCollectionToString(final Collection<?> allowedValues) {
         return allowedValues.stream()
-                .map(element -> QUOTE_SYMBOL + element + QUOTE_SYMBOL)
+                .map(element ->
+                        element instanceof String ? QUOTE_SYMBOL + element + QUOTE_SYMBOL : String.valueOf(element))
                 .collect(Collectors.joining(", ", "[", "]"));
     }
 }
