@@ -5,20 +5,39 @@ import static com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig.MAX_I
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 
 class ScanDynamodbTableIdleRuleConfigCreatorTest {
 
     ScanDynamodbTableIdleRuleConfigCreator testObject;
+    static MockedStatic<BadRuleConfigException> mockedBadRuleConfigExceptionStatic =
+            mockStatic(BadRuleConfigException.class, CALLS_REAL_METHODS);
 
     @BeforeEach
     void beforeEach() {
         testObject = new ScanDynamodbTableIdleRuleConfigCreator();
+        mockedBadRuleConfigExceptionStatic.reset();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedBadRuleConfigExceptionStatic.closeOnDemand();
     }
 
     @Test
@@ -37,11 +56,10 @@ class ScanDynamodbTableIdleRuleConfigCreatorTest {
         assertThat(actualOptionalRuleConfig).isEqualTo(expectOptionalRuleConfig);
     }
 
-    @Test
-    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid() {
-        // Given
-        final Object input = "This can be null or something invalid";
-
+    @ParameterizedTest
+    @MethodSource("invalidInputsForRuleCreatorToParse")
+    void testThatRuleConfigCreatorReturnsEmptyOptionalWhenInputIsInvalid(final Object input) {
+        // Given input
         // When
         final var actualOptionalRuleConfig = testObject.parse(input);
 
@@ -92,9 +110,9 @@ class ScanDynamodbTableIdleRuleConfigCreatorTest {
         final ScanDynamodbTableIdleRuleConfig ruleConfig = null;
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage("Rule config must not be null");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(() -> BadRuleConfigException.forNull(anyString()), times(1));
     }
 
     @Test
@@ -105,9 +123,16 @@ class ScanDynamodbTableIdleRuleConfigCreatorTest {
                 .build();
 
         // When & Then
-        assertThatThrownBy(() -> testObject.validate(ruleConfig))
-                .isInstanceOf(BadRuleConfigException.class)
-                .hasMessage(
-                        "Max idle period attribute of scan.dynamodb.table.idle rule config, must be longer than a day");
+        assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(
+                () -> BadRuleConfigException.forLessThanLimit(anyString(), anyString(), anyInt()), times(1));
+    }
+
+    private static Stream<Arguments> invalidInputsForRuleCreatorToParse() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of("An input that is not even a map"),
+                Arguments.of(Map.of(MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, "badValue")));
     }
 }

@@ -3,6 +3,7 @@ package com.lyr.rule;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,6 +14,7 @@ import com.lyr.config.RuleSetConfig;
 import com.lyr.rule.cloudwatch.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleExecution;
 import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
@@ -72,6 +74,10 @@ class RuleFactoryTest {
                 Arguments.of(
                         SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         Rule.class,
-                        ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution.class));
+                        ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution.class),
+                Arguments.of(
+                        SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
+                        Rule.class,
+                        ScanLambdaFunctionWithDisallowedArchitectureRuleExecution.class));
     }
 }

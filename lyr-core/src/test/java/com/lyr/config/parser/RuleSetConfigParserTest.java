@@ -3,6 +3,7 @@ package com.lyr.config.parser;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,6 +15,7 @@ import com.lyr.exception.config.RuleSetConfigLoadException;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -26,17 +28,15 @@ class RuleSetConfigParserTest {
         // Given
         final var expectedRuleDefToRuleConfigMap = Map.of(
                 SCAN_DYNAMODB_TABLE_IDLE,
-                ScanDynamodbTableIdleRuleConfig.builder()
-                        .maxIdlePeriodInDays(30)
-                        .build(),
+                ScanDynamodbTableIdleRuleConfig.builder().build(),
                 SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                        .maxIdleTimeoutInMinutes(15)
-                        .build(),
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build(),
                 SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build(),
                 SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build());
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build(),
+                SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build());
 
         // When
         final var actualRuleDefToRuleConfigMap = RuleSetConfigParser.parseDefaultRuleSetConfig();

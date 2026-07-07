@@ -6,4 +6,6 @@ scan.dynamodb.table.idle:
 scan.glue.session.activeWithLongIdleTimeout:
   maxIdleTimeoutInMinutes: 15
 scan.lambda.function.withUnboundedConcurrency:
+scan.lambda.function.withDisallowedArchitecture:
+  disallowedArchitecture: x86_64
 scan.cloudwatch.logGroup.withoutRetentionPolicy:

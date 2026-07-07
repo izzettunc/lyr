@@ -1,10 +1,10 @@
-package com.lyr.rule.glue.config;
+package com.lyr.rule.lambda.config;
 
-import static com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY;
+import static com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.DISALLOWED_ARCHITECTURE_CONFIG_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
@@ -22,15 +22,15 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 
-class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
+class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreatorTest {
 
-    ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator testObject;
+    ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator testObject;
     static MockedStatic<BadRuleConfigException> mockedBadRuleConfigExceptionStatic =
             mockStatic(BadRuleConfigException.class, CALLS_REAL_METHODS);
 
     @BeforeEach
     void beforeEach() {
-        testObject = new ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator();
+        testObject = new ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator();
         mockedBadRuleConfigExceptionStatic.reset();
     }
 
@@ -42,10 +42,11 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
     @Test
     void testThatRuleConfigCreatorParsesInputCorrectly() {
         // Given
-        final Object input = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, 5);
-        final var expectOptionalRuleConfig = Optional.of(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                .maxIdleTimeoutInMinutes(5)
-                .build());
+        final Object input = Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, "arm64");
+        final var expectOptionalRuleConfig =
+                Optional.of(ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
+                        .disallowedArchitecture("arm64")
+                        .build());
 
         // When
         final var actualOptionalRuleConfig = testObject.parse(input);
@@ -70,7 +71,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
         // Given
         final Object configWithoutAttributes = Map.of();
         final var expectedOptionalRuleConfig = Optional.of(
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build());
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build());
 
         // When
         final var actualOptionalRuleConfig = testObject.parse(configWithoutAttributes);
@@ -83,7 +84,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
     void testThatRuleConfigCreatorCreatesDefaultRuleConfigCorrectly() {
         // Given
         final var expectedDefaultRuleConfig =
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build();
 
         // When
         final var actualRuleConfig = testObject.createDefaultConfig();
@@ -97,7 +98,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
     void testThatRuleConfigCreatorValidationPassesGivenValidRuleConfig() {
         // Given
         final var ruleConfig =
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build();
 
         // When & Then
         assertThatNoException().isThrownBy(() -> testObject.validate(ruleConfig));
@@ -106,7 +107,7 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
     @Test
     void testThatRuleConfigCreatorValidationFailsGivenNullRuleConfig() {
         // Given
-        final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig = null;
+        final ScanLambdaFunctionWithDisallowedArchitectureRuleConfig ruleConfig = null;
 
         // When & Then
         assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
@@ -115,24 +116,24 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreatorTest {
     }
 
     @Test
-    void testThatRuleConfigCreatorValidationFailsGivenRuleConfigWithNegativeMaxIdleTimeoutInMinutes() {
+    void testThatRuleConfigCreatorValidationFailsGivenRuleConfigWithUnsupportedArchitecture() {
         // Given
-        final ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig ruleConfig =
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                        .maxIdleTimeoutInMinutes(-1)
+        final ScanLambdaFunctionWithDisallowedArchitectureRuleConfig ruleConfig =
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
+                        .disallowedArchitecture("skynet")
                         .build();
 
         // When & Then
         assertThatThrownBy(() -> testObject.validate(ruleConfig)).isInstanceOf(BadRuleConfigException.class);
 
         mockedBadRuleConfigExceptionStatic.verify(
-                () -> BadRuleConfigException.forLessThanLimit(anyString(), anyString(), anyInt()), times(1));
+                () -> BadRuleConfigException.forUnsupportedValues(anyString(), anyString(), anyCollection()), times(1));
     }
 
     private static Stream<Arguments> invalidInputsForRuleCreatorToParse() {
         return Stream.of(
                 Arguments.of((Object) null),
                 Arguments.of("An input that is not even a map"),
-                Arguments.of(Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, "badValue")));
+                Arguments.of(Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, 123)));
     }
 }

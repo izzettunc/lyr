@@ -3,6 +3,7 @@ package com.lyr.rule;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigCreator;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfigCreator;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator;
 import com.lyr.util.RuleDefinition;
 import java.util.Map;
@@ -40,6 +42,9 @@ class RuleConfigFactoryTest {
     static ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator
             mockedScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator =
                     mock(ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator.class);
+    static ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator
+            mockedScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator =
+                    mock(ScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator.class);
 
     @BeforeEach
     void beforeEach() {
@@ -72,6 +77,9 @@ class RuleConfigFactoryTest {
                 Arguments.of(
                         SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         mockedScanLambdaFunctionWithUnboundedConcurrencyRuleConfigCreator),
+                Arguments.of(
+                        SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
+                        mockedScanLambdaFunctionWithDisallowedArchitectureRuleConfigCreator),
                 Arguments.of(
                         SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                         mockedScanGlueSessionActiveWithLongIdleTimeoutRuleConfigCreator),

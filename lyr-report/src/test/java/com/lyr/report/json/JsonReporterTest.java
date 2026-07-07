@@ -40,7 +40,7 @@ class JsonReporterTest {
                   "version" : "0.0.0",
                   "executions" : [ {
                     "name" : "scan.dynamodb.table.idle",
-                    "code" : "WST-DDB-001",
+                    "code" : "AWS-DDB-001",
                     "configuration" : {
                       "a" : "1",
                       "b" : "2"
@@ -55,7 +55,7 @@ class JsonReporterTest {
                     } ]
                   }, {
                     "name" : "scan.lambda.function.withUnboundedConcurrency",
-                    "code" : "WST-LMD-001",
+                    "code" : "AWS-LMD-001",
                     "configuration" : { },
                     "findings" : [ ]
                   } ]

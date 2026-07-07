@@ -9,17 +9,15 @@ import lombok.Getter;
 public enum RuleDefinition {
     // Syntax:
     // ruleName: scan.<service>.<resource>.<check>
-    // ruleCode: <category>-<service>-<increment-id>
+    // ruleCode: <cloud-provider>-<service>-<increment-id>
     // Rule code is three letter for each section
 
     SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY(
-            "scan.cloudwatch.logGroup.withoutRetentionPolicy", "WST-CLW-001"),
-
-    SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT("scan.glue.session.activeWithLongIdleTimeout", "WST-GLU-001"),
-
-    SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "WST-DDB-001"),
-
-    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "WST-LMD-001");
+            "scan.cloudwatch.logGroup.withoutRetentionPolicy", "AWS-CLW-001"),
+    SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT("scan.glue.session.activeWithLongIdleTimeout", "AWS-GLU-001"),
+    SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "AWS-DDB-001"),
+    SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "AWS-LMD-001"),
+    SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE("scan.lambda.function.withDisallowedArchitecture", "AWS-LMD-002");
 
     private static final Map<String, RuleDefinition> NAME_TO_DEFINITION_MAP = new HashMap<>();
     private static final Map<String, RuleDefinition> CODE_TO_DEFINITION_MAP = new HashMap<>();

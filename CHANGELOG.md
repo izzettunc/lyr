@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.0.0]
+
+### Added
+
+- Added scan lambda functions with disallowed architecture rule
+- Added scan lambda functions with disallowed architecture rule to default rule set
+
+### Changed
+
+- Changed all the rule code format to follow {cloud-provider}-{service}-{increment-id} format instead of {category}-{service}-{increment-id}
+
+### Fixed
+
+- Fixed copy paste error on report type description in cli help screen
+
+### Enhancements
+
+- Standardized BadRuleConfigException with different validation errors
+
 ## [0.2.0]
 
 ### Added
@@ -28,6 +47,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Added scan cloud watch log groups without retention policy rule
+- Added scan cloud watch log groups without retention policy rule to default rule set
 
 ## [0.0.0]
 
@@ -69,5 +89,6 @@ and this project adheres to [Semantic Versioning].
 [0.0.0]: https://github.com/izzettunc/lyr/releases/tag/0.0.0
 [0.1.0]: https://github.com/izzettunc/lyr/releases/tag/0.1.0
 [0.2.0]: https://github.com/izzettunc/lyr/releases/tag/0.2.0
+[1.0.0]: https://github.com/izzettunc/lyr/releases/tag/1.0.0
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
