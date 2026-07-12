@@ -5,9 +5,15 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Builder
 @Value
+@JsonDeserialize(
+        builder =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig
+                        .ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigBuilder.class)
 public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleConfig {
 
     public static final String MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY = "maxIdleTimeoutInMinutes";
@@ -28,4 +34,7 @@ public class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig implements RuleC
                 .maxIdleTimeoutInMinutes(maxIdleTimeoutInMinutes)
                 .build();
     }
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigBuilder {}
 }

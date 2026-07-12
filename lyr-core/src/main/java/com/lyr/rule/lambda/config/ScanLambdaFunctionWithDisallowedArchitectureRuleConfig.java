@@ -5,9 +5,15 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Builder
 @Value
+@JsonDeserialize(
+        builder =
+                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig
+                        .ScanLambdaFunctionWithDisallowedArchitectureRuleConfigBuilder.class)
 public class ScanLambdaFunctionWithDisallowedArchitectureRuleConfig implements RuleConfig {
     public static final String DISALLOWED_ARCHITECTURE_CONFIG_KEY = "disallowedArchitecture";
 
@@ -23,9 +29,12 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleConfig implements R
     }
 
     @Override
-    public RuleConfig copy() {
+    public ScanLambdaFunctionWithDisallowedArchitectureRuleConfig copy() {
         return ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
                 .disallowedArchitecture(disallowedArchitecture)
                 .build();
     }
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigBuilder {}
 }

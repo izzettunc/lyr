@@ -5,9 +5,12 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Builder
 @Value
+@JsonDeserialize(builder = ScanDynamodbTableIdleRuleConfig.ScanDynamodbTableIdleRuleConfigBuilder.class)
 public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
     public static final String EXCLUDE_EMPTY_TABLES_CONFIG_KEY = "excludeEmptyTables";
     public static final String MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY = "maxIdlePeriodInDays";
@@ -37,4 +40,7 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
                 .excludeEmptyTables(excludeEmptyTables)
                 .build();
     }
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ScanDynamodbTableIdleRuleConfigBuilder {}
 }
