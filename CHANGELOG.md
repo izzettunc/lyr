@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.1.0]
+
+### Changed
+
+- Changed the tolerance on problems within user rule set configuration file see below table for breakdown
+
+| Issue                                            | Is issue intentional | Old behavior                    | New behavior                    |
+|--------------------------------------------------|----------------------|---------------------------------|---------------------------------|
+| Rule Config empty                                | Yes                  | Use defaults                    | Use defaults                    |
+| Rule Config partially filled                     | Yes                  | Use defaults for missing fields | Use defaults for missing fields |
+| Whole config file syntax/type invalid            | No                   | Raise exception                 | Raise exception                 |
+| Rule Config syntax/type invalid                  | No                   | Use default                     | Raise exception                 |
+| One attribute of rule Config syntax/type invalid | No                   | Use default                     | Raise exception                 |
+| Rule config can be parsed but logically invalid  | No                   | Raise exception                 | Raise exception                 |
+| An unknown rule is provided                      | No                   | Raise exception                 | Raise exception                 |
+| Rule set file can not be find                    | No                   | Raise exception                 | Raise exception                 |
+| Rule set file is not provided                    | Yes                  | Use default rule set            | Use defeault rule set           | 
+
+### Enhancements
+
+- Move file utils to lyr-util module
+- Refactored and simplified parsing logic by defining model for rule set and using jackson instead of snakeyaml to avoid passing Object types
+- Migrated the validation checks to respective rule configs and rule set config which enabled us to remove rule config creators and rule config factory
+
 ## [1.0.0]
 
 ### Added
@@ -90,5 +114,6 @@ and this project adheres to [Semantic Versioning].
 [0.1.0]: https://github.com/izzettunc/lyr/releases/tag/0.1.0
 [0.2.0]: https://github.com/izzettunc/lyr/releases/tag/0.2.0
 [1.0.0]: https://github.com/izzettunc/lyr/releases/tag/1.0.0
+[1.1.0]: https://github.com/izzettunc/lyr/releases/tag/1.1.0
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
