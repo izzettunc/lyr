@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.lyr.TestUtil;
+import com.lyr.config.parser.RuleSet;
 import com.lyr.exception.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.rule.RuleConfig;
@@ -30,6 +31,36 @@ class RuleSetConfigTest {
     @AfterEach
     void afterEach() {
         testObject = new RuleSetConfig(Map.of());
+    }
+
+    @Test
+    void testThatRuleSetConfigIsCreatedFromRuleSetCorrectly() {
+        // Given
+        final var scanDynamodbTableIdleRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(123)
+                .excludeEmptyTables(true)
+                .build();
+        final var scanGlueSessionActiveWithLongIdleTimeoutRuleConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(456)
+                        .build();
+
+        final var ruleSet = new RuleSet();
+        ruleSet.setScanDynamodbTableIdleRuleConfig(scanDynamodbTableIdleRuleConfig);
+        ruleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(
+                scanGlueSessionActiveWithLongIdleTimeoutRuleConfig);
+
+        final var validConfigMap = Map.of(
+                SCAN_DYNAMODB_TABLE_IDLE, scanDynamodbTableIdleRuleConfig,
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, scanGlueSessionActiveWithLongIdleTimeoutRuleConfig);
+
+        final var expectedRuleSetConfig = new RuleSetConfig(validConfigMap);
+
+        // When
+        final var actualRuleSetConfig = RuleSetConfig.from(ruleSet);
+
+        // Then
+        assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedRuleSetConfig);
     }
 
     @Test
@@ -81,7 +112,7 @@ class RuleSetConfigTest {
         // Given
         var expectedRuleDefinitionSet =
                 Set.of(SCAN_DYNAMODB_TABLE_IDLE, SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT);
-        Map<RuleDefinition, RuleConfig> configuration = Map.of(
+        var configuration = Map.of(
                 SCAN_DYNAMODB_TABLE_IDLE,
                         ScanDynamodbTableIdleRuleConfig.builder()
                                 .maxIdlePeriodInDays(123)
@@ -130,8 +161,7 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigIsParsedAndSetWhenLoadedGivenValidPath() {
         // Given
-        final var customRuleSetConfigPath =
-                TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSetConfig.yaml");
+        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSet.yaml");
         final var expectedRuleSetConfig = new RuleSetConfig(Map.of(
                 SCAN_DYNAMODB_TABLE_IDLE,
                         ScanDynamodbTableIdleRuleConfig.builder()
