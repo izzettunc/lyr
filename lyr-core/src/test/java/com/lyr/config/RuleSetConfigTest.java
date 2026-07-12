@@ -7,11 +7,15 @@ import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_A
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.lyr.TestUtil;
 import com.lyr.config.parser.RuleSet;
 import com.lyr.exception.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
+import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.rule.RuleConfig;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
@@ -19,18 +23,99 @@ import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConf
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.util.RuleDefinition;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 class RuleSetConfigTest {
 
     RuleSetConfig testObject;
+    static MockedStatic<BadRuleConfigException> mockedBadRuleConfigExceptionStatic =
+            mockStatic(BadRuleConfigException.class, CALLS_REAL_METHODS);
 
-    @AfterEach
-    void afterEach() {
+    @BeforeEach
+    void beforeEach() {
+        mockedBadRuleConfigExceptionStatic.reset();
         testObject = new RuleSetConfig(Map.of());
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedBadRuleConfigExceptionStatic.closeOnDemand();
+    }
+
+    @Test
+    void testThatRuleSetConfigIsSuccessfullyConstructedWhenMapIsValid() {
+        // Given
+        final var validConfigMap = Map.of(
+                SCAN_DYNAMODB_TABLE_IDLE,
+                ScanDynamodbTableIdleRuleConfig.builder()
+                        .maxIdlePeriodInDays(123)
+                        .excludeEmptyTables(true)
+                        .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(456)
+                        .build());
+
+        // When
+        final var actualRuleSetConfig = new RuleSetConfig(validConfigMap);
+
+        // Then
+        assertThat(actualRuleSetConfig.getAllAvailableRuleDefinition()).isEqualTo(validConfigMap.keySet());
+        assertThat(actualRuleSetConfig.getRuleConfig(SCAN_DYNAMODB_TABLE_IDLE))
+                .isEqualTo(validConfigMap.get(SCAN_DYNAMODB_TABLE_IDLE));
+        assertThat(actualRuleSetConfig.getRuleConfig(SCAN_DYNAMODB_TABLE_IDLE))
+                .isNotSameAs(validConfigMap.get(SCAN_DYNAMODB_TABLE_IDLE));
+        assertThat(actualRuleSetConfig.getRuleConfig(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT))
+                .isEqualTo(validConfigMap.get(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT));
+        assertThat(actualRuleSetConfig.getRuleConfig(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT))
+                .isNotSameAs(validConfigMap.get(SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT));
+    }
+
+    @Test
+    void testThatRuleSetConfigThrowsBadRuleConfigExceptionIfMapIsInvalid() {
+        // Given
+        final var validConfigMap = Map.of(
+                SCAN_DYNAMODB_TABLE_IDLE,
+                ScanDynamodbTableIdleRuleConfig.builder()
+                        .maxIdlePeriodInDays(-10)
+                        .excludeEmptyTables(true)
+                        .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(456)
+                        .build());
+
+        // When & Then
+        assertThatThrownBy(() -> new RuleSetConfig(validConfigMap)).isInstanceOf(BadRuleConfigException.class);
+    }
+
+    @Test
+    void testThatRuleSetConfigThrowsBadRuleConfigExceptionIfMapContainsNullRuleConfig() {
+        // Given
+        final var validConfigMap = new EnumMap<>(Map.of(
+                SCAN_DYNAMODB_TABLE_IDLE,
+                ScanDynamodbTableIdleRuleConfig.builder()
+                        .maxIdlePeriodInDays(123)
+                        .excludeEmptyTables(true)
+                        .build(),
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(456)
+                        .build()));
+        validConfigMap.put(SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY, null);
+
+        // When & Then
+        assertThatThrownBy(() -> new RuleSetConfig(validConfigMap)).isInstanceOf(BadRuleConfigException.class);
+
+        mockedBadRuleConfigExceptionStatic.verify(
+                () -> BadRuleConfigException.forNull(SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY.getRuleName()),
+                times(1));
     }
 
     @Test
@@ -80,7 +165,7 @@ class RuleSetConfigTest {
         testObject = new RuleSetConfig(configuration);
 
         // When
-        var actualConfig = testObject.getConfig(SCAN_DYNAMODB_TABLE_IDLE);
+        var actualConfig = testObject.getRuleConfig(SCAN_DYNAMODB_TABLE_IDLE);
 
         // Then
         assertThat(actualConfig).usingRecursiveComparison().isEqualTo(expectedConfig);
@@ -102,7 +187,7 @@ class RuleSetConfigTest {
         testObject = new RuleSetConfig(configuration);
 
         // When & Then
-        assertThatThrownBy(() -> testObject.getConfig(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY))
+        assertThatThrownBy(() -> testObject.getRuleConfig(SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY))
                 .isInstanceOf(RuleWithNoConfigException.class)
                 .hasMessageContaining("No config found for rule");
     }
@@ -137,16 +222,17 @@ class RuleSetConfigTest {
     @Test
     void testThatNotYetInitializedExceptionThrownWhenRuleSetConfigGetRunBeforeSet() {
         // Given
-        RuleSetConfig.setRuleSetConfig(null);
-
-        // When & Then
-        assertThatThrownBy(RuleSetConfig::getRuleSetConfig)
-                .isInstanceOf(NotYetInitializedException.class)
-                .hasMessage("Rule set configuration can not be accessed as it is not yet initialized.");
+        try (final var mockedRuleSetConfig = mockStatic(RuleSetConfig.class, CALLS_REAL_METHODS)) {
+            // When & Then
+            mockedRuleSetConfig.when(RuleSetConfig::getConfigInstance).thenReturn(null);
+            assertThatThrownBy(RuleSetConfig::getRuleSetConfig)
+                    .isInstanceOf(NotYetInitializedException.class)
+                    .hasMessage("Rule set configuration can not be accessed as it is not yet initialized.");
+        }
     }
 
     @Test
-    void testThatRuleSetConfigSetIsRuleSetConfigGot() {
+    void testThatRuleSetConfigSetterWorksAsExcepted() {
         // Given
         final var expectedRuleSetConfig = new RuleSetConfig(Map.of());
 
@@ -156,6 +242,16 @@ class RuleSetConfigTest {
 
         // Then
         assertThat(actualRuleSetConfig).isSameAs(expectedRuleSetConfig);
+    }
+
+    @Test
+    void testThatRuleSetConfigSetterThrowsExceptionWhenRuleSetConfigIsNull() {
+        // Given
+        final RuleSetConfig ruleSetConfig = null;
+
+        // When & Then
+        assertThatThrownBy(() -> RuleSetConfig.setRuleSetConfig(ruleSetConfig))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
