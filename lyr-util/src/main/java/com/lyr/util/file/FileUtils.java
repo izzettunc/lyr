@@ -1,5 +1,6 @@
-package com.lyr.rule;
+package com.lyr.util.file;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,8 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtils {
 
-    public static InputStream getInputStreamFromResource(final String filePath) {
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+    public static InputStream getInputStreamFromResource(final String filePath) throws FileNotFoundException {
+        final var resourceAsStream =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+
+        if (resourceAsStream == null) {
+            throw new FileNotFoundException("Resource not found: " + filePath);
+        }
+
+        return resourceAsStream;
     }
 
     public static InputStream getInputStreamFromSystem(final String filePath) throws IOException {
