@@ -1,5 +1,8 @@
 package com.lyr.rule.dynamodb.config;
 
+import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
+
+import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.rule.RuleConfig;
 import java.util.Map;
 import lombok.Builder;
@@ -39,6 +42,14 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
                 .maxIdlePeriodInDays(maxIdlePeriodInDays)
                 .excludeEmptyTables(excludeEmptyTables)
                 .build();
+    }
+
+    @Override
+    public void validate() {
+        if (maxIdlePeriodInDays < 1) {
+            throw BadRuleConfigException.forLessThanLimit(
+                    MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, SCAN_DYNAMODB_TABLE_IDLE.getRuleName(), 1);
+        }
     }
 
     @JsonPOJOBuilder(withPrefix = "")

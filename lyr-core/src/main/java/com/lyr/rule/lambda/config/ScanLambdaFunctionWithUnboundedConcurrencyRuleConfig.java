@@ -25,6 +25,9 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements Rul
         return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
     }
 
+    @Override
+    public void validate() {}
+
     @JsonPOJOBuilder(withPrefix = "")
     public static class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigBuilder {}
 }

@@ -1,6 +1,7 @@
 package com.lyr.rule.lambda.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -33,5 +34,15 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigTest {
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);
+    }
+
+    @Test
+    void testThatRuleConfigValidationPassesGivenValidRuleConfig() {
+        // Given
+        final var ruleConfig =
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
+
+        // When & Then
+        assertThatNoException().isThrownBy(ruleConfig::validate);
     }
 }

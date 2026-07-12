@@ -21,9 +21,12 @@ public class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig implements R
     }
 
     @Override
-    public RuleConfig copy() {
+    public ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig copy() {
         return ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
     }
+
+    @Override
+    public void validate() {}
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfigBuilder {}
