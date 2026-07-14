@@ -1,0 +1,5 @@
+scan.dynamodb.table.idle:
+  maxIdlePeriodInDays: abcdef
+  excludeEmptyTables: true
+scan.glue.session.activeWithLongIdleTimeout:
+  maxIdleTimeoutInMinutes: 22

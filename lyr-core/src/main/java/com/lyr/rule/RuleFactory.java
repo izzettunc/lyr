@@ -18,27 +18,27 @@ public class RuleFactory {
             case SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT ->
                 new Rule(
                         ruleDefinition,
-                        RuleSetConfig.getRuleSetConfig().getConfig(ruleDefinition),
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution());
             case SCAN_DYNAMODB_TABLE_IDLE ->
                 new Rule(
                         ruleDefinition,
-                        RuleSetConfig.getRuleSetConfig().getConfig(ruleDefinition),
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanDynamodbTableIdleRuleExecution());
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                 new Rule(
                         ruleDefinition,
-                        RuleSetConfig.getRuleSetConfig().getConfig(ruleDefinition),
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution());
             case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                 new Rule(
                         ruleDefinition,
-                        RuleSetConfig.getRuleSetConfig().getConfig(ruleDefinition),
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanLambdaFunctionWithDisallowedArchitectureRuleExecution());
             case SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY ->
                 new Rule(
                         ruleDefinition,
-                        RuleSetConfig.getRuleSetConfig().getConfig(ruleDefinition),
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanCloudwatchLogGroupWithoutRetentionPolicyRuleExecution());
         };
     }

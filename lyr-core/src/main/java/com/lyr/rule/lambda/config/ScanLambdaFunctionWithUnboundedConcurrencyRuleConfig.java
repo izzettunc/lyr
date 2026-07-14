@@ -4,9 +4,15 @@ import com.lyr.rule.RuleConfig;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Builder
 @Value
+@JsonDeserialize(
+        builder =
+                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig
+                        .ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigBuilder.class)
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements RuleConfig {
 
     @Override
@@ -15,7 +21,13 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements Rul
     }
 
     @Override
-    public RuleConfig copy() {
+    public ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig copy() {
         return ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
     }
+
+    @Override
+    public void validate() {}
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfigBuilder {}
 }

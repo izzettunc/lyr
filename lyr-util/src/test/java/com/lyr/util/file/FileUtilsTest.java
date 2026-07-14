@@ -1,9 +1,9 @@
-package com.lyr.rule;
+package com.lyr.util.file;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import com.lyr.TestUtil;
+import com.lyr.util.TestUtil;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 class FileUtilsTest {
 
-    private static final String resourceFilePath = "com/lyr/someResourceFile.txt";
+    private static final String resourceFilePath = "com/lyr/util/someResourceFile.txt";
     private static final String expectedFileContent = "Hello World!";
 
     @Test
@@ -48,7 +48,7 @@ class FileUtilsTest {
     @Test
     void testThatFileUtilReturnsAnInputStreamOfASystemFileGivenAnRelativePathSuccessfully() {
         // Given
-        final var resourceRelativePath = "src/test/resources/com/lyr/someResourceFile.txt";
+        final var resourceRelativePath = "src/test/resources/com/lyr/util/someResourceFile.txt";
         // When
         try (var inputStream = FileUtils.getInputStreamFromSystem(resourceRelativePath)) {
             var fileContents = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
