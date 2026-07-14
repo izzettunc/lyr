@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.databind.exc.UnrecognizedPropertyException;
 import tools.jackson.dataformat.yaml.YAMLMapper;
@@ -21,6 +22,7 @@ public final class RuleSetParser {
     private static final String DEFAULT_RULESET_CONFIG_PATH = "defaultRuleSet.yaml";
     private static final YAMLMapper YAML_MAPPER = YAMLMapper.builder()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(MapperFeature.ALLOW_COERCION_OF_SCALARS, false)
             .build();
 
     public static RuleSet parseRuleSet(final String path) {

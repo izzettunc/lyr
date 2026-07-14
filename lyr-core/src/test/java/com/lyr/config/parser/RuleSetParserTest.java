@@ -14,6 +14,8 @@ import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRu
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.util.file.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 
 class RuleSetParserTest {
@@ -180,6 +182,25 @@ class RuleSetParserTest {
                     .isInstanceOf(RuleSetParseException.class)
                     .hasMessageContaining("Failed to parse ruleset as it is not in expected format. ExceptionType:");
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "com/lyr/config/invalidRuleSetDueToAttributeTypeBooleanInteger.yaml",
+                "com/lyr/config/invalidRuleSetDueToAttributeTypeBooleanString.yaml",
+                "com/lyr/config/invalidRuleSetDueToAttributeTypeIntegerString.yaml",
+            })
+    void
+            testThatGivenRuleSetContainsWrongTypeForRuleConfigAttributeRuleSetParserThrowsRuleSetParseExceptionDueToInvalidFormat(
+                    final String path) {
+        // Given
+        final var customRuleSetPath = TestUtil.getAbsoluteFilePathOfResource(path);
+
+        // When & Then
+        assertThatThrownBy(() -> RuleSetParser.parseRuleSet(customRuleSetPath))
+                .isInstanceOf(RuleSetParseException.class)
+                .hasMessageContaining("Failed to parse ruleset as it is not in expected format. ExceptionType:");
     }
 
     @Test
