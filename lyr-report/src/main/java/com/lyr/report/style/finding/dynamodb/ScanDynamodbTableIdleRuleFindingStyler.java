@@ -11,7 +11,7 @@ public class ScanDynamodbTableIdleRuleFindingStyler implements FindingStyler {
     @Override
     public String styleForPlainText(final List<Finding> findings) {
         if (findings.isEmpty()) {
-            final var findingReport = "No idle DynamoDB table found that has been idle longer than max idle period.";
+            final var findingReport = "No idle DynamoDB tables found that has been idle longer than max idle period.";
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
             return PlainTextReportStyler.toNewLine(styledFindingReport);
         }

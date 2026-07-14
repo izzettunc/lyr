@@ -11,7 +11,7 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler imple
     @Override
     public String styleForPlainText(final List<Finding> findings) {
         if (findings.isEmpty()) {
-            final var findingReport = "No lambda found using the disallowed architecture.";
+            final var findingReport = "No lambda functions found using the disallowed architecture.";
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
             return PlainTextReportStyler.toNewLine(styledFindingReport);
         }

@@ -11,7 +11,7 @@ public class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler imple
     @Override
     public String styleForPlainText(final List<Finding> findings) {
         if (findings.isEmpty()) {
-            final var findingReport = "No cloudwatch log groups found without a retention policy.";
+            final var findingReport = "No CloudWatch log groups found without a retention policy.";
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
             return PlainTextReportStyler.toNewLine(styledFindingReport);
         }
@@ -19,7 +19,7 @@ public class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler imple
         final StringBuilder reportBuilder = new StringBuilder();
         for (final Finding finding : findings) {
             final var findingReport =
-                    String.format("Cloudwatch log group '%s' doesn't have a retention policy.", finding.identifier());
+                    String.format("CloudWatch log group '%s' doesn't have a retention policy.", finding.identifier());
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.NEGATIVE);
             reportBuilder.append(PlainTextReportStyler.toNewLine(styledFindingReport));
         }
