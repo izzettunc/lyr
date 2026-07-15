@@ -117,6 +117,7 @@ mvn clean install
 - Flag active Glue sessions with long idle timeouts
 - Flag lambda functions with unbounded concurrency
 - Flag lambda functions that uses disallowed architecture
+- Flag lambda functions that doesn't use x-ray tracing
 - Flag cloudwatch log groups without a retention policy
 
 #### Rule Set Configuration
@@ -136,6 +137,8 @@ scan.glue.session.activeWithLongIdleTimeout:
   maxIdleTimeoutInMinutes: 15
 
 scan.lambda.function.withUnboundedConcurrency:
+
+scan.lambda.function.withXrayTracingNotEnabled:
 
 scan.lambda.function.withDisallowedArchitecture:
   disallowedArchitecture: x86_64
