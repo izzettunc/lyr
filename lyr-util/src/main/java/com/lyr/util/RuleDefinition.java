@@ -17,7 +17,8 @@ public enum RuleDefinition {
     SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT("scan.glue.session.activeWithLongIdleTimeout", "AWS-GLU-001"),
     SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "AWS-DDB-001"),
     SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "AWS-LMD-001"),
-    SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE("scan.lambda.function.withDisallowedArchitecture", "AWS-LMD-002");
+    SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE("scan.lambda.function.withDisallowedArchitecture", "AWS-LMD-002"),
+    SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED("scan.lambda.function.withXrayTracingNotEnabled", "AWS-LMD-003");
 
     private static final Map<String, RuleDefinition> NAME_TO_DEFINITION_MAP = new HashMap<>();
     private static final Map<String, RuleDefinition> CODE_TO_DEFINITION_MAP = new HashMap<>();

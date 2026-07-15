@@ -9,6 +9,7 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.util.RuleDefinition;
 import java.util.function.Supplier;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,9 @@ public class RuleSet {
 
     @VisibleForTesting
     ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
+
+    @VisibleForTesting
+    ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 
     @JsonSetter(value = "scan.dynamodb.table.idle", nulls = Nulls.SET)
     public void setScanDynamodbTableIdleRuleConfig(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
@@ -73,6 +77,15 @@ public class RuleSet {
                         .build());
     }
 
+    @JsonSetter(value = "scan.lambda.function.withXrayTracingNotEnabled", nulls = Nulls.SET)
+    public void setScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig(
+            final ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig ruleConfig) {
+        this.scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder()
+                        .build());
+    }
+
     public RuleConfig getRuleConfig(final RuleDefinition ruleDefinition) {
         final var ruleConfig =
                 switch (ruleDefinition) {
@@ -89,6 +102,9 @@ public class RuleSet {
 
                     case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                         scanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
+
+                    case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
+                        scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
                 };
 
         return copyOrNull(ruleConfig);

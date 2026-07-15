@@ -7,6 +7,7 @@ import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingSty
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,6 +43,9 @@ class StylerFactoryTest {
                         ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler.class),
                 Arguments.of(
                         RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                        ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class));
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class),
+                Arguments.of(
+                        RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
+                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler.class));
     }
 }
