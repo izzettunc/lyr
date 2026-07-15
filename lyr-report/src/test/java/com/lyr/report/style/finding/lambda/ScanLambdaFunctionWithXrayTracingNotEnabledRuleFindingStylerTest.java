@@ -1,9 +1,11 @@
-package com.lyr.report.style.finding.dynamodb;
+package com.lyr.report.style.finding.lambda;
 
+import static com.lyr.report.TestUtil.createImmutableListOfFindings;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 
 import com.lyr.report.TestUtil;
 import com.lyr.report.plain.text.Sentiment;
@@ -15,15 +17,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-class ScanDynamodbTableIdleRuleFindingStylerTest {
+class ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStylerTest {
 
     static final MockedStatic<PlainTextReportStyler> mockedPlainTextReportStyler =
             mockStatic(PlainTextReportStyler.class, Mockito.CALLS_REAL_METHODS);
-    ScanDynamodbTableIdleRuleFindingStyler testObject;
+    ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler testObject;
 
     @BeforeEach
     public void beforeEach() {
-        testObject = new ScanDynamodbTableIdleRuleFindingStyler();
+        testObject = new ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler();
         mockedPlainTextReportStyler.reset();
     }
 
@@ -35,10 +37,10 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereAreFindings() {
         // Given
-        final var findings = TestUtil.createImmutableListOfFindings(TestUtil.DUMMY_STRING, TestUtil.DUMMY2_STRING);
+        final var findings = createImmutableListOfFindings(TestUtil.DUMMY_STRING, TestUtil.DUMMY2_STRING);
         final var expectedRawLines = List.of(
-                "DynamoDB table 'dummy' has been idle longer than max idle period.",
-                "DynamoDB table 'dummy2' has been idle longer than max idle period.");
+                "Lambda function 'dummy' has X-Ray tracing not enabled.",
+                "Lambda function 'dummy2' has X-Ray tracing not enabled.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
@@ -47,17 +49,16 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
         assertThat(actualResult).containsSubsequence(expectedRawLines);
         mockedPlainTextReportStyler.verify(
                 () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
-                Mockito.times(expectedRawLines.size()));
+                times(expectedRawLines.size()));
         mockedPlainTextReportStyler.verify(
-                () -> PlainTextReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
+                () -> PlainTextReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 
     @Test
     void testThatReportReturnsAReportAsAStringWhenThereAreNoFindings() {
         // Given
-        final var findings = TestUtil.createImmutableListOfFindings();
-        final var expectedRawLines =
-                List.of("No idle DynamoDB tables found that has been idle longer than max idle period.");
+        final var findings = createImmutableListOfFindings();
+        final var expectedRawLines = List.of("No lambda functions found with X-Ray tracing not enabled.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
@@ -66,8 +67,8 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
         assertThat(actualResult).containsSubsequence(expectedRawLines);
         mockedPlainTextReportStyler.verify(
                 () -> PlainTextReportStyler.styleFindingReport(anyString(), any(Sentiment.class)),
-                Mockito.times(expectedRawLines.size()));
+                times(expectedRawLines.size()));
         mockedPlainTextReportStyler.verify(
-                () -> PlainTextReportStyler.toNewLine(anyString()), Mockito.times(expectedRawLines.size()));
+                () -> PlainTextReportStyler.toNewLine(anyString()), times(expectedRawLines.size()));
     }
 }

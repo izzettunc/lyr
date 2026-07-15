@@ -11,7 +11,7 @@ public class ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler impleme
     @Override
     public String styleForPlainText(final List<Finding> findings) {
         if (findings.isEmpty()) {
-            final var findingReport = "No lambda found with unbounded concurrency.";
+            final var findingReport = "No lambda functions found with unbounded concurrency.";
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
             return PlainTextReportStyler.toNewLine(styledFindingReport);
         }

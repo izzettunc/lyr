@@ -5,6 +5,7 @@ import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -16,6 +17,7 @@ import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,6 +80,10 @@ class RuleFactoryTest {
                 Arguments.of(
                         SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
                         Rule.class,
-                        ScanLambdaFunctionWithDisallowedArchitectureRuleExecution.class));
+                        ScanLambdaFunctionWithDisallowedArchitectureRuleExecution.class),
+                Arguments.of(
+                        SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
+                        Rule.class,
+                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution.class));
     }
 }

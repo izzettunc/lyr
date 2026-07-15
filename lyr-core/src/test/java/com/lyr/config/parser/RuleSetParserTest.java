@@ -12,6 +12,7 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.util.file.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +35,8 @@ class RuleSetParserTest {
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build());
         expectedRuleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(
                 ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build());
+        expectedRuleSet.setScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig(
+                ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build());
 
         // When
         final var actualRuleSet = RuleSetParser.parseDefaultRuleSet();

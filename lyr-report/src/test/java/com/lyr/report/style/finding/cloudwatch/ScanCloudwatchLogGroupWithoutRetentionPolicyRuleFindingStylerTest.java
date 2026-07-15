@@ -39,8 +39,8 @@ class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStylerTest {
         // Given
         final var findings = createImmutableListOfFindings(TestUtil.DUMMY_STRING, TestUtil.DUMMY2_STRING);
         final var expectedRawLines = List.of(
-                "Cloudwatch log group 'dummy' doesn't have a retention policy.",
-                "Cloudwatch log group 'dummy2' doesn't have a retention policy.");
+                "CloudWatch log group 'dummy' doesn't have a retention policy.",
+                "CloudWatch log group 'dummy2' doesn't have a retention policy.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
@@ -58,7 +58,7 @@ class ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStylerTest {
     void testThatReportReturnsAReportAsAStringWhenThereAreNoFindings() {
         // Given
         final var findings = createImmutableListOfFindings();
-        final var expectedRawLines = List.of("No cloudwatch log groups found without a retention policy.");
+        final var expectedRawLines = List.of("No CloudWatch log groups found without a retention policy.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);

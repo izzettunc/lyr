@@ -58,7 +58,7 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStylerTest {
     void testThatReportReturnsAReportAsAStringWhenThereAreNoFindings() {
         // Given
         final var findings = createImmutableListOfFindings();
-        final var expectedRawLines = List.of("No lambda found using the disallowed architecture.");
+        final var expectedRawLines = List.of("No lambda functions found using the disallowed architecture.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);

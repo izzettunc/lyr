@@ -6,6 +6,7 @@ import com.lyr.rule.dynamodb.ScanDynamodbTableIdleRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution;
 import com.lyr.util.RuleDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,11 @@ public class RuleFactory {
                         ruleDefinition,
                         RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
                         new ScanCloudwatchLogGroupWithoutRetentionPolicyRuleExecution());
+            case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
+                new Rule(
+                        ruleDefinition,
+                        RuleSetConfig.getRuleSetConfig().getRuleConfig(ruleDefinition),
+                        new ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution());
         };
     }
 }

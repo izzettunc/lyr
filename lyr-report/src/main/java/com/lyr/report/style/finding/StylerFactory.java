@@ -5,6 +5,7 @@ import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingSty
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,8 @@ public class StylerFactory {
                 new ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler();
             case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                 new ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler();
+            case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
+                new ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler();
         };
     }
 }

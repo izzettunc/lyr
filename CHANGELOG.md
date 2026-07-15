@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.2.0]
+
+### Added
+
+- Added scan lambda functions with x-ray tracing not enabled rule
+- Added scan lambda functions with x-ray tracing not enabled rule to default rule set
+
+### Changed
+
+- Fixed errors in plaint text finding messages for below rules:
+    - `scan.cloudwatch.logGroup.withoutRetentionPolicy`
+    - `scan.dynamodb.table.idle`
+    - `scan.lambda.function.withUnboundedConcurrency`
+    - `scan.lambda.function.withDisallowedArchitecture`
+
+### Enhancements
+
+-  Simplified rule set config and scan aws env runner tests by using mocks to remove dependency between them and default config
+
 ## [1.1.0]
 
 ### Changed
@@ -115,5 +134,6 @@ and this project adheres to [Semantic Versioning].
 [0.2.0]: https://github.com/izzettunc/lyr/releases/tag/0.2.0
 [1.0.0]: https://github.com/izzettunc/lyr/releases/tag/1.0.0
 [1.1.0]: https://github.com/izzettunc/lyr/releases/tag/1.1.0
+[1.2.0]: https://github.com/izzettunc/lyr/releases/tag/1.2.0
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html

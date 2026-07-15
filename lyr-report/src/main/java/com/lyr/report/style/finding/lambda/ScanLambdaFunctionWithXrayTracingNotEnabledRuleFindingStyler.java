@@ -6,12 +6,12 @@ import com.lyr.report.style.finding.FindingStyler;
 import com.lyr.report.style.plain.text.PlainTextReportStyler;
 import java.util.List;
 
-public class ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler implements FindingStyler {
+public class ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler implements FindingStyler {
 
     @Override
     public String styleForPlainText(final List<Finding> findings) {
         if (findings.isEmpty()) {
-            final var findingReport = "No lambda functions found using the disallowed architecture.";
+            final var findingReport = "No lambda functions found with X-Ray tracing not enabled.";
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.POSITIVE);
             return PlainTextReportStyler.toNewLine(styledFindingReport);
         }
@@ -19,7 +19,7 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler imple
         final StringBuilder reportBuilder = new StringBuilder();
         for (final Finding finding : findings) {
             final var findingReport =
-                    String.format("Lambda function '%s' uses the disallowed architecture.", finding.identifier());
+                    String.format("Lambda function '%s' has X-Ray tracing not enabled.", finding.identifier());
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.NEGATIVE);
             reportBuilder.append(PlainTextReportStyler.toNewLine(styledFindingReport));
         }

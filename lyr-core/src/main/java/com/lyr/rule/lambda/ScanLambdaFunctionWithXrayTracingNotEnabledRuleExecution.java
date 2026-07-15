@@ -3,23 +3,22 @@ package com.lyr.rule.lambda;
 import com.google.common.collect.ImmutableList;
 import com.lyr.report.model.Finding;
 import com.lyr.rule.RuleExecutionStrategy;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.services.lambda.LambdaConnector;
-import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
+import software.amazon.awssdk.services.lambda.model.TracingMode;
 
 @Slf4j
-public class ScanLambdaFunctionWithDisallowedArchitectureRuleExecution
-        implements RuleExecutionStrategy<ScanLambdaFunctionWithDisallowedArchitectureRuleConfig> {
+public class ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution
+        implements RuleExecutionStrategy<ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig> {
 
     @Override
-    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithDisallowedArchitectureRuleConfig config) {
+    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig ignored) {
         final var listOfLambdaFunctionConfigurations = LambdaConnector.create().listLambdaFunctionConfigurations();
         final var findings = listOfLambdaFunctionConfigurations.stream()
-                .filter(functionConfig -> functionConfig
-                        .architecturesAsStrings()
-                        .contains(config.getDisallowedArchitecture().toLowerCase(Locale.ROOT)))
+                .filter(functionConfiguration -> !TracingMode.ACTIVE.equals(
+                        functionConfiguration.tracingConfig().mode()))
                 .map(FunctionConfiguration::functionName)
                 .map(Finding::byId)
                 .collect(ImmutableList.toImmutableList());
