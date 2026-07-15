@@ -75,7 +75,7 @@ class ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecutionTest {
     }
 
     @Test
-    void testThatRuleReturnsOnlyDisallowedArchitecture() {
+    void testThatRuleReturnsOnlyFunctionsThatDidNotEnableXrayTracing() {
         // Given
         final var config =
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build();
