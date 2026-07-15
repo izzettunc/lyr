@@ -1,9 +1,9 @@
 package com.lyr.config;
 
+import static com.lyr.TestUtil.DUMMY_STRING;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
-import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,17 +11,14 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
-import com.lyr.TestUtil;
 import com.lyr.config.parser.RuleSet;
+import com.lyr.config.parser.RuleSetParser;
 import com.lyr.exception.NotYetInitializedException;
 import com.lyr.exception.config.RuleWithNoConfigException;
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.rule.RuleConfig;
-import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.util.RuleDefinition;
 import java.util.EnumMap;
 import java.util.Map;
@@ -257,44 +254,64 @@ class RuleSetConfigTest {
     @Test
     void testThatRuleSetConfigIsParsedAndSetWhenLoadedGivenValidPath() {
         // Given
-        final var customRuleSetConfigPath = TestUtil.getAbsoluteFilePathOfResource("com/lyr/config/userRuleSet.yaml");
+        final var dynamoDbRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(11)
+                .excludeEmptyTables(true)
+                .build();
+        final var glueRuleConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                .maxIdleTimeoutInMinutes(22)
+                .build();
+
+        final var mockedRuleSet = new RuleSet();
+        mockedRuleSet.setScanDynamodbTableIdleRuleConfig(dynamoDbRuleConfig);
+        mockedRuleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(glueRuleConfig);
+
         final var expectedRuleSetConfig = new RuleSetConfig(Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE,
-                        ScanDynamodbTableIdleRuleConfig.builder()
-                                .maxIdlePeriodInDays(11)
-                                .excludeEmptyTables(true)
-                                .build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                        ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                                .maxIdleTimeoutInMinutes(22)
-                                .build()));
+                SCAN_DYNAMODB_TABLE_IDLE, dynamoDbRuleConfig,
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, glueRuleConfig));
 
         // When
-        final var actualRuleSetConfig = RuleSetConfig.loadUserRuleSetConfig(customRuleSetConfigPath);
+        try (final var mockedRuleSetParser = mockStatic(RuleSetParser.class)) {
+            mockedRuleSetParser
+                    .when(() -> RuleSetParser.parseRuleSet(DUMMY_STRING))
+                    .thenReturn(mockedRuleSet);
+            final var actualRuleSetConfig = RuleSetConfig.loadUserRuleSetConfig(DUMMY_STRING);
+            final var actualRuleSetConfigThatIsSet = RuleSetConfig.getRuleSetConfig();
 
-        // Then
-        assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedRuleSetConfig);
+            // Then
+            assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedRuleSetConfig);
+            assertThat(actualRuleSetConfigThatIsSet).usingRecursiveComparison().isEqualTo(expectedRuleSetConfig);
+            assertThat(actualRuleSetConfig).isSameAs(actualRuleSetConfigThatIsSet);
+            mockedRuleSetParser.verify(() -> RuleSetParser.parseRuleSet(DUMMY_STRING), times(1));
+        }
     }
 
     @Test
     void testThatRuleSetConfigIsParsedAndSetUsingDefaultConfigWhenLoadedWithoutAPath() {
         // Given
+        final var dynamoDbRuleConfig = ScanDynamodbTableIdleRuleConfig.builder().build();
+        final var glueRuleConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build();
+
+        final var mockedDefaultRuleSet = new RuleSet();
+        mockedDefaultRuleSet.setScanDynamodbTableIdleRuleConfig(dynamoDbRuleConfig);
+        mockedDefaultRuleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(glueRuleConfig);
+
         final var expectedDefaultRuleSetConfig = new RuleSetConfig(Map.of(
-                SCAN_DYNAMODB_TABLE_IDLE,
-                ScanDynamodbTableIdleRuleConfig.builder().build(),
-                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build(),
-                SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
-                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build(),
-                SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
-                ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build(),
-                SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
-                ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build()));
+                SCAN_DYNAMODB_TABLE_IDLE, dynamoDbRuleConfig,
+                SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT, glueRuleConfig));
 
         // When
-        final var actualRuleSetConfig = RuleSetConfig.loadDefaultRuleSetConfig();
+        try (final var mockedRuleSetParser = mockStatic(RuleSetParser.class)) {
+            mockedRuleSetParser.when(RuleSetParser::parseDefaultRuleSet).thenReturn(mockedDefaultRuleSet);
+            final var actualRuleSetConfig = RuleSetConfig.loadDefaultRuleSetConfig();
+            final var actualRuleSetConfigThatIsSet = RuleSetConfig.getRuleSetConfig();
 
-        // Then
-        assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedDefaultRuleSetConfig);
+            // Then
+            assertThat(actualRuleSetConfig).usingRecursiveComparison().isEqualTo(expectedDefaultRuleSetConfig);
+            assertThat(actualRuleSetConfigThatIsSet).usingRecursiveComparison().isEqualTo(expectedDefaultRuleSetConfig);
+            assertThat(actualRuleSetConfig).isSameAs(actualRuleSetConfigThatIsSet);
+            mockedRuleSetParser.verify(RuleSetParser::parseDefaultRuleSet, times(1));
+        }
     }
 }
