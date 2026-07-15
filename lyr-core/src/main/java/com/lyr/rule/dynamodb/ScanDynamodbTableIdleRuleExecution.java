@@ -10,7 +10,9 @@ import com.lyr.services.dynamodb.DynamoDbConnector;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.Period;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy<ScanDynamodbTableIdleRuleConfig> {
 
     @Override
@@ -25,7 +27,9 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                 CloudWatchUtil.getAppropriateTimeWindowForPeriod(parameters.getMaxIdlePeriodInDays());
         final var periodInSeconds = (int) Duration.ofDays(appropriateTimeWindow).getSeconds();
 
-        return dynamoDbConnector.listTableNames().stream()
+        final var listOfTableNames = dynamoDbConnector.listTableNames();
+
+        final var findings = listOfTableNames.stream()
                 .filter(tableName -> {
                     final var totalConsumedReadCapacity =
                             cloudWatchConnector.getTotalConsumedReadCapacityOfADynamoDbTable(
@@ -44,5 +48,12 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                 })
                 .map(Finding::byId)
                 .collect(ImmutableList.toImmutableList());
+
+        log.atInfo()
+                .addArgument(findings.size())
+                .addArgument(listOfTableNames.size())
+                .log("Found {} table(s) with problems out of {} table(s).");
+
+        return findings;
     }
 }
