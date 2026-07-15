@@ -58,7 +58,7 @@ class ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStylerTest {
     void testThatReportReturnsAReportAsAStringWhenThereAreNoFindings() {
         // Given
         final var findings = createImmutableListOfFindings();
-        final var expectedRawLines = List.of("No lambda found with unbounded concurrency.");
+        final var expectedRawLines = List.of("No lambda functions found with unbounded concurrency.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);

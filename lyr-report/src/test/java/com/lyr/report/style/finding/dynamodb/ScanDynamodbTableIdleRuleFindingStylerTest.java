@@ -57,7 +57,7 @@ class ScanDynamodbTableIdleRuleFindingStylerTest {
         // Given
         final var findings = TestUtil.createImmutableListOfFindings();
         final var expectedRawLines =
-                List.of("No idle DynamoDB table found that has been idle longer than max idle period.");
+                List.of("No idle DynamoDB tables found that has been idle longer than max idle period.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
