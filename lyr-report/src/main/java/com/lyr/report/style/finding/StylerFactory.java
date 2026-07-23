@@ -6,6 +6,7 @@ import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeou
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithoutTriggerRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class StylerFactory {
                 new ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler();
             case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
                 new ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler();
+            case SCAN_LAMBDA_FUNCTION_WITHOUT_TRIGGER -> new ScanLambdaFunctionWithoutTriggerRuleFindingStyler();
         };
     }
 }

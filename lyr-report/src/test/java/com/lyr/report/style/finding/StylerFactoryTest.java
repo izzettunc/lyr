@@ -8,6 +8,7 @@ import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeou
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithoutTriggerRuleFindingStyler;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,6 +47,9 @@ class StylerFactoryTest {
                         ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class),
                 Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
-                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler.class));
+                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler.class),
+                Arguments.of(
+                        RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_TRIGGER,
+                        ScanLambdaFunctionWithoutTriggerRuleFindingStyler.class));
     }
 }
