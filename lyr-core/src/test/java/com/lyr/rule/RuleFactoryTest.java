@@ -3,6 +3,7 @@ package com.lyr.rule;
 import static com.lyr.util.RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY;
 import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE;
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_TRIGGER;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED;
@@ -18,6 +19,7 @@ import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithoutTriggerRuleExecution;
 import com.lyr.util.RuleDefinition;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +86,10 @@ class RuleFactoryTest {
                 Arguments.of(
                         SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
                         Rule.class,
-                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution.class));
+                        ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution.class),
+                Arguments.of(
+                        SCAN_LAMBDA_FUNCTION_WITHOUT_TRIGGER,
+                        Rule.class,
+                        ScanLambdaFunctionWithoutTriggerRuleExecution.class));
     }
 }

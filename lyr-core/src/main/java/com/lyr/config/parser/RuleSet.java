@@ -10,6 +10,7 @@ import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConf
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutTriggerRuleConfig;
 import com.lyr.util.RuleDefinition;
 import java.util.function.Supplier;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class RuleSet {
 
     @VisibleForTesting
     ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+
+    @VisibleForTesting
+    ScanLambdaFunctionWithoutTriggerRuleConfig scanLambdaFunctionWithoutTriggerRuleConfig;
 
     @JsonSetter(value = "scan.dynamodb.table.idle", nulls = Nulls.SET)
     public void setScanDynamodbTableIdleRuleConfig(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
@@ -86,6 +90,14 @@ public class RuleSet {
                         .build());
     }
 
+    @JsonSetter(value = "scan.lambda.function.withoutTrigger", nulls = Nulls.SET)
+    public void setScanLambdaFunctionWithoutTriggerRuleConfig(
+            final ScanLambdaFunctionWithoutTriggerRuleConfig ruleConfig) {
+        this.scanLambdaFunctionWithoutTriggerRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build());
+    }
+
     public RuleConfig getRuleConfig(final RuleDefinition ruleDefinition) {
         final var ruleConfig =
                 switch (ruleDefinition) {
@@ -105,6 +117,8 @@ public class RuleSet {
 
                     case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
                         scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+
+                    case SCAN_LAMBDA_FUNCTION_WITHOUT_TRIGGER -> scanLambdaFunctionWithoutTriggerRuleConfig;
                 };
 
         return copyOrNull(ruleConfig);
