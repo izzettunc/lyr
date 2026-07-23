@@ -3,17 +3,17 @@ package com.lyr.rule.lambda;
 import com.google.common.collect.ImmutableList;
 import com.lyr.report.model.Finding;
 import com.lyr.rule.RuleExecutionStrategy;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutTriggerRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 import com.lyr.services.lambda.LambdaConnector;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 
 @Slf4j
-public class ScanLambdaFunctionWithoutTriggerRuleExecution
-        implements RuleExecutionStrategy<ScanLambdaFunctionWithoutTriggerRuleConfig> {
+public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution
+        implements RuleExecutionStrategy<ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig> {
 
     @Override
-    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithoutTriggerRuleConfig ignored) {
+    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig ignored) {
         final var lambdaConnector = LambdaConnector.create();
         final var listOfLambdaFunctionConfigurations = lambdaConnector.listLambdaFunctionConfigurations();
         final var findings = listOfLambdaFunctionConfigurations.stream()

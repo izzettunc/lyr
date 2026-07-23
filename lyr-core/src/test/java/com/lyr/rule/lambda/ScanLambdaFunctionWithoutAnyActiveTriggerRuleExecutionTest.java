@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import com.lyr.report.model.Finding;
-import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutTriggerRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 import com.lyr.services.lambda.LambdaConnector;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +27,16 @@ import org.mockito.Mockito;
 import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 
-class ScanLambdaFunctionWithoutTriggerRuleExecutionTest {
+class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecutionTest {
 
     static MockedStatic<LambdaConnector> mockedLambdaConnector = Mockito.mockStatic(LambdaConnector.class);
     static LambdaConnector mockedLambdaConnectorInstance = Mockito.mock(LambdaConnector.class);
-    static ScanLambdaFunctionWithoutTriggerRuleExecution testObject;
+    static ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution testObject;
 
     @BeforeEach
     public void beforeEach() {
         mockedLambdaConnector.when(LambdaConnector::create).thenReturn(mockedLambdaConnectorInstance);
-        testObject = new ScanLambdaFunctionWithoutTriggerRuleExecution();
+        testObject = new ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution();
     }
 
     @AfterEach
@@ -53,7 +53,8 @@ class ScanLambdaFunctionWithoutTriggerRuleExecutionTest {
     @Test
     void testThatRuleExecutesSuccessfully() {
         // Given
-        final var config = ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+        final var config =
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
 
         final var listOfFunctionConfigurations = List.of(
                 createFunctionConfiguration(FUNCTION_1),
@@ -83,7 +84,8 @@ class ScanLambdaFunctionWithoutTriggerRuleExecutionTest {
     @Test
     void testThatRuleReturnsOnlyFunctionsWithoutATrigger() {
         // Given
-        final var config = ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+        final var config =
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
 
         final var listOfFunctionConfigurations = List.of(
                 createFunctionConfiguration(FUNCTION_1),
@@ -115,7 +117,8 @@ class ScanLambdaFunctionWithoutTriggerRuleExecutionTest {
     @Test
     void testThatRuleReturnsEmptyListWhenNoLambdaFunctionsArePresent() {
         // Given
-        final var config = ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+        final var config =
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
 
         final List<FunctionConfiguration> listOfFunctionConfigurations = List.of();
 

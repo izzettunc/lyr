@@ -6,13 +6,13 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ScanLambdaFunctionWithoutTriggerRuleConfigTest {
+class ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfigTest {
 
     @Test
     void testThatRuleConfigIsCopiedCorrectly() {
         // Given
         final var expectedConfig =
-                ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
 
         // When
         final var actualCopiedConfig = expectedConfig.copy();
@@ -26,7 +26,7 @@ class ScanLambdaFunctionWithoutTriggerRuleConfigTest {
     void testThatRuleConfigIsConvertedToAMapSuccessfully() {
         // Given
         final var expectedConfig =
-                ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
         final var expectedConfigMap = Map.of();
 
         // When
@@ -40,7 +40,7 @@ class ScanLambdaFunctionWithoutTriggerRuleConfigTest {
     void testThatRuleConfigValidationPassesGivenValidRuleConfig() {
         // Given
         final var ruleConfig =
-                ScanLambdaFunctionWithoutTriggerRuleConfig.builder().build();
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
 
         // When & Then
         assertThatNoException().isThrownBy(ruleConfig::validate);

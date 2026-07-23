@@ -17,15 +17,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-class ScanLambdaFunctionWithoutTriggerRuleFindingStylerTest {
+class ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStylerTest {
 
     static final MockedStatic<PlainTextReportStyler> mockedPlainTextReportStyler =
             mockStatic(PlainTextReportStyler.class, Mockito.CALLS_REAL_METHODS);
-    ScanLambdaFunctionWithoutTriggerRuleFindingStyler testObject;
+    ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler testObject;
 
     @BeforeEach
     public void beforeEach() {
-        testObject = new ScanLambdaFunctionWithoutTriggerRuleFindingStyler();
+        testObject = new ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler();
         mockedPlainTextReportStyler.reset();
     }
 

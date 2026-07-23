@@ -6,7 +6,7 @@ import com.lyr.report.style.finding.FindingStyler;
 import com.lyr.report.style.plain.text.PlainTextReportStyler;
 import java.util.List;
 
-public class ScanLambdaFunctionWithoutTriggerRuleFindingStyler implements FindingStyler {
+public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler implements FindingStyler {
 
     @Override
     public String styleForPlainText(final List<Finding> findings) {

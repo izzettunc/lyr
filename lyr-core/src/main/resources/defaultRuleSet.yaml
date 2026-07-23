@@ -9,5 +9,5 @@ scan.lambda.function.withUnboundedConcurrency:
 scan.lambda.function.withXrayTracingNotEnabled:
 scan.lambda.function.withDisallowedArchitecture:
   disallowedArchitecture: x86_64
-scan.lambda.function.withoutTrigger:
+scan.lambda.function.withoutAnyActiveTrigger:
 scan.cloudwatch.logGroup.withoutRetentionPolicy:
