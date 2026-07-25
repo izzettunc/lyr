@@ -19,7 +19,8 @@ public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler implemen
         final StringBuilder reportBuilder = new StringBuilder();
         for (final Finding finding : findings) {
             final var findingReport = String.format(
-                    "Lambda function '%s' doesn't have any active event source that can trigger it.", finding.identifier());
+                    "Lambda function '%s' doesn't have any active event source that can trigger it.",
+                    finding.identifier());
             final var styledFindingReport = PlainTextReportStyler.styleFindingReport(findingReport, Sentiment.NEGATIVE);
             reportBuilder.append(PlainTextReportStyler.toNewLine(styledFindingReport));
         }
