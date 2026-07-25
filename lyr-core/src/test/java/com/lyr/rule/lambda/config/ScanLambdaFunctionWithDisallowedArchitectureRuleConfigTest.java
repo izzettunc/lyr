@@ -83,6 +83,6 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigTest {
         assertThatThrownBy(ruleConfig::validate).isInstanceOf(BadRuleConfigException.class);
 
         mockedBadRuleConfigExceptionStatic.verify(
-                () -> BadRuleConfigException.forUnsupportedValues(anyString(), anyString(), anyCollection()), times(1));
+                () -> BadRuleConfigException.forUnsupportedValue(anyString(), anyString(), anyCollection()), times(1));
     }
 }

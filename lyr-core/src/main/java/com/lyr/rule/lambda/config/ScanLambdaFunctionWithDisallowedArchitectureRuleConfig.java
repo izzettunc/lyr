@@ -49,7 +49,7 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleConfig implements R
     @Override
     public void validate() {
         if (!POSSIBLE_ARCHITECTURES_SET.contains(disallowedArchitecture.toLowerCase(Locale.ROOT))) {
-            throw BadRuleConfigException.forUnsupportedValues(
+            throw BadRuleConfigException.forUnsupportedValue(
                     DISALLOWED_ARCHITECTURE_CONFIG_KEY,
                     SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE.getRuleName(),
                     POSSIBLE_ARCHITECTURES_SET);
