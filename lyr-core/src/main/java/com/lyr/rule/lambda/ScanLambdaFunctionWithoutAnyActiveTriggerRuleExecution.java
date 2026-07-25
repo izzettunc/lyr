@@ -5,7 +5,10 @@ import com.lyr.report.model.Finding;
 import com.lyr.rule.RuleExecutionStrategy;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 import com.lyr.services.lambda.LambdaConnector;
+import com.lyr.util.StringUtil;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.services.lambda.model.EventSourceMappingConfiguration;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 
 @Slf4j
@@ -13,13 +16,14 @@ public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution
         implements RuleExecutionStrategy<ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig> {
 
     @Override
-    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig ignored) {
+    public ImmutableList<Finding> execute(final ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig ruleConfig) {
         final var lambdaConnector = LambdaConnector.create();
         final var listOfLambdaFunctionConfigurations = lambdaConnector.listLambdaFunctionConfigurations();
         final var findings = listOfLambdaFunctionConfigurations.stream()
                 .map(FunctionConfiguration::functionName)
-                .filter(functionName ->
-                        lambdaConnector.listEventSourceMappings(functionName).isEmpty())
+                .filter(functionName -> isEmptyOrAllConsideredAsNotActive(
+                        lambdaConnector.listEventSourceMappings(functionName),
+                        ruleConfig.getTriggerStatesConsideredAsActive()))
                 .map(Finding::byId)
                 .collect(ImmutableList.toImmutableList());
 
@@ -29,5 +33,14 @@ public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution
                 .log("Found {} function(s) with problems out of {} function(s).");
 
         return findings;
+    }
+
+    private boolean isEmptyOrAllConsideredAsNotActive(
+            final List<EventSourceMappingConfiguration> listOfEventSourceMapping,
+            final List<String> statesConsideredAsActive) {
+        return listOfEventSourceMapping.stream()
+                .map(mapping -> !StringUtil.containsIgnoreCase(statesConsideredAsActive, mapping.state()))
+                .reduce(Boolean::logicalAnd)
+                .orElse(true);
     }
 }

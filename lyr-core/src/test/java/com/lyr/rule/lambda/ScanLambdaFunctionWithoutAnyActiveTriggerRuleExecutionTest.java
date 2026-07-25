@@ -5,7 +5,6 @@ import static com.lyr.TestUtil.FUNCTION_2;
 import static com.lyr.TestUtil.FUNCTION_3;
 import static com.lyr.TestUtil.FUNCTION_4;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -62,7 +61,7 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecutionTest {
                 createFunctionConfiguration(FUNCTION_3),
                 createFunctionConfiguration(FUNCTION_4));
 
-        final var listOfEventSourceMappingConfigurations = createEventSourceMappingConfiguration(0);
+        final var listOfEventSourceMappingConfigurations = createEventSourceMappingConfiguration(List.of());
 
         final var expectedResult = Stream.of(FUNCTION_1, FUNCTION_2, FUNCTION_3, FUNCTION_4)
                 .map(Finding::byId)
@@ -82,10 +81,11 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecutionTest {
     }
 
     @Test
-    void testThatRuleReturnsOnlyFunctionsWithoutATrigger() {
+    void testThatRuleReturnsOnlyFunctionsWithoutAnyActiveTrigger() {
         // Given
-        final var config =
-                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
+        final var config = ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder()
+                .triggerStatesConsideredAsActive(List.of("active", "enabled", "ready"))
+                .build();
 
         final var listOfFunctionConfigurations = List.of(
                 createFunctionConfiguration(FUNCTION_1),
@@ -93,18 +93,27 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecutionTest {
                 createFunctionConfiguration(FUNCTION_3),
                 createFunctionConfiguration(FUNCTION_4));
 
-        final var listOfEventSourceMappingConfigurationsForInvalidFunctions = createEventSourceMappingConfiguration(0);
-        final var listOfEventSourceMappingConfigurationsForValidFunctions = createEventSourceMappingConfiguration(3);
+        final var function1AllValidMappings = createEventSourceMappingConfiguration(List.of("active", "enabled"));
+        final var function2PartiallyValidMappings =
+                createEventSourceMappingConfiguration(List.of("active", "disabled"));
+        final var function3AllInvalidMappings =
+                createEventSourceMappingConfiguration(List.of("inactive", "disabled", "random"));
+        final var function4EmptyMappings = createEventSourceMappingConfiguration(List.of());
 
         final var expectedResult =
-                Stream.of(FUNCTION_2, FUNCTION_4).map(Finding::byId).collect(ImmutableList.toImmutableList());
+                Stream.of(FUNCTION_3, FUNCTION_4).map(Finding::byId).collect(ImmutableList.toImmutableList());
 
         // When
         when(mockedLambdaConnectorInstance.listLambdaFunctionConfigurations()).thenReturn(listOfFunctionConfigurations);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(or(eq(FUNCTION_2), eq(FUNCTION_4))))
-                .thenReturn(listOfEventSourceMappingConfigurationsForInvalidFunctions);
-        when(mockedLambdaConnectorInstance.listEventSourceMappings(or(eq(FUNCTION_1), eq(FUNCTION_3))))
-                .thenReturn(listOfEventSourceMappingConfigurationsForValidFunctions);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_1)))
+                .thenReturn(function1AllValidMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_2)))
+                .thenReturn(function2PartiallyValidMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_3)))
+                .thenReturn(function3AllInvalidMappings);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_4)))
+                .thenReturn(function4EmptyMappings);
+
         final var actualResult = testObject.execute(config);
 
         // Then
@@ -135,16 +144,56 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecutionTest {
                 .isEqualTo(expectedResult);
     }
 
+    @Test
+    void testThatRuleReturnsCorrectResultByIgnoringTheCasingOfStates() {
+        // Given
+        final var config = ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder()
+                .triggerStatesConsideredAsActive(List.of("Active", "enabled", "reaDy"))
+                .build();
+
+        final var listOfFunctionConfigurations = List.of(
+                createFunctionConfiguration(FUNCTION_1),
+                createFunctionConfiguration(FUNCTION_2),
+                createFunctionConfiguration(FUNCTION_3),
+                createFunctionConfiguration(FUNCTION_4));
+
+        final var function1AllLowerCase = createEventSourceMappingConfiguration(List.of("active", "enabled"));
+        final var function2RandomAndUpperCase = createEventSourceMappingConfiguration(List.of("ENABLED", "rEaDy"));
+        final var function3AllUpperCase = createEventSourceMappingConfiguration(List.of("ACTIVE"));
+        final var function4EmptyMappings = createEventSourceMappingConfiguration(List.of());
+
+        final var expectedResult = ImmutableList.of(Finding.byId(FUNCTION_4));
+
+        // When
+        when(mockedLambdaConnectorInstance.listLambdaFunctionConfigurations()).thenReturn(listOfFunctionConfigurations);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_1)))
+                .thenReturn(function1AllLowerCase);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_2)))
+                .thenReturn(function2RandomAndUpperCase);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_3)))
+                .thenReturn(function3AllUpperCase);
+        when(mockedLambdaConnectorInstance.listEventSourceMappings(eq(FUNCTION_4)))
+                .thenReturn(function4EmptyMappings);
+
+        final var actualResult = testObject.execute(config);
+
+        // Then
+        assertThat(actualResult)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedResult);
+    }
+
     private static FunctionConfiguration createFunctionConfiguration(final String functionName) {
         return FunctionConfiguration.builder().functionName(functionName).build();
     }
 
     private static List<EventSourceMappingConfiguration> createEventSourceMappingConfiguration(
-            final int numberOfEventSources) {
+            final List<String> states) {
         final List<EventSourceMappingConfiguration> eventSourceMappingConfigurations = new ArrayList<>();
-        for (int i = 0; i < numberOfEventSources; i++) {
+        for (String state : states) {
             eventSourceMappingConfigurations.add(
-                    EventSourceMappingConfiguration.builder().build());
+                    EventSourceMappingConfiguration.builder().state(state).build());
         }
         return eventSourceMappingConfigurations;
     }
