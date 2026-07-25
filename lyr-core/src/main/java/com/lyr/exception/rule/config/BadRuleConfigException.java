@@ -1,8 +1,9 @@
 package com.lyr.exception.rule.config;
 
+import static com.lyr.util.StringUtil.collectionToString;
+
 import java.io.Serial;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class BadRuleConfigException extends RuntimeException {
 
@@ -10,7 +11,6 @@ public class BadRuleConfigException extends RuntimeException {
     private static final long serialVersionUID = -878484276999786191L;
 
     private static final String FOR = " for ";
-    private static final String QUOTE_SYMBOL = "\"";
 
     public BadRuleConfigException(final String message) {
         super(message);
@@ -27,17 +27,18 @@ public class BadRuleConfigException extends RuntimeException {
         return new BadRuleConfigException(message);
     }
 
-    public static BadRuleConfigException forUnsupportedValues(
+    public static BadRuleConfigException forUnsupportedValue(
             final String configName, final String ruleName, final Collection<?> allowedValues) {
-        final var allowedValuesAsString = formatCollectionToString(allowedValues);
+        final var allowedValuesAsString = collectionToString(allowedValues);
         final var message = configName + FOR + ruleName + " rule config must be one of " + allowedValuesAsString;
         return new BadRuleConfigException(message);
     }
 
-    private static String formatCollectionToString(final Collection<?> allowedValues) {
-        return allowedValues.stream()
-                .map(element ->
-                        element instanceof String ? QUOTE_SYMBOL + element + QUOTE_SYMBOL : String.valueOf(element))
-                .collect(Collectors.joining(", ", "[", "]"));
+    public static BadRuleConfigException forUnsupportedValues(
+            final String configName, final String ruleName, final Collection<?> allowedValues) {
+        final var allowedValuesAsString = collectionToString(allowedValues);
+        final var message =
+                configName + FOR + ruleName + " rule config must consist of elements of " + allowedValuesAsString;
+        return new BadRuleConfigException(message);
     }
 }
