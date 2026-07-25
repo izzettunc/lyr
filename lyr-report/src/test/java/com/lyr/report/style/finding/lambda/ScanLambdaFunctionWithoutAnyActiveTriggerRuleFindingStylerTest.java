@@ -39,8 +39,8 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStylerTest {
         // Given
         final var findings = createImmutableListOfFindings(TestUtil.DUMMY_STRING, TestUtil.DUMMY2_STRING);
         final var expectedRawLines = List.of(
-                "Lambda function 'dummy' doesn't have any other event source that triggers it.",
-                "Lambda function 'dummy2' doesn't have any other event source that triggers it.");
+                "Lambda function 'dummy' doesn't have any active event source that can trigger it.",
+                "Lambda function 'dummy2' doesn't have any active event source that can trigger it.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
@@ -58,7 +58,7 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStylerTest {
     void testThatReportReturnsAReportAsAStringWhenThereAreNoFindings() {
         // Given
         final var findings = createImmutableListOfFindings();
-        final var expectedRawLines = List.of("No lambda functions found without a trigger.");
+        final var expectedRawLines = List.of("No lambda functions found without an active trigger.");
 
         // When
         final var actualResult = testObject.styleForPlainText(findings);
