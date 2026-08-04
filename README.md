@@ -36,13 +36,13 @@ Lyr is a CLI tool that analyzes cloud health and security across live environmen
 Lyr is being developed user in mind, if you have no preference you can simply run it with all default options like below:
 
 ```bash
-java -jar lyr-1.2.0.jar scan-env aws
+java -jar lyr-1.3.0.jar scan-env aws
 ```
 
 Or, if you are a power user and would like to configure the tool based on your needs you can provide all kinds of options
 
 ```bash
-java -jar lyr-1.2.0.jar scan-env aws \
+java -jar lyr-1.3.0.jar scan-env aws \
     --config "path/to/rule/set/config/file.yaml" \
     --profile "my-aws-profile" \
     --reportType "json" \
@@ -51,7 +51,7 @@ java -jar lyr-1.2.0.jar scan-env aws \
 
 All available options can be found by running help function
 ```console
-lyr@lyr:~$ java -jar lyr-1.2.0.jar scan-env aws --help
+lyr@lyr:~$ java -jar lyr-1.3.0.jar scan-env aws --help
 Usage: lyr scan-env aws [-hV] [-c=<arg0>] [-l=<arg3>] [-p=<arg2>] [-r=<arg1>]
 Scans you aws environment using relative rulest and credentials
   -c, --config=<arg0>       Path to user rule set config file that specifies
@@ -118,6 +118,7 @@ mvn clean install
 - Flag lambda functions with unbounded concurrency
 - Flag lambda functions that uses disallowed architecture
 - Flag lambda functions that doesn't use x-ray tracing
+- Flag lambda functions that can not be triggered
 - Flag cloudwatch log groups without a retention policy
 
 #### Rule Set Configuration
@@ -143,6 +144,9 @@ scan.lambda.function.withXrayTracingNotEnabled:
 scan.lambda.function.withDisallowedArchitecture:
   disallowedArchitecture: x86_64
 
+scan.lambda.function.withoutAnyActiveTrigger:
+  triggerStatesConsideredAsActive: ["creating", "enabling", "enabled", "updating"]
+  
 scan.cloudwatch.logGroup.withoutRetentionPolicy:
 ```
 

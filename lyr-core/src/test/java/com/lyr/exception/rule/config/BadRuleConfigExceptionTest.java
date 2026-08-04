@@ -55,6 +55,63 @@ class BadRuleConfigExceptionTest {
 
         // When
         final var actualBadRuleConfigException =
+                BadRuleConfigException.forUnsupportedValue(configName, ruleName, allowedValues);
+
+        // Then
+        assertThat(actualBadRuleConfigException)
+                .isInstanceOf(BadRuleConfigException.class)
+                .hasMessage(expectedMessage);
+    }
+
+    @Test
+    void testThatBadRuleConfigExceptionForUnsupportedValueIsFormedCorrectlyEvenIfCollectionIsEmpty() {
+        // Given
+        final var ruleName = "dummy";
+        final var configName = "dummy config";
+        final var expectedMessage = "dummy config for dummy rule config must be one of []";
+
+        // When
+        final var actualBadRuleConfigException =
+                BadRuleConfigException.forUnsupportedValue(configName, ruleName, List.of());
+
+        // Then
+        assertThat(actualBadRuleConfigException)
+                .isInstanceOf(BadRuleConfigException.class)
+                .hasMessage(expectedMessage);
+    }
+
+    @Test
+    void testThatBadRuleConfigExceptionForUnsupportedValueIsFormedCorrectlyForSetCollectionType() {
+        // Given
+        final var ruleName = "dummy";
+        final var configName = "dummy config";
+        final var expectedMessage = "dummy config for dummy rule config must be one of {}";
+
+        // When
+        final var actualBadRuleConfigException =
+                BadRuleConfigException.forUnsupportedValue(configName, ruleName, Set.of());
+
+        // Then
+        assertThat(actualBadRuleConfigException)
+                .isInstanceOf(BadRuleConfigException.class)
+                .hasMessage(expectedMessage);
+    }
+
+    @Test
+    void testThatBadRuleConfigExceptionForUnsupportedValuesIsFormedCorrectly() {
+        // Given
+        final var ruleName = "dummy";
+        final var configName = "dummy config";
+        final List<Object> allowedValues = new ArrayList<>(List.of(123, "abc", true));
+        final var allowedObject = new Object();
+        allowedValues.add(allowedObject);
+        allowedValues.add(null);
+        final var expectedMessage =
+                "dummy config for dummy rule config must consist of elements of [123, \"abc\", true, " + allowedObject
+                        + ", null]";
+
+        // When
+        final var actualBadRuleConfigException =
                 BadRuleConfigException.forUnsupportedValues(configName, ruleName, allowedValues);
 
         // Then
@@ -64,11 +121,28 @@ class BadRuleConfigExceptionTest {
     }
 
     @Test
-    void testThatBadRuleConfigExceptionForUnsupportedValueIsFormedCorrectlyEvenIfCollectiomIsEmpty() {
+    void testThatBadRuleConfigExceptionForUnsupportedValuesIsFormedCorrectlyEvenIfCollectionIsEmpty() {
         // Given
         final var ruleName = "dummy";
         final var configName = "dummy config";
-        final var expectedMessage = "dummy config for dummy rule config must be one of []";
+        final var expectedMessage = "dummy config for dummy rule config must consist of elements of []";
+
+        // When
+        final var actualBadRuleConfigException =
+                BadRuleConfigException.forUnsupportedValues(configName, ruleName, List.of());
+
+        // Then
+        assertThat(actualBadRuleConfigException)
+                .isInstanceOf(BadRuleConfigException.class)
+                .hasMessage(expectedMessage);
+    }
+
+    @Test
+    void testThatBadRuleConfigExceptionForUnsupportedValuesIsFormedCorrectlyForSetCollectionType() {
+        // Given
+        final var ruleName = "dummy";
+        final var configName = "dummy config";
+        final var expectedMessage = "dummy config for dummy rule config must consist of elements of {}";
 
         // When
         final var actualBadRuleConfigException =

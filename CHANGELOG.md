@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.3.0]
+
+### Added
+
+- Added scan lambda function without any active trigger rule
+- Added scan lambda function without any active trigger rule to default rule set
+
+### Fixed
+
+- Fixed potential bug due to casing mismatch in scan lambda functions with disallowed architecture rule
+
+### Enhancements
+
+- Created string util functionality to make string operations easier
+
 ## [1.2.0]
 
 ### Added
@@ -14,7 +29,7 @@ and this project adheres to [Semantic Versioning].
 
 ### Changed
 
-- Fixed errors in plaint text finding messages for below rules:
+- Fixed errors in plain text finding messages for below rules:
     - `scan.cloudwatch.logGroup.withoutRetentionPolicy`
     - `scan.dynamodb.table.idle`
     - `scan.lambda.function.withUnboundedConcurrency`
@@ -135,5 +150,6 @@ and this project adheres to [Semantic Versioning].
 [1.0.0]: https://github.com/izzettunc/lyr/releases/tag/1.0.0
 [1.1.0]: https://github.com/izzettunc/lyr/releases/tag/1.1.0
 [1.2.0]: https://github.com/izzettunc/lyr/releases/tag/1.2.0
+[1.3.0]: https://github.com/izzettunc/lyr/releases/tag/1.3.0
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html

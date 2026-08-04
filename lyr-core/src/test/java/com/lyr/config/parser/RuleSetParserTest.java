@@ -13,6 +13,7 @@ import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConf
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 import com.lyr.util.file.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,6 +38,8 @@ class RuleSetParserTest {
                 ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig(
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build());
+        expectedRuleSet.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
+                ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build());
 
         // When
         final var actualRuleSet = RuleSetParser.parseDefaultRuleSet();

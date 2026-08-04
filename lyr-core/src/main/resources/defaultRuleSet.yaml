@@ -9,4 +9,6 @@ scan.lambda.function.withUnboundedConcurrency:
 scan.lambda.function.withXrayTracingNotEnabled:
 scan.lambda.function.withDisallowedArchitecture:
   disallowedArchitecture: x86_64
+scan.lambda.function.withoutAnyActiveTrigger:
+  triggerStatesConsideredAsActive: ["creating", "enabling", "enabled", "updating"]
 scan.cloudwatch.logGroup.withoutRetentionPolicy:

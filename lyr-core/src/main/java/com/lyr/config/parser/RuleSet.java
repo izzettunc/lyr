@@ -10,6 +10,7 @@ import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConf
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 import com.lyr.util.RuleDefinition;
 import java.util.function.Supplier;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class RuleSet {
 
     @VisibleForTesting
     ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+
+    @VisibleForTesting
+    ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig scanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
 
     @JsonSetter(value = "scan.dynamodb.table.idle", nulls = Nulls.SET)
     public void setScanDynamodbTableIdleRuleConfig(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
@@ -86,6 +90,15 @@ public class RuleSet {
                         .build());
     }
 
+    @JsonSetter(value = "scan.lambda.function.withoutAnyActiveTrigger", nulls = Nulls.SET)
+    public void setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
+            final ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig ruleConfig) {
+        this.scanLambdaFunctionWithoutAnyActiveTriggerRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder()
+                        .build());
+    }
+
     public RuleConfig getRuleConfig(final RuleDefinition ruleDefinition) {
         final var ruleConfig =
                 switch (ruleDefinition) {
@@ -105,6 +118,9 @@ public class RuleSet {
 
                     case SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED ->
                         scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
+
+                    case SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER ->
+                        scanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
                 };
 
         return copyOrNull(ruleConfig);
