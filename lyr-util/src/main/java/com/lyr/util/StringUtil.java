@@ -29,9 +29,12 @@ public class StringUtil {
             final String collectionOpeningSymbol,
             final String collectionClosingSymbol) {
         return collection.stream()
-                .map(element ->
-                        element instanceof String ? QUOTE_SYMBOL + element + QUOTE_SYMBOL : String.valueOf(element))
+                .map(StringUtil::objectToTypeAwareString)
                 .collect(Collectors.joining(COMMA_SPACE_SYMBOL, collectionOpeningSymbol, collectionClosingSymbol));
+    }
+
+    public static String objectToTypeAwareString(final Object object) {
+        return object instanceof String ? QUOTE_SYMBOL + object + QUOTE_SYMBOL : String.valueOf(object);
     }
 
     public static Collection<String> toLower(final Collection<String> collection) {

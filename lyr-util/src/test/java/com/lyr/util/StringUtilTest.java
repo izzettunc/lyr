@@ -144,4 +144,29 @@ class StringUtilTest {
         assertThat(resultForAllExist).isTrue();
         assertThat(resultForAllDoesNotExist).isFalse();
     }
+
+    @Test
+    void testThatObjectToTypeAwareStringConvertsCorrectly() {
+        final var number = 123;
+        final var expectedNumberAsTypeAwareString = "123";
+        final var text = "123";
+        final var expectedTextAsTypeAwareString = "\"123\"";
+        final var bool = true;
+        final var expectedBoolAsTypeAwareString = "true";
+        final String nullAsString = null;
+        final Object nullAsObject = null;
+        final var expectedNullAsTypeAwareString = "null";
+
+        final var actualNumberAsTypeAwareString = StringUtil.objectToTypeAwareString(number);
+        final var actualTextAsTypeAwareString = StringUtil.objectToTypeAwareString(text);
+        final var actualBoolAsTypeAwareString = StringUtil.objectToTypeAwareString(bool);
+        final var actualNullAsStringAsTypeAwareString = StringUtil.objectToTypeAwareString(nullAsString);
+        final var actualNullAsObjectAsTypeAwareString = StringUtil.objectToTypeAwareString(nullAsObject);
+
+        assertThat(actualNumberAsTypeAwareString).isEqualTo(expectedNumberAsTypeAwareString);
+        assertThat(actualTextAsTypeAwareString).isEqualTo(expectedTextAsTypeAwareString);
+        assertThat(actualBoolAsTypeAwareString).isEqualTo(expectedBoolAsTypeAwareString);
+        assertThat(actualNullAsStringAsTypeAwareString).isEqualTo(expectedNullAsTypeAwareString);
+        assertThat(actualNullAsObjectAsTypeAwareString).isEqualTo(expectedNullAsTypeAwareString);
+    }
 }
