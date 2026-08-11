@@ -16,7 +16,7 @@ class ExecutionTest {
                 .code("code")
                 .name("name")
                 .findings(createImmutableListOfFindings("1", "2", "3"))
-                .configuration(ImmutableMap.of("key1", "value1", "key2", "value2"))
+                .configuration(ImmutableMap.of("key1", "value1", "key2", 123))
                 .build();
 
         // When & Then
@@ -31,7 +31,7 @@ class ExecutionTest {
                 .code("code")
                 .name("name")
                 .findings(createImmutableListOfFindings("1", "2", "3"))
-                .configuration(ImmutableMap.of("key1", "value1", "key2", "value2"))
+                .configuration(ImmutableMap.of("key1", "value1", "key2", 123))
                 .build();
 
         // When

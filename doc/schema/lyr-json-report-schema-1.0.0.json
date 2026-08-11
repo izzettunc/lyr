@@ -3,7 +3,7 @@
   "$id": "https://lyr.com/schema/lyr-json-report-schema-0.0.0.json",
   "title": "Report",
   "description": "A findings report for Lyr",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "object",
   "properties": {
     "version": {
@@ -28,9 +28,7 @@
           "configuration": {
             "description": "Configuration that effects the behaviour of the execution",
             "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "additionalProperties": true
           },
           "findings": {
             "description": "A list of findings",

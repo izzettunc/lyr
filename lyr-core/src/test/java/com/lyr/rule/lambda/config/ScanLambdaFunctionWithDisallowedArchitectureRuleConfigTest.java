@@ -52,10 +52,11 @@ class ScanLambdaFunctionWithDisallowedArchitectureRuleConfigTest {
         final var expectedConfig = ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
                 .disallowedArchitecture("arm64")
                 .build();
+
         final var expectedConfigMap = Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, "arm64");
 
         // When
-        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualConfigMap = expectedConfig.getConfigAsMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);

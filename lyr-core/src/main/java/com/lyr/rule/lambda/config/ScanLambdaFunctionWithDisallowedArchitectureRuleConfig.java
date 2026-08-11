@@ -35,7 +35,7 @@ public class ScanLambdaFunctionWithDisallowedArchitectureRuleConfig implements R
     String disallowedArchitecture = DEFAULT_DISALLOWED_ARCHITECTURE;
 
     @Override
-    public Map<String, String> getConfigAsStringMap() {
+    public Map<String, Object> getConfigAsMap() {
         return Map.of(DISALLOWED_ARCHITECTURE_CONFIG_KEY, disallowedArchitecture);
     }
 

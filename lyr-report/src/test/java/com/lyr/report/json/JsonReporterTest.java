@@ -43,7 +43,9 @@ class JsonReporterTest {
                     "code" : "AWS-DDB-001",
                     "configuration" : {
                       "a" : "1",
-                      "b" : "2"
+                      "b" : 2,
+                      "c" : true,
+                      "d" : [ "123", 456, false ]
                     },
                     "findings" : [ {
                       "identifier" : "123"
@@ -65,7 +67,7 @@ class JsonReporterTest {
                 Execution.builder()
                         .name(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE.getRuleName())
                         .code(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE.getRuleCode())
-                        .configuration(ImmutableMap.of("a", "1", "b", "2"))
+                        .configuration(ImmutableMap.of("a", "1", "b", 2, "c", true, "d", List.of("123", 456, false)))
                         .findings(ImmutableList.of(
                                 Finding.byId("123"),
                                 Finding.byId("456"),
@@ -92,7 +94,7 @@ class JsonReporterTest {
     @SneakyThrows
     void testThatJsonReporterFollowsTheSchema() {
         // Given
-        try (final var schemaInputStream = TestUtil.getInputStreamFromResource("lyr-json-report-schema-0.0.0.json")) {
+        try (final var schemaInputStream = TestUtil.getInputStreamFromResource("lyr-json-report-schema-1.0.0.json")) {
             final var schemaRegistry = SchemaRegistry.builder().build();
             final var schema = schemaRegistry.getSchema(schemaInputStream);
 
@@ -100,7 +102,8 @@ class JsonReporterTest {
                     Execution.builder()
                             .name(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE.getRuleName())
                             .code(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE.getRuleCode())
-                            .configuration(ImmutableMap.of("a", "1", "b", "2"))
+                            .configuration(
+                                    ImmutableMap.of("a", "1", "b", 2, "c", true, "d", List.of("123", 456, false)))
                             .findings(ImmutableList.of(
                                     Finding.byId("123"),
                                     Finding.byId("456"),

@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record Execution(
-        String name, String code, ImmutableMap<String, String> configuration, ImmutableList<Finding> findings) {
+        String name, String code, ImmutableMap<String, Object> configuration, ImmutableList<Finding> findings) {
 
     public static Execution copyOf(final Execution execution) {
         return Execution.builder()

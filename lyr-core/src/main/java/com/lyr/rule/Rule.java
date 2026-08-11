@@ -50,8 +50,8 @@ public class Rule {
     }
 
     private Execution buildExecutionFromFindings(final ImmutableList<Finding> findings) {
-        final ImmutableMap<String, String> ruleConfigAsStringMap =
-                ruleConfig != null ? ImmutableMap.copyOf(ruleConfig.getConfigAsStringMap()) : ImmutableMap.of();
+        final ImmutableMap<String, Object> ruleConfigAsStringMap =
+                ruleConfig != null ? ImmutableMap.copyOf(ruleConfig.getConfigAsMap()) : ImmutableMap.of();
         return Execution.builder()
                 .name(ruleDefinition.getRuleName())
                 .code(ruleDefinition.getRuleCode())
