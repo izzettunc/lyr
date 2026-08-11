@@ -30,7 +30,7 @@ class ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfigTest {
         final var expectedConfigMap = Map.of();
 
         // When
-        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualConfigMap = expectedConfig.getConfigAsMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);

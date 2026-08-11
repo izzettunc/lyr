@@ -53,10 +53,11 @@ class ScanGlueSessionActiveWithLongIdleTimeoutRuleConfigTest {
         final var expectedConfig = ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
                 .maxIdleTimeoutInMinutes(123)
                 .build();
-        final var expectedConfigMap = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, "123");
+
+        final var expectedConfigMap = Map.of(MAX_IDLE_TIMEOUT_IN_MINUTES_CONFIG_KEY, 123);
 
         // When
-        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualConfigMap = expectedConfig.getConfigAsMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);

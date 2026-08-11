@@ -56,12 +56,12 @@ class ScanDynamodbTableIdleRuleConfigTest {
                 .maxIdlePeriodInDays(123)
                 .excludeEmptyTables(true)
                 .build();
-        final var expectedConfigMap = Map.of(
-                MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, "123",
-                EXCLUDE_EMPTY_TABLES_CONFIG_KEY, "true");
+
+        final var expectedConfigMap =
+                Map.of(MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, 123, EXCLUDE_EMPTY_TABLES_CONFIG_KEY, true);
 
         // When
-        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualConfigMap = expectedConfig.getConfigAsMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);

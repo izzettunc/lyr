@@ -53,10 +53,11 @@ class ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfigTest {
         final var expectedConfig = ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder()
                 .triggerStatesConsideredAsActive(List.of("a", "b"))
                 .build();
-        final var expectedConfigMap = Map.of(TRIGGER_STATES_CONSIDERED_AS_ACTIVE_KEY, "[\"a\", \"b\"]");
+
+        final var expectedConfigMap = Map.of(TRIGGER_STATES_CONSIDERED_AS_ACTIVE_KEY, List.of("a", "b"));
 
         // When
-        final var actualConfigMap = expectedConfig.getConfigAsStringMap();
+        final var actualConfigMap = expectedConfig.getConfigAsMap();
 
         // Then
         assertThat(actualConfigMap).usingRecursiveComparison().isEqualTo(expectedConfigMap);

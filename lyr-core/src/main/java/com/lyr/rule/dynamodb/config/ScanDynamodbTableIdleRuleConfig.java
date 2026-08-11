@@ -30,10 +30,10 @@ public class ScanDynamodbTableIdleRuleConfig implements RuleConfig {
     Boolean excludeEmptyTables = DEFAULT_EXCLUDE_EMPTY_TABLES;
 
     @Override
-    public Map<String, String> getConfigAsStringMap() {
+    public Map<String, Object> getConfigAsMap() {
         return Map.of(
-                MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, maxIdlePeriodInDays.toString(),
-                EXCLUDE_EMPTY_TABLES_CONFIG_KEY, excludeEmptyTables.toString());
+                MAX_IDLE_PERIOD_IN_DAYS_CONFIG_KEY, maxIdlePeriodInDays,
+                EXCLUDE_EMPTY_TABLES_CONFIG_KEY, excludeEmptyTables);
     }
 
     @Override

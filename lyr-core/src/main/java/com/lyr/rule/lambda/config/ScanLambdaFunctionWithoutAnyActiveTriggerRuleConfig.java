@@ -9,7 +9,6 @@ import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIV
 
 import com.lyr.exception.rule.config.BadRuleConfigException;
 import com.lyr.rule.RuleConfig;
-import com.lyr.util.StringUtil;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -35,10 +34,8 @@ public class ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig implements Rule
     List<String> triggerStatesConsideredAsActive = DEFAULT_TRIGGER_STATES_CONSIDERED_AS_ACTIVE;
 
     @Override
-    public Map<String, String> getConfigAsStringMap() {
-        return Map.of(
-                TRIGGER_STATES_CONSIDERED_AS_ACTIVE_KEY,
-                StringUtil.collectionToString(triggerStatesConsideredAsActive));
+    public Map<String, Object> getConfigAsMap() {
+        return Map.of(TRIGGER_STATES_CONSIDERED_AS_ACTIVE_KEY, triggerStatesConsideredAsActive);
     }
 
     @Override

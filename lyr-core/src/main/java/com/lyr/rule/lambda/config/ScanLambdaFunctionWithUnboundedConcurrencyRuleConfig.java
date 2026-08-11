@@ -16,7 +16,7 @@ import tools.jackson.databind.annotation.JsonPOJOBuilder;
 public class ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig implements RuleConfig {
 
     @Override
-    public Map<String, String> getConfigAsStringMap() {
+    public Map<String, Object> getConfigAsMap() {
         return Map.of();
     }
 
