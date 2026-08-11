@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [1.3.1]
+
+### Added
+
+- Version of the schema to the version helper information
+
+### Fixed
+
+- Fixed wrong json representation of configuration in rule executions
+- Fixed wrong type of execution configuration in json schema
+
+### Changed
+
+- Used a type aware representation of configuration values in plain text reporting
+
 ## [1.3.0]
 
 ### Added
@@ -151,5 +166,6 @@ and this project adheres to [Semantic Versioning].
 [1.1.0]: https://github.com/izzettunc/lyr/releases/tag/1.1.0
 [1.2.0]: https://github.com/izzettunc/lyr/releases/tag/1.2.0
 [1.3.0]: https://github.com/izzettunc/lyr/releases/tag/1.3.0
+[1.3.1]: https://github.com/izzettunc/lyr/releases/tag/1.3.1
 [Keep a changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
