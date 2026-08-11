@@ -5,6 +5,8 @@ import picocli.CommandLine;
 
 public class VersionProvider implements CommandLine.IVersionProvider {
 
+    private static final String SCHEMA_VERSION = "1.0.0";
+
     public static Package getPackage() {
         return VersionProvider.class.getPackage();
     }
@@ -18,8 +20,12 @@ public class VersionProvider implements CommandLine.IVersionProvider {
         }
     }
 
+    public static String getSchemaVersion() {
+        return SCHEMA_VERSION;
+    }
+
     @Override
     public String[] getVersion() {
-        return new String[] {getVersionFromManifest()};
+        return new String[] {"Version " + getVersionFromManifest(), "Schema version " + getSchemaVersion()};
     }
 }

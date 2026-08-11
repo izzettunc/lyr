@@ -76,12 +76,16 @@ class VersionProviderTest {
     void testThatVersionProviderUsesGetVersionFromManifestForProvidingVersion() {
         // Given
         final var dummyVersion = "dummy-1.2.3";
+        final var dummySchemaVersion = "dummy-9.8.7";
+        final var expectedVersion = new String[] {"Version " + dummyVersion, "Schema version " + dummySchemaVersion};
         try (final var mockedVersionProvider = mockStatic(VersionProvider.class)) {
             mockedVersionProvider.when(VersionProvider::getVersionFromManifest).thenReturn(dummyVersion);
+            mockedVersionProvider.when(VersionProvider::getSchemaVersion).thenReturn(dummySchemaVersion);
 
             final var result = testObject.getVersion();
-            assertThat(result).isEqualTo(new String[] {dummyVersion});
+            assertThat(result).isEqualTo(expectedVersion);
             mockedVersionProvider.verify(VersionProvider::getVersionFromManifest, times(1));
+            mockedVersionProvider.verify(VersionProvider::getSchemaVersion, times(1));
         }
     }
 
