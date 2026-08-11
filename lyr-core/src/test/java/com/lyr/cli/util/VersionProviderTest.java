@@ -73,7 +73,7 @@ class VersionProviderTest {
     }
 
     @Test
-    void testThatVersionProviderUsesGetVersionFromManifestForProvidingVersion() {
+    void testThatVersionProviderReturnsVersionsCorrectly() {
         // Given
         final var dummyVersion = "dummy-1.2.3";
         final var dummySchemaVersion = "dummy-9.8.7";
