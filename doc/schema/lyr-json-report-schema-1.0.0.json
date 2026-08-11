@@ -28,9 +28,7 @@
           "configuration": {
             "description": "Configuration that effects the behaviour of the execution",
             "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+            "additionalProperties": true
           },
           "findings": {
             "description": "A list of findings",
