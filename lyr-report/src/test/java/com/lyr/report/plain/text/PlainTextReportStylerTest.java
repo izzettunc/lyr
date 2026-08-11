@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.common.collect.ImmutableMap;
 import com.lyr.report.style.plain.text.PlainTextReportStyler;
 import com.lyr.report.style.plain.text.TitleLevel;
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -89,13 +90,15 @@ class PlainTextReportStylerTest {
     @Test
     void testThatStyleExecutionConfigurationWorksCorrectlyGivenValidConfiguration() {
         // Given
-        final var configuration = ImmutableMap.of("a", "1", "b", "2", "c", "3");
+        final ImmutableMap<String, Object> configuration =
+                ImmutableMap.of("a", "1", "b", 2, "c", true, "d", List.of("123", 456, false));
         final var expectedText = """
 
                 Execution configuration:
-                a: 1
+                a: "1"
                 b: 2
-                c: 3""";
+                c: true
+                d: ["123", 456, false]""";
 
         // When
         final var actualText = testObject.styleExecutionConfiguration(configuration);
@@ -107,7 +110,7 @@ class PlainTextReportStylerTest {
     @Test
     void testThatStyleExecutionConfigurationReturnsEmptyStringGivenEmptyConfiguration() {
         // Given
-        final ImmutableMap<String, String> configuration = ImmutableMap.of();
+        final ImmutableMap<String, Object> configuration = ImmutableMap.of();
         final var expectedText = "";
 
         // When

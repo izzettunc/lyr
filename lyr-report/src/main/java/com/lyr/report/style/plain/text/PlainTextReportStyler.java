@@ -2,6 +2,8 @@ package com.lyr.report.style.plain.text;
 
 import com.google.common.collect.ImmutableMap;
 import com.lyr.report.plain.text.Sentiment;
+import com.lyr.util.StringUtil;
+import java.util.Collection;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,15 +22,24 @@ public class PlainTextReportStyler {
         };
     }
 
-    public String styleExecutionConfiguration(final ImmutableMap<String, String> configuration) {
+    public String styleExecutionConfiguration(final ImmutableMap<String, Object> configuration) {
         if (configuration.isEmpty()) {
             return "";
         }
 
         final StringBuilder builder = new StringBuilder();
         builder.append(toNewLine("Execution configuration:"));
-        for (final Map.Entry<String, String> configEntry : configuration.entrySet()) {
-            final var keyValuePair = String.format("%s: %s", configEntry.getKey(), configEntry.getValue());
+        for (final Map.Entry<String, Object> configEntry : configuration.entrySet()) {
+            final var value = configEntry.getValue();
+            final String valAsString;
+
+            if (value instanceof Collection) {
+                valAsString = StringUtil.collectionToString((Collection<?>) value);
+            } else {
+                valAsString = StringUtil.objectToTypeAwareString(value);
+            }
+
+            final var keyValuePair = String.format("%s: %s", configEntry.getKey(), valAsString);
             builder.append(toNewLine(keyValuePair));
         }
         return builder.toString();
