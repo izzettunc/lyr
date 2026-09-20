@@ -4,10 +4,12 @@ import com.lyr.services.ServiceProvider;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
+import software.amazon.awssdk.services.dynamodb.model.DescribeContinuousBackupsRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 public final class DynamoDbConnector {
 
@@ -32,10 +34,25 @@ public final class DynamoDbConnector {
                 .toList();
     }
 
-    public Optional<DescribeTableResponse> getTable(final String tableName) {
+    public Optional<TableDescription> getTableDescription(final String tableName) {
         try {
-            return Optional.of(client.describeTable(
-                    DescribeTableRequest.builder().tableName(tableName).build()));
+            final var request =
+                    DescribeTableRequest.builder().tableName(tableName).build();
+            final var tableDescription = client.describeTable(request).table();
+            return Optional.of(tableDescription);
+        } catch (final ResourceNotFoundException resourceNotFoundException) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<ContinuousBackupsDescription> getContinuousBackupsDescription(final String tableName) {
+        try {
+            final var request = DescribeContinuousBackupsRequest.builder()
+                    .tableName(tableName)
+                    .build();
+            final var continuousBackupsDescription =
+                    client.describeContinuousBackups(request).continuousBackupsDescription();
+            return Optional.of(continuousBackupsDescription);
         } catch (final ResourceNotFoundException resourceNotFoundException) {
             return Optional.empty();
         }

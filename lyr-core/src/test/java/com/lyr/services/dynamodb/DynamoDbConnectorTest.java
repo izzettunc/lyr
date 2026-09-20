@@ -21,6 +21,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
+import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsStatus;
+import software.amazon.awssdk.services.dynamodb.model.DescribeContinuousBackupsRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeContinuousBackupsResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
@@ -55,30 +59,30 @@ class DynamoDbConnectorTest {
     }
 
     @Test
-    void testThatGetTableReturnsOptionalOfDescribeTableResponseWhenFound() {
+    void testThatGetTableDescriptionReturnsOptionalOfTableDescriptionResponseWhenFound() {
         // Given
-        final var expectedDescribeTableResponse = DescribeTableResponse.builder()
-                .table(TableDescription.builder()
-                        .tableName(TestUtil.DUMMY_STRING)
-                        .build())
-                .build();
+        final var expectedTableDescription =
+                TableDescription.builder().tableName(TestUtil.DUMMY_STRING).build();
+
+        final var describeTableResponse =
+                DescribeTableResponse.builder().table(expectedTableDescription).build();
 
         // When
         when(mockedDynamoDbClient.describeTable(any(DescribeTableRequest.class)))
-                .thenReturn(expectedDescribeTableResponse);
-        final var actualResult = testObject.getTable(TestUtil.DUMMY_STRING);
+                .thenReturn(describeTableResponse);
+        final var actualResult = testObject.getTableDescription(TestUtil.DUMMY_STRING);
 
         // Then
-        assertThat(actualResult).isEqualTo(Optional.of(expectedDescribeTableResponse));
+        assertThat(actualResult).isEqualTo(Optional.of(expectedTableDescription));
     }
 
     @Test
-    void testThatGetTableReturnsOptionalOfDescribeTableResponseWhenNotFound() {
+    void testThatGetTableReturnsOptionalOfDescribeTableDescriptionResponseWhenNotFound() {
         // Given nothing
         // When
         when(mockedDynamoDbClient.describeTable(any(DescribeTableRequest.class)))
                 .thenThrow(ResourceNotFoundException.class);
-        final var actualResult = testObject.getTable(TestUtil.DUMMY_STRING);
+        final var actualResult = testObject.getTableDescription(TestUtil.DUMMY_STRING);
 
         // Then
         assertThat(actualResult).isEqualTo(Optional.empty());
@@ -106,5 +110,37 @@ class DynamoDbConnectorTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedListOfTableNames);
+    }
+
+    @Test
+    void testThatGetContinuousBackupsDescriptionReturnsOptionalOfTableDescriptionResponseWhenFound() {
+        // Given
+        final var expectedContinuousBackupsDescription = ContinuousBackupsDescription.builder()
+                .continuousBackupsStatus(ContinuousBackupsStatus.ENABLED)
+                .build();
+
+        final var continuousBackupsDescriptionResponse = DescribeContinuousBackupsResponse.builder()
+                .continuousBackupsDescription(expectedContinuousBackupsDescription)
+                .build();
+
+        // When
+        when(mockedDynamoDbClient.describeContinuousBackups(any(DescribeContinuousBackupsRequest.class)))
+                .thenReturn(continuousBackupsDescriptionResponse);
+        final var actualResult = testObject.getContinuousBackupsDescription(TestUtil.DUMMY_STRING);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.of(expectedContinuousBackupsDescription));
+    }
+
+    @Test
+    void testThatGetContinuousBackupsDescriptionOptionalOfDescribeTableDescriptionResponseWhenNotFound() {
+        // Given nothing
+        // When
+        when(mockedDynamoDbClient.describeContinuousBackups(any(DescribeContinuousBackupsRequest.class)))
+                .thenThrow(ResourceNotFoundException.class);
+        final var actualResult = testObject.getContinuousBackupsDescription(TestUtil.DUMMY_STRING);
+
+        // Then
+        assertThat(actualResult).isEqualTo(Optional.empty());
     }
 }
