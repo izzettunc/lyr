@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.lyr.rule.RuleConfig;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -18,12 +19,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RuleSet {
 
+    // region CloudWatch
+    @VisibleForTesting
+    ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
+    // endregion
+    // region DynamoDB
     @VisibleForTesting
     ScanDynamodbTableIdleRuleConfig scanDynamodbTableIdleRuleConfig;
 
     @VisibleForTesting
+    ScanDynamodbTableWithoutBackupRuleConfig scanDynamodbTableWithoutBackupRuleConfig;
+    // endregion
+    // region Glue
+    @VisibleForTesting
     ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig scanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
-
+    // endregion
+    // region Lambda
     @VisibleForTesting
     ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig scanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 
@@ -31,18 +42,32 @@ public class RuleSet {
     ScanLambdaFunctionWithDisallowedArchitectureRuleConfig scanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 
     @VisibleForTesting
-    ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
-
-    @VisibleForTesting
     ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig scanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 
     @VisibleForTesting
     ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig scanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
+    // endregion
+
+    @JsonSetter(value = "scan.cloudwatch.logGroup.withoutRetentionPolicy", nulls = Nulls.SET)
+    public void setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(
+            final ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig ruleConfig) {
+        this.scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder()
+                        .build());
+    }
 
     @JsonSetter(value = "scan.dynamodb.table.idle", nulls = Nulls.SET)
     public void setScanDynamodbTableIdleRuleConfig(final ScanDynamodbTableIdleRuleConfig ruleConfig) {
         this.scanDynamodbTableIdleRuleConfig = defaultIfNull(
                 ruleConfig, () -> ScanDynamodbTableIdleRuleConfig.builder().build());
+    }
+
+    @JsonSetter(value = "scan.dynamodb.table.withoutBackup", nulls = Nulls.SET)
+    public void setScanDynamodbTableWithoutBackupRuleConfig(final ScanDynamodbTableWithoutBackupRuleConfig ruleConfig) {
+        this.scanDynamodbTableWithoutBackupRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanDynamodbTableWithoutBackupRuleConfig.builder().build());
     }
 
     @JsonSetter(value = "scan.glue.session.activeWithLongIdleTimeout", nulls = Nulls.SET)
@@ -69,15 +94,6 @@ public class RuleSet {
         this.scanLambdaFunctionWithDisallowedArchitectureRuleConfig = defaultIfNull(
                 ruleConfig,
                 () -> ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
-                        .build());
-    }
-
-    @JsonSetter(value = "scan.cloudwatch.logGroup.withoutRetentionPolicy", nulls = Nulls.SET)
-    public void setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(
-            final ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig ruleConfig) {
-        this.scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig = defaultIfNull(
-                ruleConfig,
-                () -> ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder()
                         .build());
     }
 
@@ -109,6 +125,8 @@ public class RuleSet {
                         scanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 
                     case SCAN_DYNAMODB_TABLE_IDLE -> scanDynamodbTableIdleRuleConfig;
+
+                    case SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP -> scanDynamodbTableWithoutBackupRuleConfig;
 
                     case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                         scanLambdaFunctionWithDisallowedArchitectureRuleConfig;

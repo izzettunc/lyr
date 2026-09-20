@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -40,6 +41,8 @@ class RuleSetTest {
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build());
+        expectedRuleSet.setScanDynamodbTableWithoutBackupRuleConfig(
+                ScanDynamodbTableWithoutBackupRuleConfig.builder().build());
 
         // When
         testObject.setScanDynamodbTableIdleRuleConfig(null);
@@ -49,6 +52,7 @@ class RuleSetTest {
         testObject.setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(null);
         testObject.setScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig(null);
         testObject.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(null);
+        testObject.setScanDynamodbTableWithoutBackupRuleConfig(null);
 
         // Then
         assertThat(testObject).usingRecursiveComparison().isEqualTo(expectedRuleSet);
@@ -76,6 +80,10 @@ class RuleSetTest {
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithoutTriggerRuleConfig =
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
+        final var expectedScanDynamodbTableWithoutBackupRuleConfig = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfPitrEnabled(false)
+                .passIfBackupPlanEnabled(true)
+                .build();
 
         // When
         testObject.setScanDynamodbTableIdleRuleConfig(expectedScanDynamodbTableIdleRuleConfig);
@@ -91,6 +99,7 @@ class RuleSetTest {
                 expectedScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig);
         testObject.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
                 expectedScanLambdaFunctionWithoutTriggerRuleConfig);
+        testObject.setScanDynamodbTableWithoutBackupRuleConfig(expectedScanDynamodbTableWithoutBackupRuleConfig);
 
         // Then
         assertThat(testObject.scanDynamodbTableIdleRuleConfig).isSameAs(expectedScanDynamodbTableIdleRuleConfig);
@@ -106,6 +115,8 @@ class RuleSetTest {
                 .isSameAs(expectedScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig);
         assertThat(testObject.scanLambdaFunctionWithoutAnyActiveTriggerRuleConfig)
                 .isSameAs(expectedScanLambdaFunctionWithoutTriggerRuleConfig);
+        assertThat(testObject.scanDynamodbTableWithoutBackupRuleConfig)
+                .isSameAs(expectedScanDynamodbTableWithoutBackupRuleConfig);
     }
 
     @Test
@@ -130,6 +141,10 @@ class RuleSetTest {
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithoutTriggerRuleConfig =
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
+        final var expectedScanDynamodbTableWithoutBackupRuleConfig = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfPitrEnabled(false)
+                .passIfBackupPlanEnabled(true)
+                .build();
 
         testObject.setScanDynamodbTableIdleRuleConfig(expectedScanDynamodbTableIdleRuleConfig);
         testObject.setScanLambdaFunctionWithUnboundedConcurrencyRuleConfig(
@@ -144,6 +159,7 @@ class RuleSetTest {
                 expectedScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig);
         testObject.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
                 expectedScanLambdaFunctionWithoutTriggerRuleConfig);
+        testObject.setScanDynamodbTableWithoutBackupRuleConfig(expectedScanDynamodbTableWithoutBackupRuleConfig);
 
         // When
         final var actualScanDynamodbTableIdleRuleConfig =
@@ -160,6 +176,8 @@ class RuleSetTest {
                 testObject.getRuleConfig(RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED);
         final var actualScanLambdaFunctionWithoutTriggerRuleConfig =
                 testObject.getRuleConfig(RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER);
+        final var actualScanDynamodbTableWithoutBackupRuleConfig =
+                testObject.getRuleConfig(RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP);
 
         // Then
         assertThat(actualScanDynamodbTableIdleRuleConfig)
@@ -189,6 +207,10 @@ class RuleSetTest {
         assertThat(actualScanLambdaFunctionWithoutTriggerRuleConfig)
                 .isNotSameAs(expectedScanLambdaFunctionWithoutTriggerRuleConfig)
                 .isEqualTo(expectedScanLambdaFunctionWithoutTriggerRuleConfig);
+
+        assertThat(actualScanDynamodbTableWithoutBackupRuleConfig)
+                .isNotSameAs(expectedScanDynamodbTableWithoutBackupRuleConfig)
+                .isEqualTo(expectedScanDynamodbTableWithoutBackupRuleConfig);
     }
 
     @Test
@@ -209,6 +231,8 @@ class RuleSetTest {
                 testObject.getRuleConfig(RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED);
         final var actualScanLambdaFunctionWithoutTriggerRuleConfig =
                 testObject.getRuleConfig(RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER);
+        final var actualScanDynamodbTableWithoutBackupRuleConfig =
+                testObject.getRuleConfig(RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP);
 
         // Then
         assertThat(actualScanDynamodbTableIdleRuleConfig).isNull();
@@ -218,5 +242,6 @@ class RuleSetTest {
         assertThat(actualScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig).isNull();
         assertThat(actualScanLambdaFunctionWithXrayTracingNotEnabled).isNull();
         assertThat(actualScanLambdaFunctionWithoutTriggerRuleConfig).isNull();
+        assertThat(actualScanDynamodbTableWithoutBackupRuleConfig).isNull();
     }
 }
