@@ -11,14 +11,12 @@ public class PlainTextReportStyler {
 
     private static final char FIRST_LEVEL_BLOCK_CHAR = '#';
     private static final char SECOND_LEVEL_BLOCK_CHAR = '=';
-    private static final char THIRD_LEVEL_BLOCK_CHAR = '_';
     private static final String LINE_BREAK = "\n";
 
     public String buildTitleBlock(final TitleLevel level, final String title) {
         return switch (level) {
             case PRIMARY -> buildFirstLevelTitleBlock(title);
             case SECONDARY -> buildSecondLevelTitleBlock(title);
-            case TERTIARY -> buildThirdLevelTitleBlock(title);
         };
     }
 
@@ -75,23 +73,12 @@ public class PlainTextReportStyler {
         return toNewLine(outerBlock) + toNewLine(fancyTitle) + toNewLine(outerBlock);
     }
 
-    private String buildThirdLevelTitleBlock(final String title) {
-        final var fancyTitle = String.format(" %s", title);
-        final var outerBlock = buildThirdLevelBlock(fancyTitle.length());
-
-        return toNewLine(fancyTitle) + toNewLine(outerBlock);
-    }
-
     private String buildFirstLevelBlock(final int blockLength) {
         return buildBlock(FIRST_LEVEL_BLOCK_CHAR, blockLength);
     }
 
     private String buildSecondLevelBlock(final int blockLength) {
         return buildBlock(SECOND_LEVEL_BLOCK_CHAR, blockLength);
-    }
-
-    private String buildThirdLevelBlock(final int blockLength) {
-        return buildBlock(THIRD_LEVEL_BLOCK_CHAR, blockLength);
     }
 
     private String buildBlock(final char blockChar, final int blockLength) {

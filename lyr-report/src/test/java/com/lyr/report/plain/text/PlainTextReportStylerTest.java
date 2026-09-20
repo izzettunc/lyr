@@ -88,6 +88,22 @@ class PlainTextReportStylerTest {
     }
 
     @Test
+    void testThatToNewLinePutsSimpleTruncatedNewLineGivenBlankString() {
+        // Given
+        final var expectedText = "\n";
+
+        // When
+        final var actualTextEmptyLine = PlainTextReportStyler.toNewLine("");
+        final var actualTextSpace = PlainTextReportStyler.toNewLine("");
+        final var actualTextTab = PlainTextReportStyler.toNewLine("");
+
+        // Then
+        assertThat(actualTextEmptyLine).isEqualTo(expectedText);
+        assertThat(actualTextSpace).isEqualTo(expectedText);
+        assertThat(actualTextTab).isEqualTo(expectedText);
+    }
+
+    @Test
     void testThatStyleExecutionConfigurationWorksCorrectlyGivenValidConfiguration() {
         // Given
         final ImmutableMap<String, Object> configuration =
