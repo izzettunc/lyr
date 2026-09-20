@@ -7,7 +7,6 @@ import static com.lyr.TestUtil.TABLE_4;
 import static com.lyr.TestUtil.TABLE_WITH_DATA;
 import static com.lyr.TestUtil.TABLE_WITH_DATA_OTHER;
 import static com.lyr.TestUtil.createImmutableListOfFindings;
-import static com.lyr.TestUtil.createOptionalDescribeTableResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 class ScanDynamodbTableIdleRuleExecutionTest {
 
@@ -72,7 +72,7 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .build();
         final var timeWindow = 1;
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
-        final var optTable = createOptionalDescribeTableResponse(123L);
+        final var optTable = createOptionalTableDescription(123L);
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
         // When
@@ -80,7 +80,7 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
-        when(mockedDynamoDbConnectorInstance.getTable(any())).thenReturn(optTable);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
@@ -137,7 +137,7 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         final var dataSize = 123d;
         final var listOfTables =
                 List.of(TABLE_1, tableNameWithReadCon, tableNameWithWriteCon, TABLE_4, tableNameWithBothCon);
-        final var optTable = createOptionalDescribeTableResponse(123L);
+        final var optTable = createOptionalTableDescription(123L);
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
         // When
@@ -145,7 +145,7 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
-        when(mockedDynamoDbConnectorInstance.getTable(any())).thenReturn(optTable);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
                         or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
                 .thenReturn(0d);
@@ -179,8 +179,8 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         final var listOfTables = List.of(
                 TABLE_1, TABLE_WITH_DATA,
                 TABLE_WITH_DATA_OTHER, TABLE_4);
-        final var optTableWithData = createOptionalDescribeTableResponse(123L);
-        final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
+        final var optTableWithData = createOptionalTableDescription(123L);
+        final var optTableWithNoData = createOptionalTableDescription(0L);
         final var expectedFindings = createImmutableListOfFindings(TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
         // When
@@ -194,9 +194,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
         final var actualFindings = testObject.execute(config);
@@ -219,8 +219,8 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         final var listOfListTableResponses = List.of(
                 TABLE_1, TABLE_WITH_DATA,
                 TABLE_WITH_DATA_OTHER, TABLE_4);
-        final var optTableWithData = createOptionalDescribeTableResponse(123L);
-        final var optTableWithNoData = createOptionalDescribeTableResponse(0L);
+        final var optTableWithData = createOptionalTableDescription(123L);
+        final var optTableWithNoData = createOptionalTableDescription(0L);
         final var expectedFindings =
                 createImmutableListOfFindings(TABLE_1, TABLE_4, TABLE_WITH_DATA, TABLE_WITH_DATA_OTHER);
 
@@ -235,9 +235,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTableWithNoData);
 
         final var actualFindings = testObject.execute(config);
@@ -262,7 +262,7 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         final var listOfListTableResponses = List.of(
                 TABLE_1, tableNameThatDoesntExist,
                 otherTableNameThatDoesntExists, TABLE_4);
-        final var optTable = createOptionalDescribeTableResponse(0L);
+        final var optTable = createOptionalTableDescription(0L);
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
         // When
@@ -276,9 +276,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
                         any(), any(), any(), anyInt()))
                 .thenReturn(0d);
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(Optional.empty());
-        when(mockedDynamoDbConnectorInstance.getTable(or(eq(TABLE_1), eq(TABLE_4))))
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_1), eq(TABLE_4))))
                 .thenReturn(optTable);
 
         final var actualFindings = testObject.execute(config);
@@ -288,5 +288,10 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedFindings);
+    }
+
+    private static Optional<TableDescription> createOptionalTableDescription(final long tableSizeBytes) {
+        return Optional.of(
+                TableDescription.builder().tableSizeBytes(tableSizeBytes).build());
     }
 }

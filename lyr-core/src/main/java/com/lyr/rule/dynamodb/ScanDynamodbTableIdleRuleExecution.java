@@ -41,10 +41,10 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                     return totalConsumedReadCapacity == 0 && totalConsumedWriteCapacity == 0;
                 })
                 .filter(tableName -> {
-                    final var optTable = dynamoDbConnector.getTable(tableName);
+                    final var optTable = dynamoDbConnector.getTableDescription(tableName);
                     return optTable.isPresent()
                             && (!parameters.getExcludeEmptyTables()
-                                    || optTable.get().table().tableSizeBytes() != 0);
+                                    || optTable.get().tableSizeBytes() != 0);
                 })
                 .map(Finding::byId)
                 .collect(ImmutableList.toImmutableList());
