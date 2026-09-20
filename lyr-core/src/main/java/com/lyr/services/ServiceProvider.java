@@ -18,11 +18,13 @@ import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.profiles.ProfileFile;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.AwsProfileRegionProvider;
+import software.amazon.awssdk.services.backup.BackupClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.sts.StsClient;
 
@@ -36,6 +38,8 @@ public class ServiceProvider {
     private static volatile DynamoDbClient dynamoDbClient;
     private static volatile CloudWatchClient cloudWatchClient;
     private static volatile CloudWatchLogsClient cloudWatchLogsClient;
+    private static volatile BackupClient backupClient;
+    private static volatile ResourceGroupsTaggingApiClient resourceGroupsTaggingApiClient;
 
     private static EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider;
     private static ProfileCredentialsProvider profileCredentialsProvider;
@@ -186,6 +190,34 @@ public class ServiceProvider {
         return stsClient;
     }
 
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
+    public static BackupClient getOrBuildBackupClient() {
+        checkIfServiceProviderIsConfigured();
+
+        if (backupClient == null) {
+            synchronized (ServiceProvider.class) {
+                if (backupClient == null) {
+                    backupClient = buildBackupClient();
+                }
+            }
+        }
+        return backupClient;
+    }
+
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
+    public static ResourceGroupsTaggingApiClient getOrBuildResourceGroupsTaggingApiClient() {
+        checkIfServiceProviderIsConfigured();
+
+        if (resourceGroupsTaggingApiClient == null) {
+            synchronized (ServiceProvider.class) {
+                if (resourceGroupsTaggingApiClient == null) {
+                    resourceGroupsTaggingApiClient = buildResourceGroupsTaggingApiClient();
+                }
+            }
+        }
+        return resourceGroupsTaggingApiClient;
+    }
+
     @VisibleForTesting
     static CloudWatchClient buildCloudWatchClient() {
         if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
@@ -298,6 +330,40 @@ public class ServiceProvider {
                     .build();
         } else {
             return StsClient.builder()
+                    .credentialsProvider(profileCredentialsProvider)
+                    .region(awsProfileRegionProvider.getRegion())
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        }
+    }
+
+    @VisibleForTesting
+    static BackupClient buildBackupClient() {
+        if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
+            return BackupClient.builder()
+                    .credentialsProvider(environmentVariableCredentialsProvider)
+                    .region(Region.of(getAwsRegionFromEnv()))
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        } else {
+            return BackupClient.builder()
+                    .credentialsProvider(profileCredentialsProvider)
+                    .region(awsProfileRegionProvider.getRegion())
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        }
+    }
+
+    @VisibleForTesting
+    static ResourceGroupsTaggingApiClient buildResourceGroupsTaggingApiClient() {
+        if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
+            return ResourceGroupsTaggingApiClient.builder()
+                    .credentialsProvider(environmentVariableCredentialsProvider)
+                    .region(Region.of(getAwsRegionFromEnv()))
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        } else {
+            return ResourceGroupsTaggingApiClient.builder()
                     .credentialsProvider(profileCredentialsProvider)
                     .region(awsProfileRegionProvider.getRegion())
                     .httpClientBuilder(UrlConnectionHttpClient.builder())

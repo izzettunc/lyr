@@ -99,6 +99,24 @@ class ServiceProviderTest {
     }
 
     @Test
+    void testThatServiceProviderBuildsOnlyOneBackupClient() {
+        try (final var firstClient = ServiceProvider.getOrBuildBackupClient();
+                final var secondClient = ServiceProvider.getOrBuildBackupClient()) {
+
+            assertThat(firstClient).isSameAs(secondClient);
+        }
+    }
+
+    @Test
+    void testThatServiceProviderBuildsOnlyOneResourceGroupsTaggingApiClient() {
+        try (final var firstClient = ServiceProvider.getOrBuildResourceGroupsTaggingApiClient();
+                final var secondClient = ServiceProvider.getOrBuildResourceGroupsTaggingApiClient()) {
+
+            assertThat(firstClient).isSameAs(secondClient);
+        }
+    }
+
+    @Test
     void testThatCloudWatchClientIsBuildWithEnvironmentVariableIfPresent() {
         // Given
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn(TestUtil.DUMMY_STRING);
@@ -109,6 +127,19 @@ class ServiceProviderTest {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
+        }
+    }
+
+    @Test
+    void testThatCloudWatchClientIsBuildWithProfile() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+
+        // When
+        try (final var _ = ServiceProvider.buildCloudWatchClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
         }
     }
 
@@ -127,12 +158,12 @@ class ServiceProviderTest {
     }
 
     @Test
-    void testThatCloudWatchClientIsBuildWithProfile() {
+    void testThatCloudWatchLogsClientIsBuildWithProfile() {
         // Given
         mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
 
         // When
-        try (final var _ = ServiceProvider.buildCloudWatchClient()) {
+        try (final var _ = ServiceProvider.buildCloudWatchLogsClient()) {
             // Then
             mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
             mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
@@ -275,6 +306,60 @@ class ServiceProviderTest {
     }
 
     @Test
+    void testThatBackupClientIsBuildWithEnvironmentVariableIfPresent() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+        mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+
+        // When
+        try (final var _ = ServiceProvider.buildBackupClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
+        }
+    }
+
+    @Test
+    void testThatBackupClientIsBuildWithProfile() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+
+        // When
+        try (final var _ = ServiceProvider.buildBackupClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
+        }
+    }
+
+    @Test
+    void testThatResourceGroupsTaggingApiClientIsBuildWithEnvironmentVariableIfPresent() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+        mockedServiceProvider.when(ServiceProvider::getAwsRegionFromEnv).thenReturn(TestUtil.DUMMY_STRING);
+
+        // When
+        try (final var _ = ServiceProvider.buildResourceGroupsTaggingApiClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(1));
+        }
+    }
+
+    @Test
+    void testThatResourceGroupsTaggingApiClientIsBuildWithProfile() {
+        // Given
+        mockedServiceProvider.when(ServiceProvider::getAwsAccessKeyIdFromEnv).thenReturn("");
+
+        // When
+        try (final var _ = ServiceProvider.buildResourceGroupsTaggingApiClient()) {
+            // Then
+            mockedServiceProvider.verify(ServiceProvider::getAwsAccessKeyIdFromEnv, times(1));
+            mockedServiceProvider.verify(ServiceProvider::getAwsRegionFromEnv, times(0));
+        }
+    }
+
+    @Test
     void testThatServiceProviderThrowsAnExceptionWhenCloudWatchClientIsRequestedBeforeServiceProviderIsConfigured() {
         // Given
         ServiceProvider.configure(null); // Setting service provider to semi not initialized state
@@ -325,6 +410,29 @@ class ServiceProviderTest {
 
         // When & Then
         assertThatThrownBy(ServiceProvider::getOrBuildSsmClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void testThatServiceProviderThrowsAnExceptionWhenBackupClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildBackupClient)
+                .isInstanceOf(NotYetConfiguredException.class)
+                .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
+    }
+
+    @Test
+    void
+            testThatServiceProviderThrowsAnExceptionWhenResourceGroupsTaggingApiClientIsRequestedBeforeServiceProviderIsConfigured() {
+        // Given
+        ServiceProvider.configure(null); // Setting service provider to semi not initialized state
+
+        // When & Then
+        assertThatThrownBy(ServiceProvider::getOrBuildResourceGroupsTaggingApiClient)
                 .isInstanceOf(NotYetConfiguredException.class)
                 .hasMessageContaining("Service provider can not be accessed as it is not yet configured.");
     }
