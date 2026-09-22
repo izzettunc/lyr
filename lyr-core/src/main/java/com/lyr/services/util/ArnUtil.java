@@ -51,7 +51,7 @@ public class ArnUtil {
             return false;
         }
 
-        if (patternPart.equals(WILDCARD_SYMBOL)) {
+        if (WILDCARD_SYMBOL.equals(patternPart)) {
             return true;
         }
 

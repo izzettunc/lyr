@@ -204,7 +204,6 @@ public class ServiceProvider {
         return backupClient;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static ResourceGroupsTaggingApiClient getOrBuildResourceGroupsTaggingApiClient() {
         checkIfServiceProviderIsConfigured();
 
