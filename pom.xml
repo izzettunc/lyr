@@ -35,7 +35,7 @@
         <slf4j.version>2.0.18</slf4j.version>
 
         <!-- Parser -->
-        <jackson.version>3.2.0</jackson.version>
+        <jackson.version>3.2.2</jackson.version>
 
         <!-- CLI -->
         <picocli.version>4.7.7</picocli.version>
