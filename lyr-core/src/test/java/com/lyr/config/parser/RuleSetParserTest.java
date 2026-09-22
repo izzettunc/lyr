@@ -9,6 +9,7 @@ import com.lyr.TestUtil;
 import com.lyr.exception.config.RuleSetParseException;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -26,20 +27,22 @@ class RuleSetParserTest {
     void testThatDefaultRuleSetIsLoadedSuccessfully() {
         // Given
         final var expectedRuleSet = new RuleSet();
+        expectedRuleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build());
         expectedRuleSet.setScanDynamodbTableIdleRuleConfig(
                 ScanDynamodbTableIdleRuleConfig.builder().build());
+        expectedRuleSet.setScanDynamodbTableWithoutBackupRuleConfig(
+                ScanDynamodbTableWithoutBackupRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithDisallowedArchitectureRuleConfig(
                 ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithUnboundedConcurrencyRuleConfig(
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build());
-        expectedRuleSet.setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(
-                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build());
-        expectedRuleSet.setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig(
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig(
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build());
+        expectedRuleSet.setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build());
 
         // When
         final var actualRuleSet = RuleSetParser.parseDefaultRuleSet();
