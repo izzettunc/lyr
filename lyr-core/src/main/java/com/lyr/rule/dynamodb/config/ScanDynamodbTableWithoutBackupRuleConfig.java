@@ -13,7 +13,7 @@ import tools.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonDeserialize(
         builder = ScanDynamodbTableWithoutBackupRuleConfig.ScanDynamodbTableWithoutBackupRuleConfigBuilder.class)
 public class ScanDynamodbTableWithoutBackupRuleConfig implements RuleConfig {
-    public static final String PASS_IF_PITR_ENABLED_CONFIG_KEY = "passIfPITREnabled";
+    public static final String PASS_IF_PITR_ENABLED_CONFIG_KEY = "passIfPitrEnabled";
     public static final String PASS_IF_BACKUP_PLAN_ENABLED_CONFIG_KEY = "passIfBackupPlanEnabled";
 
     public static final Boolean DEFAULT_PASS_IF_PITR_ENABLED = Boolean.TRUE;
