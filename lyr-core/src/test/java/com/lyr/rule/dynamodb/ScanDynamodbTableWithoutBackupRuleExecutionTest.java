@@ -1,5 +1,8 @@
 package com.lyr.rule.dynamodb;
 
+import static com.lyr.TestUtil.DUMMY2_STRING;
+import static com.lyr.TestUtil.DUMMY3_STRING;
+import static com.lyr.TestUtil.DUMMY4_STRING;
 import static com.lyr.TestUtil.DUMMY_STRING;
 import static com.lyr.TestUtil.TABLE_1;
 import static com.lyr.TestUtil.TABLE_2;
@@ -7,12 +10,17 @@ import static com.lyr.TestUtil.TABLE_3;
 import static com.lyr.TestUtil.TABLE_4;
 import static com.lyr.TestUtil.TABLE_5;
 import static com.lyr.TestUtil.TABLE_6;
+import static com.lyr.TestUtil.TABLE_7;
+import static com.lyr.TestUtil.WILDCARD_SYMBOL;
 import static com.lyr.TestUtil.createImmutableListOfFindings;
 import static com.lyr.TestUtil.in;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
@@ -22,7 +30,9 @@ import com.lyr.services.dynamodb.DynamoDbConnector;
 import com.lyr.services.tag.TaggingConnector;
 import com.lyr.services.util.ArnUtil;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,14 +40,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import software.amazon.awssdk.services.backup.model.BackupSelection;
-import software.amazon.awssdk.services.backup.model.Condition;
-import software.amazon.awssdk.services.backup.model.ConditionType;
+import software.amazon.awssdk.services.backup.model.ConditionParameter;
+import software.amazon.awssdk.services.backup.model.Conditions;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsStatus;
 import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryDescription;
 import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryStatus;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
-import software.amazon.awssdk.services.resourcegroupstaggingapi.model.ResourceTagMapping;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
 
 class ScanDynamodbTableWithoutBackupRuleExecutionTest {
@@ -118,7 +127,8 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
     }
 
     @Test
-    void testThatScanDynamodbTableWithoutBackupRuleExecutionWorksSuccessfullyWithOnlyScanningBackupPlan() {
+    void
+            testThatScanDynamodbTableWithoutBackupRuleExecutionWorksSuccessfullyWithOnlyScanningBackupPlanWhenBackupSelectionCoversResources() {
         // Given
         final var config = ScanDynamodbTableWithoutBackupRuleConfig.builder()
                 .passIfBackupPlanEnabled(true)
@@ -130,22 +140,12 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                         .resources(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4))
                         .build(),
                 BackupSelection.builder()
-                        .resources(tableNameToTableArn(TABLE_5))
-                        .listOfTags(Condition.builder()
-                                .conditionKey(DUMMY_STRING)
-                                .conditionValue("enabled")
-                                .conditionType(ConditionType.STRINGEQUALS)
-                                .build())
+                        .resources(tableNameToTableArn(TABLE_3))
                         .build());
 
-        final var listOfResourceTagMappings = List.of(ResourceTagMapping.builder()
-                .resourceARN(tableNameToTableArn(TABLE_6))
-                .tags(Tag.builder().key(DUMMY_STRING).value("enabled").build())
-                .build());
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
-        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5, TABLE_6);
-
-        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1);
 
         // When
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
@@ -154,7 +154,184 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
             return createOptTableDescContArn(argument);
         });
         when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
-                .thenReturn(listOfResourceTagMappings);
+                .thenReturn(emptyMapOfTagsFor(listOfTables));
+        when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
+
+        final var actualFindings = testObject.execute(config);
+
+        // Then
+        assertThat(actualFindings)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedFindings);
+    }
+
+    @Test
+    void
+            testThatScanDynamodbTableWithoutBackupRuleExecutionWorksSuccessfullyWithOnlyScanningBackupPlanWhenBackupSelectionCoversResourcesWithWildcard() {
+        // Given
+        final var config = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfBackupPlanEnabled(true)
+                .passIfPitrEnabled(false)
+                .build();
+
+        final var listOfBackupSelections =
+                List.of(BackupSelection.builder().resources(WILDCARD_SYMBOL).build());
+
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
+
+        final var expectedFindings = createImmutableListOfFindings();
+
+        // When
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(anyString())).thenAnswer(inv -> {
+            final String argument = inv.getArgument(0);
+            return createOptTableDescContArn(argument);
+        });
+        when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
+                .thenReturn(emptyMapOfTagsFor(listOfTables));
+        when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
+
+        final var actualFindings = testObject.execute(config);
+
+        // Then
+        assertThat(actualFindings)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedFindings);
+    }
+
+    @Test
+    void
+            testThatScanDynamodbTableWithoutBackupRuleExecutionWorksSuccessfullyWithOnlyScanningBackupPlanWhenBackupSelectionCoversTags() {
+        // Given
+        final var config = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfBackupPlanEnabled(true)
+                .passIfPitrEnabled(false)
+                .build();
+
+        final var listOfBackupSelections = List.of(
+                BackupSelection.builder()
+                        .conditions(Conditions.builder()
+                                .stringEquals(ConditionParameter.builder()
+                                        .conditionKey(DUMMY_STRING)
+                                        .conditionValue("enabled")
+                                        .build())
+                                .build())
+                        .build(),
+                BackupSelection.builder()
+                        .conditions(Conditions.builder()
+                                .stringEquals(
+                                        ConditionParameter.builder()
+                                                .conditionKey(DUMMY3_STRING)
+                                                .conditionValue("enabled")
+                                                .build(),
+                                        ConditionParameter.builder()
+                                                .conditionKey(DUMMY4_STRING)
+                                                .conditionValue("enabled")
+                                                .build())
+                                .build())
+                        .build());
+
+        final Map<String, List<Tag>> mapOfTags = Map.of(
+                tableNameToTableArn(TABLE_1),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_2),
+                        List.of(Tag.builder()
+                                .key(DUMMY2_STRING)
+                                .value("enabled")
+                                .build()),
+                tableNameToTableArn(TABLE_3),
+                        List.of(Tag.builder()
+                                .key(DUMMY_STRING)
+                                .value("disabled")
+                                .build()),
+                tableNameToTableArn(TABLE_4),
+                        List.of(
+                                Tag.builder()
+                                        .key(DUMMY2_STRING)
+                                        .value("enabled")
+                                        .build(),
+                                Tag.builder()
+                                        .key(DUMMY3_STRING)
+                                        .value("enabled")
+                                        .build(),
+                                Tag.builder()
+                                        .key(DUMMY4_STRING)
+                                        .value("enabled")
+                                        .build()),
+                tableNameToTableArn(TABLE_5),
+                        List.of(Tag.builder()
+                                .key(DUMMY3_STRING)
+                                .value("enabled")
+                                .build()));
+
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5);
+
+        final var expectedFindings = createImmutableListOfFindings(TABLE_2, TABLE_3, TABLE_5);
+
+        // When
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(anyString())).thenAnswer(inv -> {
+            final String argument = inv.getArgument(0);
+            return createOptTableDescContArn(argument);
+        });
+        when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
+                .thenReturn(mapOfTags);
+        when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
+
+        final var actualFindings = testObject.execute(config);
+
+        // Then
+        assertThat(actualFindings)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedFindings);
+    }
+
+    @Test
+    void
+            testThatScanDynamodbTableWithoutBackupRuleExecutionWorksSuccessfullyWithOnlyScanningBackupPlanWhenBackupSelectionCoversTagsAndResources() {
+        // Given
+        final var config = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfBackupPlanEnabled(true)
+                .passIfPitrEnabled(false)
+                .build();
+
+        final var listOfBackupSelections = List.of(BackupSelection.builder()
+                .resources(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4), tableNameToTableArn(TABLE_3))
+                .conditions(Conditions.builder()
+                        .stringEquals(ConditionParameter.builder()
+                                .conditionKey(DUMMY_STRING)
+                                .conditionValue("enabled")
+                                .build())
+                        .build())
+                .build());
+
+        final Map<String, List<Tag>> mapOfTags = Map.of(
+                tableNameToTableArn(TABLE_1),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_2),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_3), List.of(),
+                tableNameToTableArn(TABLE_4),
+                        List.of(Tag.builder()
+                                .key(DUMMY_STRING)
+                                .value("disabled")
+                                .build()));
+
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
+
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3, TABLE_4);
+
+        // When
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(anyString())).thenAnswer(inv -> {
+            final String argument = inv.getArgument(0);
+            return createOptTableDescContArn(argument);
+        });
+        when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
+                .thenReturn(mapOfTags);
         when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
 
         final var actualFindings = testObject.execute(config);
@@ -175,37 +352,53 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .build();
 
         final var enabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .continuousBackupsStatus(ContinuousBackupsStatus.ENABLED)
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.ENABLED)
+                        .build())
                 .build();
         final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .continuousBackupsStatus(ContinuousBackupsStatus.DISABLED)
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
+                        .build())
                 .build();
 
         final var listOfBackupSelections = List.of(BackupSelection.builder()
-                .resources(tableNameToTableArn(TABLE_4), tableNameToTableArn(TABLE_5))
-                .listOfTags(Condition.builder()
-                        .conditionKey(DUMMY_STRING)
-                        .conditionValue("enabled")
-                        .conditionType(ConditionType.STRINGEQUALS)
+                .resources(
+                        tableNameToTableArn(TABLE_4),
+                        tableNameToTableArn(TABLE_3),
+                        tableNameToTableArn(TABLE_5),
+                        tableNameToTableArn(TABLE_7))
+                .conditions(Conditions.builder()
+                        .stringEquals(ConditionParameter.builder()
+                                .conditionKey(DUMMY_STRING)
+                                .conditionValue("enabled")
+                                .build())
                         .build())
                 .build());
 
-        final var listOfResourceTagMappings = List.of(
-                ResourceTagMapping.builder()
-                        .resourceARN(tableNameToTableArn(TABLE_6))
-                        .tags(Tag.builder().key(DUMMY_STRING).value("enabled").build())
-                        .build(),
-                ResourceTagMapping.builder()
-                        .resourceARN(tableNameToTableArn(TABLE_3))
-                        .tags(Tag.builder().key("BadKey").value("enabled").build())
-                        .build());
+        final Map<String, List<Tag>> mapOfTags = Map.of(
+                tableNameToTableArn(TABLE_1), List.of(),
+                tableNameToTableArn(TABLE_2), List.of(),
+                tableNameToTableArn(TABLE_3),
+                        List.of(Tag.builder()
+                                .key(DUMMY2_STRING)
+                                .value("enabled")
+                                .build()),
+                tableNameToTableArn(TABLE_4),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_5), List.of(),
+                tableNameToTableArn(TABLE_6),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_7),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()));
 
-        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5, TABLE_6);
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5, TABLE_6, TABLE_7);
 
-        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3);
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3, TABLE_5, TABLE_6);
 
         // When
-        when(mockedDynamoDbConnectorInstance.getContinuousBackupsDescription(in(TABLE_1, TABLE_3, TABLE_5, TABLE_6)))
+        when(mockedDynamoDbConnectorInstance.getContinuousBackupsDescription(
+                        in(TABLE_1, TABLE_3, TABLE_5, TABLE_6, TABLE_7)))
                 .thenReturn(Optional.of(disabledContBackupDesc));
         when(mockedDynamoDbConnectorInstance.getContinuousBackupsDescription(in(TABLE_2, TABLE_4)))
                 .thenReturn(Optional.of(enabledContBackupDesc));
@@ -215,7 +408,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
             return createOptTableDescContArn(argument);
         });
         when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
-                .thenReturn(listOfResourceTagMappings);
+                .thenReturn(mapOfTags);
         when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
 
         final var actualFindings = testObject.execute(config);
@@ -269,7 +462,9 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 otherTableNameThatDoesntExists, TABLE_4);
 
         final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .continuousBackupsStatus(ContinuousBackupsStatus.DISABLED)
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
+                        .build())
                 .build();
 
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
@@ -302,7 +497,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
         final var tableNameThatDoesntExist = "tableThatDoesntExist";
         final var otherTableNameThatDoesntExists = "otherTableThatDoesntExists";
 
-        final var listOfListTableResponses = List.of(
+        final var listOfTables = List.of(
                 TABLE_1, tableNameThatDoesntExist,
                 otherTableNameThatDoesntExists, TABLE_4);
 
@@ -313,7 +508,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
         // When
-        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfListTableResponses);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedDynamoDbConnectorInstance.getTableDescription(in(TABLE_1, TABLE_4)))
                 .thenAnswer(inv -> {
                     final String argument = inv.getArgument(0);
@@ -323,7 +518,67 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                         in(tableNameThatDoesntExist, otherTableNameThatDoesntExists)))
                 .thenReturn(Optional.empty());
         when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
-                .thenReturn(List.of());
+                .thenReturn(emptyMapOfTagsFor(listOfTables));
+        when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
+
+        final var actualFindings = testObject.execute(config);
+
+        // Then
+        assertThat(actualFindings)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedFindings);
+    }
+
+    @Test
+    void testThatScanDynamodbTableIdleRuleGracefullyIgnoresUnsupportedConditionsWhenOnlyBackupPlanScanned() {
+        // Given
+        final var config = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfBackupPlanEnabled(true)
+                .passIfPitrEnabled(false)
+                .build();
+
+        final var listOfBackupSelections = List.of(
+                BackupSelection.builder()
+                        .resources(tableNameToTableArn(TABLE_1))
+                        .conditions(Conditions.builder()
+                                .stringNotEquals(ConditionParameter.builder()
+                                        .conditionKey(DUMMY_STRING)
+                                        .conditionValue("enabled")
+                                        .build())
+                                .build())
+                        .build(),
+                BackupSelection.builder()
+                        .conditions(Conditions.builder()
+                                .stringNotEquals(ConditionParameter.builder()
+                                        .conditionKey(DUMMY_STRING)
+                                        .conditionValue("enabled")
+                                        .build())
+                                .build())
+                        .build(),
+                BackupSelection.builder()
+                        .notResources(tableNameToTableArn(TABLE_3))
+                        .build());
+
+        final Map<String, List<Tag>> mapOfTags = Map.of(
+                tableNameToTableArn(TABLE_1),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_2),
+                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_3), List.of());
+
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3);
+
+        final var expectedFindings = createImmutableListOfFindings(TABLE_2, TABLE_3);
+
+        // When
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(anyString())).thenAnswer(inv -> {
+            final String argument = inv.getArgument(0);
+            return createOptTableDescContArn(argument);
+        });
+        when(mockedTaggingConnectorInstance.getResourceTagMappingForResources(any(String[].class)))
+                .thenReturn(mapOfTags);
         when(mockedBackupConnectorInstance.listAllBackupPlanSelections()).thenReturn(listOfBackupSelections);
 
         final var actualFindings = testObject.execute(config);
@@ -351,5 +606,9 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .resource(ArnUtil.Resource.builder().resourceId(tableName).build())
                 .build()
                 .toString();
+    }
+
+    private static Map<String, List<Tag>> emptyMapOfTagsFor(final List<String> arns) {
+        return arns.stream().collect(Collectors.toMap(arn -> arn, _ -> List.of()));
     }
 }
