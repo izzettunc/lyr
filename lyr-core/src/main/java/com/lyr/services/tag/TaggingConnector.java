@@ -1,12 +1,18 @@
 package com.lyr.services.tag;
 
+import static java.util.Arrays.stream;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.GetResourcesRequest;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.GetResourcesResponse;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.ResourceTagMapping;
+import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
 
 public final class TaggingConnector {
 
@@ -25,21 +31,25 @@ public final class TaggingConnector {
         return new TaggingConnector(taggingClient);
     }
 
-    public List<ResourceTagMapping> getResourceTagMappingForResourceType(final String resourceType) {
+    public Map<String, List<Tag>> getResourceTagMappingForResourceType(final String resourceType) {
         final var request =
                 GetResourcesRequest.builder().resourceTypeFilters(resourceType).build();
         return client.getResourcesPaginator(request).stream()
                 .map(GetResourcesResponse::resourceTagMappingList)
                 .flatMap(List::stream)
-                .toList();
+                .collect(Collectors.toMap(ResourceTagMapping::resourceARN, ResourceTagMapping::tags));
     }
 
-    public List<ResourceTagMapping> getResourceTagMappingForResources(final String... resourceArns) {
+    public Map<String, List<Tag>> getResourceTagMappingForResources(final String... resourceArns) {
         final var request =
                 GetResourcesRequest.builder().resourceARNList(resourceArns).build();
-        return client.getResourcesPaginator(request).stream()
+        final var tableArnToTagMap = client.getResourcesPaginator(request).stream()
                 .map(GetResourcesResponse::resourceTagMappingList)
                 .flatMap(List::stream)
-                .toList();
+                .collect(Collectors.toMap(ResourceTagMapping::resourceARN, ResourceTagMapping::tags));
+
+        return stream(resourceArns)
+                .collect(Collectors.toMap(
+                        tableArn -> tableArn, tableArn -> tableArnToTagMap.getOrDefault(tableArn, new ArrayList<>())));
     }
 }

@@ -1,5 +1,6 @@
 package com.lyr.services.tag;
 
+import static com.lyr.TestUtil.DUMMY2_STRING;
 import static com.lyr.TestUtil.DUMMY_STRING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.lyr.services.ServiceProvider;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +77,9 @@ class TaggingConnectorTest {
 
         final var mockedGetResourcesIterable = mock(GetResourcesIterable.class);
 
-        final var expectedResourceTagMappings = List.of(resourceTagMapping1, resourceTagMapping2);
+        final var expectedResourceTagMappings = Map.of(
+                resourceTagMapping1.resourceARN(), resourceTagMapping1.tags(),
+                resourceTagMapping2.resourceARN(), resourceTagMapping2.tags());
 
         // When
         when(mockedGetResourcesIterable.stream()).thenReturn(listOfGetResourcesResponses.stream());
@@ -131,7 +135,9 @@ class TaggingConnectorTest {
 
         final var mockedGetResourcesIterable = mock(GetResourcesIterable.class);
 
-        final var expectedResourceTagMappings = List.of(resourceTagMapping1, resourceTagMapping2);
+        final var expectedResourceTagMappings = Map.of(
+                resourceTagMapping1.resourceARN(), resourceTagMapping1.tags(),
+                resourceTagMapping2.resourceARN(), resourceTagMapping2.tags());
 
         // When
         when(mockedGetResourcesIterable.stream()).thenReturn(listOfGetResourcesResponses.stream());
@@ -156,14 +162,21 @@ class TaggingConnectorTest {
 
         final var mockedGetResourcesIterable = mock(GetResourcesIterable.class);
 
+        final var expectedResourceTagMappings = Map.of(
+                DUMMY_STRING, List.of(),
+                DUMMY2_STRING, List.of());
+
         // When
         when(mockedGetResourcesIterable.stream()).thenReturn(listOfGetResourcesResponses.stream());
         when(mockedTaggingClient.getResourcesPaginator(any(GetResourcesRequest.class)))
                 .thenReturn(mockedGetResourcesIterable);
 
-        final var actualResult = testObject.getResourceTagMappingForResources(DUMMY_STRING);
+        final var actualResult = testObject.getResourceTagMappingForResources(DUMMY_STRING, DUMMY2_STRING);
 
         // Then
-        assertThat(actualResult).isEmpty();
+        assertThat(actualResult)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedResourceTagMappings);
     }
 }
