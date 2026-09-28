@@ -32,7 +32,7 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
         final var allAvailableTables = dynamodbConnector.listTableNames();
         var tablesInQuestion = Set.copyOf(allAvailableTables);
 
-        if (config.getPassIfPitrEnabled()) {
+        if (config.getPassIfPitrEnabled() && !tablesInQuestion.isEmpty()) {
             tablesInQuestion = tablesInQuestion.stream()
                     .filter(name -> dynamodbConnector
                             .getContinuousBackupsDescription(name)
@@ -42,7 +42,7 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
                     .collect(Collectors.toSet());
         }
 
-        if (config.getPassIfBackupPlanEnabled()) {
+        if (config.getPassIfBackupPlanEnabled() && !tablesInQuestion.isEmpty()) {
             final var backupConnector = BackupConnector.create();
             final var taggingConnector = TaggingConnector.create();
 

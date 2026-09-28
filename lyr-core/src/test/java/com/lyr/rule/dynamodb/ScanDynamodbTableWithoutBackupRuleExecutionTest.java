@@ -235,6 +235,10 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedFindings);
+
+        verify(mockedDynamoDbConnectorInstance, never()).getContinuousBackupsDescription(anyString());
+        verify(mockedBackupConnectorInstance, never()).listAllBackupPlanSelections();
+        verify(mockedTaggingConnectorInstance, never()).getResourceTagMappingForResources(anyString());
     }
 
     @Test
