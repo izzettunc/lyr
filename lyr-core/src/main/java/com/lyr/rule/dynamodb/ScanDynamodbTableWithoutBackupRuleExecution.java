@@ -17,7 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.awssdk.services.backup.model.BackupSelection;
-import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsStatus;
+import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
+import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryStatus;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.ResourceTagMapping;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
@@ -36,8 +37,7 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
             tablesInQuestion = tablesInQuestion.stream()
                     .filter(name -> dynamodbConnector
                             .getContinuousBackupsDescription(name)
-                            .filter(continuousBackupsDescription -> ContinuousBackupsStatus.DISABLED.equals(
-                                    continuousBackupsDescription.continuousBackupsStatus()))
+                            .filter(this::isPitrDisabled)
                             .isPresent())
                     .collect(Collectors.toSet());
         }
@@ -91,5 +91,19 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
         return stream(allValidTableArns)
                 .collect(Collectors.toMap(
                         tableArn -> tableArn, tableArn -> tableArnToTagMap.getOrDefault(tableArn, new ArrayList<>())));
+    }
+
+    private boolean isPitrDisabled(final ContinuousBackupsDescription continuousBackupsDescription) {
+        final var pitrDescriptions = continuousBackupsDescription.pointInTimeRecoveryDescription();
+
+        return null == pitrDescriptions || PointInTimeRecoveryStatus.DISABLED.equals(pitrDescriptions.pointInTimeRecoveryStatus());
+    }
+
+    private String trimTagPrefixFromConditionKey(final String conditionKey) {
+        return conditionKey.replace("aws:ResourceTag/", "");
+    }
+
+    private boolean isPatternMatches(final String pattern, final String resourceARN) {
+        return "*".equals(pattern) || ArnUtil.isMatching(pattern, resourceARN);
     }
 }

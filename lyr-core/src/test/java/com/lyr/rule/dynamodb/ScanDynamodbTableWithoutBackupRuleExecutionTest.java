@@ -34,6 +34,8 @@ import software.amazon.awssdk.services.backup.model.Condition;
 import software.amazon.awssdk.services.backup.model.ConditionType;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsStatus;
+import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryDescription;
+import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryStatus;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.ResourceTagMapping;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
@@ -79,15 +81,23 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .passIfPitrEnabled(true)
                 .build();
 
-        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3);
         final var enabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .continuousBackupsStatus(ContinuousBackupsStatus.ENABLED)
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.ENABLED)
+                        .build())
                 .build();
         final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
+                        .build())
+                .build();
+        final var nullContBackupDesc = ContinuousBackupsDescription.builder()
                 .continuousBackupsStatus(ContinuousBackupsStatus.DISABLED)
                 .build();
 
-        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5);
+
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_3, TABLE_5);
 
         // When
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
@@ -95,6 +105,8 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .thenReturn(Optional.of(disabledContBackupDesc));
         when(mockedDynamoDbConnectorInstance.getContinuousBackupsDescription(in(TABLE_2, TABLE_4)))
                 .thenReturn(Optional.of(enabledContBackupDesc));
+        when(mockedDynamoDbConnectorInstance.getContinuousBackupsDescription(eq(TABLE_5)))
+                .thenReturn(Optional.of(nullContBackupDesc));
 
         final var actualFindings = testObject.execute(config);
 
