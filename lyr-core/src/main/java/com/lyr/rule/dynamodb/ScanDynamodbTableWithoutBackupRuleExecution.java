@@ -14,12 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.backup.model.BackupSelection;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
 import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryStatus;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
 
+@Slf4j
 public class ScanDynamodbTableWithoutBackupRuleExecution
         implements RuleExecutionStrategy<ScanDynamodbTableWithoutBackupRuleConfig> {
     DynamoDbConnector dynamoDbConnector;
@@ -43,7 +45,14 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
             tablesInQuestion = filterTablesWithoutBackupPlan(tablesInQuestion);
         }
 
-        return tablesInQuestion.stream().map(Finding::byId).collect(ImmutableList.toImmutableList());
+        final var findings = tablesInQuestion.stream().map(Finding::byId).collect(ImmutableList.toImmutableList());
+
+        log.atInfo()
+                .addArgument(findings.size())
+                .addArgument(allAvailableTables.size())
+                .log("Found {} table(s) with problems out of {} table(s).");
+
+        return findings;
     }
 
     private Set<String> filterTablesWithoutPitr(final Set<String> tableNames) {
