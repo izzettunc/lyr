@@ -1,5 +1,6 @@
 package com.lyr.services.glue;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
 import java.util.List;
 import software.amazon.awssdk.services.glue.GlueClient;
@@ -18,7 +19,8 @@ public final class GlueConnector {
         return new GlueConnector(ServiceProvider.getOrBuildGlueClient());
     }
 
-    public static GlueConnector create(final GlueClient glueClient) {
+    @VisibleForTesting
+    static GlueConnector create(final GlueClient glueClient) {
         return new GlueConnector(glueClient);
     }
 

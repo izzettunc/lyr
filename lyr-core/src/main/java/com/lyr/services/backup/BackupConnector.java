@@ -1,5 +1,6 @@
 package com.lyr.services.backup;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,8 @@ public final class BackupConnector {
         return new BackupConnector(ServiceProvider.getOrBuildBackupClient());
     }
 
-    public static BackupConnector create(final BackupClient backupClient) {
+    @VisibleForTesting
+    static BackupConnector create(final BackupClient backupClient) {
         return new BackupConnector(backupClient);
     }
 

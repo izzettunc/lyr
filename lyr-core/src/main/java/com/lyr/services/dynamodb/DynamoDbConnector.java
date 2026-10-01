@@ -1,5 +1,6 @@
 package com.lyr.services.dynamodb;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,8 @@ public final class DynamoDbConnector {
         return new DynamoDbConnector(ServiceProvider.getOrBuildDynamoDbClient());
     }
 
-    public static DynamoDbConnector create(final DynamoDbClient dynamoDbClient) {
+    @VisibleForTesting
+    static DynamoDbConnector create(final DynamoDbClient dynamoDbClient) {
         return new DynamoDbConnector(dynamoDbClient);
     }
 
