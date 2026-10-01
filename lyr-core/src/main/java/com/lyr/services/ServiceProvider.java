@@ -5,7 +5,6 @@ import static com.lyr.exception.services.BadAwsServiceConfigException.BAD_AWS_SE
 import com.google.common.annotations.VisibleForTesting;
 import com.lyr.exception.NotYetConfiguredException;
 import com.lyr.exception.services.BadAwsServiceConfigException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,16 +30,6 @@ import software.amazon.awssdk.services.sts.StsClient;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceProvider {
-    private static volatile SsmClient ssmClient;
-    private static volatile StsClient stsClient;
-    private static volatile LambdaClient lambdaClient;
-    private static volatile GlueClient glueClient;
-    private static volatile DynamoDbClient dynamoDbClient;
-    private static volatile CloudWatchClient cloudWatchClient;
-    private static volatile CloudWatchLogsClient cloudWatchLogsClient;
-    private static volatile BackupClient backupClient;
-    private static volatile ResourceGroupsTaggingApiClient resourceGroupsTaggingApiClient;
-
     private static EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider;
     private static ProfileCredentialsProvider profileCredentialsProvider;
     private static AwsProfileRegionProvider awsProfileRegionProvider;
@@ -93,128 +82,58 @@ public class ServiceProvider {
         return System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable());
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchClient getOrBuildCloudWatchClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (cloudWatchClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (cloudWatchClient == null) {
-                    cloudWatchClient = buildCloudWatchClient();
-                }
-            }
-        }
-        return cloudWatchClient;
+        return CloudWatchClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchLogsClient getOrBuildCloudWatchLogsClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (cloudWatchLogsClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (cloudWatchLogsClient == null) {
-                    cloudWatchLogsClient = buildCloudWatchLogsClient();
-                }
-            }
-        }
-        return cloudWatchLogsClient;
+        return CloudWatchLogsClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static DynamoDbClient getOrBuildDynamoDbClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (dynamoDbClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (dynamoDbClient == null) {
-                    dynamoDbClient = buildDynamoDbClient();
-                }
-            }
-        }
-        return dynamoDbClient;
+        return DynamoDbClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static GlueClient getOrBuildGlueClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (glueClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (glueClient == null) {
-                    glueClient = buildGlueClient();
-                }
-            }
-        }
-        return glueClient;
+        return GlueClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static LambdaClient getOrBuildLambdaClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (lambdaClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (lambdaClient == null) {
-                    lambdaClient = buildLambdaClient();
-                }
-            }
-        }
-        return lambdaClient;
+        return LambdaClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static SsmClient getOrBuildSsmClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (ssmClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (ssmClient == null) {
-                    ssmClient = buildSsmClient();
-                }
-            }
-        }
-        return ssmClient;
+        return SsmClientHolder.INSTANCE;
     }
 
     public static StsClient getOrBuildStsClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (stsClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (stsClient == null) {
-                    stsClient = buildStsClient();
-                }
-            }
-        }
-        return stsClient;
+        return StsClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static BackupClient getOrBuildBackupClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (backupClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (backupClient == null) {
-                    backupClient = buildBackupClient();
-                }
-            }
-        }
-        return backupClient;
+        return BackupClientHolder.INSTANCE;
     }
 
     public static ResourceGroupsTaggingApiClient getOrBuildResourceGroupsTaggingApiClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (resourceGroupsTaggingApiClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (resourceGroupsTaggingApiClient == null) {
-                    resourceGroupsTaggingApiClient = buildResourceGroupsTaggingApiClient();
-                }
-            }
-        }
-        return resourceGroupsTaggingApiClient;
+        return ResourceGroupsTaggingApiClientHolder.INSTANCE;
     }
 
     @VisibleForTesting
@@ -368,5 +287,41 @@ public class ServiceProvider {
                     .httpClientBuilder(UrlConnectionHttpClient.builder())
                     .build();
         }
+    }
+
+    private static final class DynamoDbClientHolder {
+        static final DynamoDbClient INSTANCE = buildDynamoDbClient();
+    }
+
+    private static final class GlueClientHolder {
+        static final GlueClient INSTANCE = buildGlueClient();
+    }
+
+    private static final class SsmClientHolder {
+        static final SsmClient INSTANCE = buildSsmClient();
+    }
+
+    private static final class StsClientHolder {
+        static final StsClient INSTANCE = buildStsClient();
+    }
+
+    private static final class BackupClientHolder {
+        static final BackupClient INSTANCE = buildBackupClient();
+    }
+
+    private static final class ResourceGroupsTaggingApiClientHolder {
+        static final ResourceGroupsTaggingApiClient INSTANCE = buildResourceGroupsTaggingApiClient();
+    }
+
+    private static final class LambdaClientHolder {
+        static final LambdaClient INSTANCE = buildLambdaClient();
+    }
+
+    private static final class CloudWatchClientHolder {
+        static final CloudWatchClient INSTANCE = buildCloudWatchClient();
+    }
+
+    private static final class CloudWatchLogsClientHolder {
+        static final CloudWatchLogsClient INSTANCE = buildCloudWatchLogsClient();
     }
 }
