@@ -24,9 +24,11 @@ import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
 @Slf4j
 public class ScanDynamodbTableWithoutBackupRuleExecution
         implements RuleExecutionStrategy<ScanDynamodbTableWithoutBackupRuleConfig> {
-    DynamoDbConnector dynamoDbConnector;
-    BackupConnector backupConnector;
-    TaggingConnector taggingConnector;
+    private static final String AWS_RESOURCE_TAG_PREFIX = "aws:ResourceTag/";
+
+    private DynamoDbConnector dynamoDbConnector;
+    private BackupConnector backupConnector;
+    private TaggingConnector taggingConnector;
 
     @Override
     public ImmutableList<Finding> execute(final ScanDynamodbTableWithoutBackupRuleConfig config) {
@@ -143,6 +145,6 @@ public class ScanDynamodbTableWithoutBackupRuleExecution
     }
 
     private String trimTagPrefixFromConditionKey(final String conditionKey) {
-        return conditionKey.replace("aws:ResourceTag/", "");
+        return conditionKey.replace(AWS_RESOURCE_TAG_PREFIX, "");
     }
 }
