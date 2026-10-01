@@ -94,8 +94,8 @@ class PlainTextReportStylerTest {
 
         // When
         final var actualTextEmptyLine = PlainTextReportStyler.toNewLine("");
-        final var actualTextSpace = PlainTextReportStyler.toNewLine("");
-        final var actualTextTab = PlainTextReportStyler.toNewLine("");
+        final var actualTextSpace = PlainTextReportStyler.toNewLine(" ");
+        final var actualTextTab = PlainTextReportStyler.toNewLine("\t");
 
         // Then
         assertThat(actualTextEmptyLine).isEqualTo(expectedText);
