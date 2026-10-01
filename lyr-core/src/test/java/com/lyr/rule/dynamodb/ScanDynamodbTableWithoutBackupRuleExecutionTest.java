@@ -43,13 +43,15 @@ import software.amazon.awssdk.services.backup.model.BackupSelection;
 import software.amazon.awssdk.services.backup.model.ConditionParameter;
 import software.amazon.awssdk.services.backup.model.Conditions;
 import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsDescription;
-import software.amazon.awssdk.services.dynamodb.model.ContinuousBackupsStatus;
 import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryDescription;
 import software.amazon.awssdk.services.dynamodb.model.PointInTimeRecoveryStatus;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.resourcegroupstaggingapi.model.Tag;
 
 class ScanDynamodbTableWithoutBackupRuleExecutionTest {
+
+    private static final String ENABLED = "enabled";
+    private static final String DISABLED = "disabled";
 
     static MockedStatic<DynamoDbConnector> mockedDynamoDbConnector = Mockito.mockStatic(DynamoDbConnector.class);
     static DynamoDbConnector mockedDynamoDbConnectorInstance = Mockito.mock(DynamoDbConnector.class);
@@ -90,19 +92,9 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .passIfPitrEnabled(true)
                 .build();
 
-        final var enabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
-                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.ENABLED)
-                        .build())
-                .build();
-        final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
-                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
-                        .build())
-                .build();
-        final var nullContBackupDesc = ContinuousBackupsDescription.builder()
-                .continuousBackupsStatus(ContinuousBackupsStatus.DISABLED)
-                .build();
+        final var enabledContBackupDesc = createContinuousBackupDescription(PointInTimeRecoveryStatus.ENABLED);
+        final var disabledContBackupDesc = createContinuousBackupDescription(PointInTimeRecoveryStatus.DISABLED);
+        final var nullContBackupDesc = createContinuousBackupDescription(null);
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5);
 
@@ -136,12 +128,8 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .build();
 
         final var listOfBackupSelections = List.of(
-                BackupSelection.builder()
-                        .resources(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4))
-                        .build(),
-                BackupSelection.builder()
-                        .resources(tableNameToTableArn(TABLE_3))
-                        .build());
+                createBackupSelection(List.of(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4)), List.of()),
+                createBackupSelection(List.of(tableNameToTableArn(TABLE_3)), List.of()));
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
@@ -175,8 +163,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .passIfPitrEnabled(false)
                 .build();
 
-        final var listOfBackupSelections =
-                List.of(BackupSelection.builder().resources(WILDCARD_SYMBOL).build());
+        final var listOfBackupSelections = List.of(createBackupSelection(List.of(WILDCARD_SYMBOL), List.of()));
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
@@ -211,60 +198,27 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .build();
 
         final var listOfBackupSelections = List.of(
-                BackupSelection.builder()
-                        .conditions(Conditions.builder()
-                                .stringEquals(ConditionParameter.builder()
-                                        .conditionKey(DUMMY_STRING)
-                                        .conditionValue("enabled")
-                                        .build())
-                                .build())
-                        .build(),
-                BackupSelection.builder()
-                        .conditions(Conditions.builder()
-                                .stringEquals(
-                                        ConditionParameter.builder()
-                                                .conditionKey(DUMMY3_STRING)
-                                                .conditionValue("enabled")
-                                                .build(),
-                                        ConditionParameter.builder()
-                                                .conditionKey(DUMMY4_STRING)
-                                                .conditionValue("enabled")
-                                                .build())
-                                .build())
-                        .build());
+                createBackupSelection(List.of(), List.of(createConditionParam(DUMMY_STRING, ENABLED))),
+                createBackupSelection(
+                        List.of(),
+                        List.of(
+                                createConditionParam(DUMMY3_STRING, ENABLED),
+                                createConditionParam(DUMMY4_STRING, ENABLED))));
 
         final Map<String, List<Tag>> mapOfTags = Map.of(
                 tableNameToTableArn(TABLE_1),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                List.of(createTag(DUMMY_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_2),
-                        List.of(Tag.builder()
-                                .key(DUMMY2_STRING)
-                                .value("enabled")
-                                .build()),
+                List.of(createTag(DUMMY2_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_3),
-                        List.of(Tag.builder()
-                                .key(DUMMY_STRING)
-                                .value("disabled")
-                                .build()),
+                List.of(createTag(DUMMY_STRING, DISABLED)),
                 tableNameToTableArn(TABLE_4),
-                        List.of(
-                                Tag.builder()
-                                        .key(DUMMY2_STRING)
-                                        .value("enabled")
-                                        .build(),
-                                Tag.builder()
-                                        .key(DUMMY3_STRING)
-                                        .value("enabled")
-                                        .build(),
-                                Tag.builder()
-                                        .key(DUMMY4_STRING)
-                                        .value("enabled")
-                                        .build()),
+                List.of(
+                        createTag(DUMMY2_STRING, ENABLED),
+                        createTag(DUMMY3_STRING, ENABLED),
+                        createTag(DUMMY4_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_5),
-                        List.of(Tag.builder()
-                                .key(DUMMY3_STRING)
-                                .value("enabled")
-                                .build()));
+                List.of(createTag(DUMMY3_STRING, ENABLED)));
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5);
 
@@ -298,27 +252,15 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .passIfPitrEnabled(false)
                 .build();
 
-        final var listOfBackupSelections = List.of(BackupSelection.builder()
-                .resources(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4), tableNameToTableArn(TABLE_3))
-                .conditions(Conditions.builder()
-                        .stringEquals(ConditionParameter.builder()
-                                .conditionKey(DUMMY_STRING)
-                                .conditionValue("enabled")
-                                .build())
-                        .build())
-                .build());
+        final var listOfBackupSelections = List.of(createBackupSelection(
+                List.of(tableNameToTableArn(TABLE_2), tableNameToTableArn(TABLE_4), tableNameToTableArn(TABLE_3)),
+                List.of(createConditionParam(DUMMY_STRING, ENABLED))));
 
         final Map<String, List<Tag>> mapOfTags = Map.of(
-                tableNameToTableArn(TABLE_1),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
-                tableNameToTableArn(TABLE_2),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_1), List.of(createTag(DUMMY_STRING, ENABLED)),
+                tableNameToTableArn(TABLE_2), List.of(createTag(DUMMY_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_3), List.of(),
-                tableNameToTableArn(TABLE_4),
-                        List.of(Tag.builder()
-                                .key(DUMMY_STRING)
-                                .value("disabled")
-                                .build()));
+                tableNameToTableArn(TABLE_4), List.of(createTag(DUMMY_STRING, DISABLED)));
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
 
@@ -351,46 +293,25 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .passIfPitrEnabled(true)
                 .build();
 
-        final var enabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
-                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.ENABLED)
-                        .build())
-                .build();
-        final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
-                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
-                        .build())
-                .build();
+        final var enabledContBackupDesc = createContinuousBackupDescription(PointInTimeRecoveryStatus.ENABLED);
+        final var disabledContBackupDesc = createContinuousBackupDescription(PointInTimeRecoveryStatus.DISABLED);
 
-        final var listOfBackupSelections = List.of(BackupSelection.builder()
-                .resources(
+        final var listOfBackupSelections = List.of(createBackupSelection(
+                List.of(
                         tableNameToTableArn(TABLE_4),
                         tableNameToTableArn(TABLE_3),
                         tableNameToTableArn(TABLE_5),
-                        tableNameToTableArn(TABLE_7))
-                .conditions(Conditions.builder()
-                        .stringEquals(ConditionParameter.builder()
-                                .conditionKey(DUMMY_STRING)
-                                .conditionValue("enabled")
-                                .build())
-                        .build())
-                .build());
+                        tableNameToTableArn(TABLE_7)),
+                List.of(createConditionParam(DUMMY_STRING, ENABLED))));
 
         final Map<String, List<Tag>> mapOfTags = Map.of(
                 tableNameToTableArn(TABLE_1), List.of(),
                 tableNameToTableArn(TABLE_2), List.of(),
-                tableNameToTableArn(TABLE_3),
-                        List.of(Tag.builder()
-                                .key(DUMMY2_STRING)
-                                .value("enabled")
-                                .build()),
-                tableNameToTableArn(TABLE_4),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_3), List.of(createTag(DUMMY2_STRING, ENABLED)),
+                tableNameToTableArn(TABLE_4), List.of(createTag(DUMMY_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_5), List.of(),
-                tableNameToTableArn(TABLE_6),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
-                tableNameToTableArn(TABLE_7),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()));
+                tableNameToTableArn(TABLE_6), List.of(createTag(DUMMY_STRING, ENABLED)),
+                tableNameToTableArn(TABLE_7), List.of(createTag(DUMMY_STRING, ENABLED)));
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4, TABLE_5, TABLE_6, TABLE_7);
 
@@ -461,11 +382,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 TABLE_1, tableNameThatDoesntExist,
                 otherTableNameThatDoesntExists, TABLE_4);
 
-        final var disabledContBackupDesc = ContinuousBackupsDescription.builder()
-                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
-                        .pointInTimeRecoveryStatus(PointInTimeRecoveryStatus.DISABLED)
-                        .build())
-                .build();
+        final var disabledContBackupDesc = createContinuousBackupDescription(PointInTimeRecoveryStatus.DISABLED);
 
         final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
 
@@ -544,7 +461,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                         .conditions(Conditions.builder()
                                 .stringNotEquals(ConditionParameter.builder()
                                         .conditionKey(DUMMY_STRING)
-                                        .conditionValue("enabled")
+                                        .conditionValue(ENABLED)
                                         .build())
                                 .build())
                         .build(),
@@ -552,7 +469,7 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                         .conditions(Conditions.builder()
                                 .stringNotEquals(ConditionParameter.builder()
                                         .conditionKey(DUMMY_STRING)
-                                        .conditionValue("enabled")
+                                        .conditionValue(ENABLED)
                                         .build())
                                 .build())
                         .build(),
@@ -561,10 +478,8 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                         .build());
 
         final Map<String, List<Tag>> mapOfTags = Map.of(
-                tableNameToTableArn(TABLE_1),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
-                tableNameToTableArn(TABLE_2),
-                        List.of(Tag.builder().key(DUMMY_STRING).value("enabled").build()),
+                tableNameToTableArn(TABLE_1), List.of(createTag(DUMMY_STRING, ENABLED)),
+                tableNameToTableArn(TABLE_2), List.of(createTag(DUMMY_STRING, ENABLED)),
                 tableNameToTableArn(TABLE_3), List.of());
 
         final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3);
@@ -595,6 +510,48 @@ class ScanDynamodbTableWithoutBackupRuleExecutionTest {
                 .tableName(tableName)
                 .tableArn(tableNameToTableArn(tableName))
                 .build());
+    }
+
+    private static ContinuousBackupsDescription createContinuousBackupDescription(
+            final PointInTimeRecoveryStatus pointInTimeRecoveryStatus) {
+        final var baseBuilder = ContinuousBackupsDescription.builder();
+
+        if (null == pointInTimeRecoveryStatus) {
+            return baseBuilder.build();
+        }
+
+        return baseBuilder
+                .pointInTimeRecoveryDescription(PointInTimeRecoveryDescription.builder()
+                        .pointInTimeRecoveryStatus(pointInTimeRecoveryStatus)
+                        .build())
+                .build();
+    }
+
+    private static Tag createTag(final String key, final String value) {
+        return Tag.builder().key(key).value(value).build();
+    }
+
+    private static ConditionParameter createConditionParam(final String key, final String value) {
+        return ConditionParameter.builder()
+                .conditionKey(key)
+                .conditionValue(value)
+                .build();
+    }
+
+    private static BackupSelection createBackupSelection(
+            final List<String> resourcePatternList, final List<ConditionParameter> conditionParameterList) {
+        final var builder = BackupSelection.builder();
+
+        if (!resourcePatternList.isEmpty()) {
+            builder.resources(resourcePatternList);
+        }
+
+        if (!conditionParameterList.isEmpty()) {
+            builder.conditions(
+                    Conditions.builder().stringEquals(conditionParameterList).build());
+        }
+
+        return builder.build();
     }
 
     private static String tableNameToTableArn(final String tableName) {
