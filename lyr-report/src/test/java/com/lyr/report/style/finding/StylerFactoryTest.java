@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.lyr.report.style.finding.cloudwatch.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler;
 import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableIdleRuleFindingStyler;
+import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableWithoutBackupRuleFindingStyler;
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
@@ -32,7 +33,13 @@ class StylerFactoryTest {
 
     public static Stream<Arguments> validRuleDefinitionsAndExpectedStylerClasses() {
         return Stream.of(
+                Arguments.of(
+                        RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class),
                 Arguments.of(RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE, ScanDynamodbTableIdleRuleFindingStyler.class),
+                Arguments.of(
+                        RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP,
+                        ScanDynamodbTableWithoutBackupRuleFindingStyler.class),
                 Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler.class),
@@ -40,16 +47,13 @@ class StylerFactoryTest {
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE,
                         ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler.class),
                 Arguments.of(
-                        RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
-                        ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler.class),
-                Arguments.of(
-                        RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                        ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class),
-                Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
                         ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler.class),
                 Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER,
-                        ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler.class));
+                        ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler.class),
+                Arguments.of(
+                        RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
+                        ScanCloudwatchLogGroupWithoutRetentionPolicyRuleFindingStyler.class));
     }
 }

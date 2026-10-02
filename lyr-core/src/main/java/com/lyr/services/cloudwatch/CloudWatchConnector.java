@@ -1,5 +1,6 @@
 package com.lyr.services.cloudwatch;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +29,7 @@ public final class CloudWatchConnector {
                 ServiceProvider.getOrBuildCloudWatchClient(), ServiceProvider.getOrBuildCloudWatchLogsClient());
     }
 
+    @VisibleForTesting
     static CloudWatchConnector create(final CloudWatchClient cloudWatchClient, final CloudWatchLogsClient logsClient) {
         return new CloudWatchConnector(cloudWatchClient, logsClient);
     }

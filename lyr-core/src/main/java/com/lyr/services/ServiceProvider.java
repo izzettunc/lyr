@@ -5,7 +5,6 @@ import static com.lyr.exception.services.BadAwsServiceConfigException.BAD_AWS_SE
 import com.google.common.annotations.VisibleForTesting;
 import com.lyr.exception.NotYetConfiguredException;
 import com.lyr.exception.services.BadAwsServiceConfigException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,25 +17,19 @@ import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.profiles.ProfileFile;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.AwsProfileRegionProvider;
+import software.amazon.awssdk.services.backup.BackupClient;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.glue.GlueClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.resourcegroupstaggingapi.ResourceGroupsTaggingApiClient;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.sts.StsClient;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceProvider {
-    private static volatile SsmClient ssmClient;
-    private static volatile StsClient stsClient;
-    private static volatile LambdaClient lambdaClient;
-    private static volatile GlueClient glueClient;
-    private static volatile DynamoDbClient dynamoDbClient;
-    private static volatile CloudWatchClient cloudWatchClient;
-    private static volatile CloudWatchLogsClient cloudWatchLogsClient;
-
     private static EnvironmentVariableCredentialsProvider environmentVariableCredentialsProvider;
     private static ProfileCredentialsProvider profileCredentialsProvider;
     private static AwsProfileRegionProvider awsProfileRegionProvider;
@@ -89,101 +82,58 @@ public class ServiceProvider {
         return System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable());
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchClient getOrBuildCloudWatchClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (cloudWatchClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (cloudWatchClient == null) {
-                    cloudWatchClient = buildCloudWatchClient();
-                }
-            }
-        }
-        return cloudWatchClient;
+        return CloudWatchClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static CloudWatchLogsClient getOrBuildCloudWatchLogsClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (cloudWatchLogsClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (cloudWatchLogsClient == null) {
-                    cloudWatchLogsClient = buildCloudWatchLogsClient();
-                }
-            }
-        }
-        return cloudWatchLogsClient;
+        return CloudWatchLogsClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static DynamoDbClient getOrBuildDynamoDbClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (dynamoDbClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (dynamoDbClient == null) {
-                    dynamoDbClient = buildDynamoDbClient();
-                }
-            }
-        }
-        return dynamoDbClient;
+        return DynamoDbClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static GlueClient getOrBuildGlueClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (glueClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (glueClient == null) {
-                    glueClient = buildGlueClient();
-                }
-            }
-        }
-        return glueClient;
+        return GlueClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static LambdaClient getOrBuildLambdaClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (lambdaClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (lambdaClient == null) {
-                    lambdaClient = buildLambdaClient();
-                }
-            }
-        }
-        return lambdaClient;
+        return LambdaClientHolder.INSTANCE;
     }
 
-    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Intentional implementation suggested by AWS")
     public static SsmClient getOrBuildSsmClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (ssmClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (ssmClient == null) {
-                    ssmClient = buildSsmClient();
-                }
-            }
-        }
-        return ssmClient;
+        return SsmClientHolder.INSTANCE;
     }
 
     public static StsClient getOrBuildStsClient() {
         checkIfServiceProviderIsConfigured();
 
-        if (stsClient == null) {
-            synchronized (ServiceProvider.class) {
-                if (stsClient == null) {
-                    stsClient = buildStsClient();
-                }
-            }
-        }
-        return stsClient;
+        return StsClientHolder.INSTANCE;
+    }
+
+    public static BackupClient getOrBuildBackupClient() {
+        checkIfServiceProviderIsConfigured();
+
+        return BackupClientHolder.INSTANCE;
+    }
+
+    public static ResourceGroupsTaggingApiClient getOrBuildResourceGroupsTaggingApiClient() {
+        checkIfServiceProviderIsConfigured();
+
+        return ResourceGroupsTaggingApiClientHolder.INSTANCE;
     }
 
     @VisibleForTesting
@@ -303,5 +253,75 @@ public class ServiceProvider {
                     .httpClientBuilder(UrlConnectionHttpClient.builder())
                     .build();
         }
+    }
+
+    @VisibleForTesting
+    static BackupClient buildBackupClient() {
+        if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
+            return BackupClient.builder()
+                    .credentialsProvider(environmentVariableCredentialsProvider)
+                    .region(Region.of(getAwsRegionFromEnv()))
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        } else {
+            return BackupClient.builder()
+                    .credentialsProvider(profileCredentialsProvider)
+                    .region(awsProfileRegionProvider.getRegion())
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        }
+    }
+
+    @VisibleForTesting
+    static ResourceGroupsTaggingApiClient buildResourceGroupsTaggingApiClient() {
+        if (!StringUtils.isBlank(getAwsAccessKeyIdFromEnv())) {
+            return ResourceGroupsTaggingApiClient.builder()
+                    .credentialsProvider(environmentVariableCredentialsProvider)
+                    .region(Region.of(getAwsRegionFromEnv()))
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        } else {
+            return ResourceGroupsTaggingApiClient.builder()
+                    .credentialsProvider(profileCredentialsProvider)
+                    .region(awsProfileRegionProvider.getRegion())
+                    .httpClientBuilder(UrlConnectionHttpClient.builder())
+                    .build();
+        }
+    }
+
+    private static final class DynamoDbClientHolder {
+        static final DynamoDbClient INSTANCE = buildDynamoDbClient();
+    }
+
+    private static final class GlueClientHolder {
+        static final GlueClient INSTANCE = buildGlueClient();
+    }
+
+    private static final class SsmClientHolder {
+        static final SsmClient INSTANCE = buildSsmClient();
+    }
+
+    private static final class StsClientHolder {
+        static final StsClient INSTANCE = buildStsClient();
+    }
+
+    private static final class BackupClientHolder {
+        static final BackupClient INSTANCE = buildBackupClient();
+    }
+
+    private static final class ResourceGroupsTaggingApiClientHolder {
+        static final ResourceGroupsTaggingApiClient INSTANCE = buildResourceGroupsTaggingApiClient();
+    }
+
+    private static final class LambdaClientHolder {
+        static final LambdaClient INSTANCE = buildLambdaClient();
+    }
+
+    private static final class CloudWatchClientHolder {
+        static final CloudWatchClient INSTANCE = buildCloudWatchClient();
+    }
+
+    private static final class CloudWatchLogsClientHolder {
+        static final CloudWatchLogsClient INSTANCE = buildCloudWatchLogsClient();
     }
 }

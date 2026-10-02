@@ -52,6 +52,16 @@
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
+            <artifactId>backup</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>resourcegroupstaggingapi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
             <artifactId>sts</artifactId>
         </dependency>
 
@@ -76,11 +86,6 @@
         </dependency>
 
         <!-- Parser dependencies -->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>

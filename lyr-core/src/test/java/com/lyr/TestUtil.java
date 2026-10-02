@@ -1,22 +1,24 @@
 package com.lyr;
 
+import static org.mockito.ArgumentMatchers.argThat;
+
 import com.google.common.collect.ImmutableList;
 import com.lyr.report.model.Finding;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
-import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 public final class TestUtil {
     public static final String DUMMY_STRING = "dummy";
     public static final String DUMMY2_STRING = "dummy2";
+    public static final String DUMMY3_STRING = "dummy3";
+    public static final String DUMMY4_STRING = "dummy4";
     public static final String UPDATED_DUMMY_STRING = "updatedDummy";
     public static final String UPDATED_DUMMY2_STRING = "updatedDummy2";
     public static final String FINAL_UPDATED_DUMMY_STRING = "finalUpdatedDummy";
@@ -25,6 +27,9 @@ public final class TestUtil {
     public static final String TABLE_2 = "table2";
     public static final String TABLE_3 = "table3";
     public static final String TABLE_4 = "table4";
+    public static final String TABLE_5 = "table5";
+    public static final String TABLE_6 = "table6";
+    public static final String TABLE_7 = "table7";
     public static final String TABLE_WITH_DATA = "tableWithData";
     public static final String TABLE_WITH_DATA_OTHER = "tableWithDataOther";
     public static final String SESSION_1 = "session1";
@@ -43,14 +48,10 @@ public final class TestUtil {
     public static final String LOG_GROUP_3 = "logGroup3";
     public static final String LOG_GROUP_4 = "logGroup4";
 
+    public static final String WILDCARD_SYMBOL = "*";
+
     public static List<Finding> createImmutableListOfFindings(final String... identifiers) {
         return Stream.of(identifiers).map(Finding::byId).collect(ImmutableList.toImmutableList());
-    }
-
-    public static Optional<DescribeTableResponse> createOptionalDescribeTableResponse(final long tableSizeBytes) {
-        return Optional.of(DescribeTableResponse.builder()
-                .table(TableDescription.builder().tableSizeBytes(tableSizeBytes).build())
-                .build());
     }
 
     public static String getAbsoluteFilePathOfResource(final String filePath) {
@@ -68,5 +69,9 @@ public final class TestUtil {
         }
 
         return path.toString();
+    }
+
+    public static <T> T in(T... values) {
+        return argThat(value -> Arrays.asList(values).contains(value));
     }
 }
