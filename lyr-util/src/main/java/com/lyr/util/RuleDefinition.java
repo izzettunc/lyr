@@ -19,6 +19,7 @@ public enum RuleDefinition {
 
     SCAN_DYNAMODB_TABLE_IDLE("scan.dynamodb.table.idle", "AWS-DDB-001"),
     SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP("scan.dynamodb.table.withoutBackup", "AWS-DDB-002"),
+    SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION("scan.dynamodb.table.withoutDeletionProtection", "AWS-DDB-003"),
 
     SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "AWS-LMD-001"),
     SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE("scan.lambda.function.withDisallowedArchitecture", "AWS-LMD-002"),

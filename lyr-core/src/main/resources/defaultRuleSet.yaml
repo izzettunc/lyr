@@ -8,6 +8,7 @@ scan.dynamodb.table.idle:
 scan.dynamodb.table.withoutBackup:
   passIfPitrEnabled: true
   passIfBackupPlanEnabled: true
+scan.dynamodb.table.withoutDeletionProtection:
 scan.lambda.function.withUnboundedConcurrency:
 scan.lambda.function.withXrayTracingNotEnabled:
 scan.lambda.function.withDisallowedArchitecture:

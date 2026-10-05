@@ -6,6 +6,7 @@ import com.lyr.rule.RuleConfig;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -73,6 +74,30 @@ class RuleSetTest {
         testObject.setScanDynamodbTableWithoutBackupRuleConfig(expectedRuleConfig);
         // Then
         assertThat(testObject.scanDynamodbTableWithoutBackupRuleConfig).isSameAs(expectedRuleConfig);
+    }
+
+    @Test
+    void testThatScanDynamodbTableWithoutDeletionProtectionRuleConfigSetterBuildsDefaultWhenNullAsInputProvided() {
+        // Given
+        final var expectedRuleConfig =
+                ScanDynamodbTableWithoutDeletionProtectionRuleConfig.builder().build();
+        // When
+        testObject.setScanDynamodbTableWithoutDeletionProtectionRuleConfig(null);
+        // Then
+        assertThat(testObject.scanDynamodbTableWithoutDeletionProtectionRuleConfig)
+                .isEqualTo(expectedRuleConfig);
+    }
+
+    @Test
+    void testThatScanDynamodbTableWithoutDeletionProtectionRuleConfigSetterUsesGivenValueWhenNonNullAsInputProvided() {
+        // Given
+        final var expectedRuleConfig =
+                ScanDynamodbTableWithoutDeletionProtectionRuleConfig.builder().build();
+        // When
+        testObject.setScanDynamodbTableWithoutDeletionProtectionRuleConfig(expectedRuleConfig);
+        // Then
+        assertThat(testObject.scanDynamodbTableWithoutDeletionProtectionRuleConfig)
+                .isSameAs(expectedRuleConfig);
     }
 
     @Test
@@ -255,35 +280,53 @@ class RuleSetTest {
     }
 
     static Stream<Arguments> allRuleDefinitionsWithRandomConfigDataAndSetters() {
+        final var expectedScanGlueSessionActiveWithLongIdleTimeoutRuleConfig =
+                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
+                        .maxIdleTimeoutInMinutes(999)
+                        .build();
         final var expectedScanDynamodbTableIdleRuleConfig = ScanDynamodbTableIdleRuleConfig.builder()
                 .maxIdlePeriodInDays(9999)
                 .build();
+        final var expectedScanDynamodbTableWithoutBackupRuleConfig = ScanDynamodbTableWithoutBackupRuleConfig.builder()
+                .passIfPitrEnabled(false)
+                .passIfBackupPlanEnabled(true)
+                .build();
+        final var expectedScanDynamodbTableWithoutDeletionProtectionRuleConfig =
+                ScanDynamodbTableWithoutDeletionProtectionRuleConfig.builder().build();
+        ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithUnboundedConcurrencyRuleConfig =
                 ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithDisallowedArchitectureRuleConfig =
                 ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder()
                         .disallowedArchitecture("random")
                         .build();
-        final var expectedScanGlueSessionActiveWithLongIdleTimeoutRuleConfig =
-                ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig.builder()
-                        .maxIdleTimeoutInMinutes(999)
-                        .build();
-        final var expectedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig =
-                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig =
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithoutTriggerRuleConfig =
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
-        final var expectedScanDynamodbTableWithoutBackupRuleConfig = ScanDynamodbTableWithoutBackupRuleConfig.builder()
-                .passIfPitrEnabled(false)
-                .passIfBackupPlanEnabled(true)
-                .build();
+        final var expectedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig =
+                ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
 
         return Stream.of(
+                Arguments.of(
+                        RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
+                        expectedScanGlueSessionActiveWithLongIdleTimeoutRuleConfig,
+                        (BiConsumer<RuleSet, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig>)
+                                RuleSet::setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig),
                 Arguments.of(
                         RuleDefinition.SCAN_DYNAMODB_TABLE_IDLE, expectedScanDynamodbTableIdleRuleConfig, (BiConsumer<
                                         RuleSet, ScanDynamodbTableIdleRuleConfig>)
                                 RuleSet::setScanDynamodbTableIdleRuleConfig),
+                Arguments.of(
+                        RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP,
+                        expectedScanDynamodbTableWithoutBackupRuleConfig,
+                        (BiConsumer<RuleSet, ScanDynamodbTableWithoutBackupRuleConfig>)
+                                RuleSet::setScanDynamodbTableWithoutBackupRuleConfig),
+                Arguments.of(
+                        RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION,
+                        expectedScanDynamodbTableWithoutDeletionProtectionRuleConfig,
+                        (BiConsumer<RuleSet, ScanDynamodbTableWithoutDeletionProtectionRuleConfig>)
+                                RuleSet::setScanDynamodbTableWithoutDeletionProtectionRuleConfig),
                 Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY,
                         expectedScanLambdaFunctionWithUnboundedConcurrencyRuleConfig,
@@ -295,16 +338,6 @@ class RuleSetTest {
                         (BiConsumer<RuleSet, ScanLambdaFunctionWithDisallowedArchitectureRuleConfig>)
                                 RuleSet::setScanLambdaFunctionWithDisallowedArchitectureRuleConfig),
                 Arguments.of(
-                        RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
-                        expectedScanGlueSessionActiveWithLongIdleTimeoutRuleConfig,
-                        (BiConsumer<RuleSet, ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig>)
-                                RuleSet::setScanGlueSessionActiveWithLongIdleTimeoutRuleConfig),
-                Arguments.of(
-                        RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
-                        expectedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig,
-                        (BiConsumer<RuleSet, ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig>)
-                                RuleSet::setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig),
-                Arguments.of(
                         RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED,
                         expectedScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig,
                         (BiConsumer<RuleSet, ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig>)
@@ -315,9 +348,9 @@ class RuleSetTest {
                         (BiConsumer<RuleSet, ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig>)
                                 RuleSet::setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig),
                 Arguments.of(
-                        RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP,
-                        expectedScanDynamodbTableWithoutBackupRuleConfig,
-                        (BiConsumer<RuleSet, ScanDynamodbTableWithoutBackupRuleConfig>)
-                                RuleSet::setScanDynamodbTableWithoutBackupRuleConfig));
+                        RuleDefinition.SCAN_CLOUDWATCH_LOG_GROUP_WITHOUT_RETENTION_POLICY,
+                        expectedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig,
+                        (BiConsumer<RuleSet, ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig>)
+                                RuleSet::setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig));
     }
 }
