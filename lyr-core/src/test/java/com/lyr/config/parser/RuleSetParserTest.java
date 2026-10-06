@@ -10,6 +10,7 @@ import com.lyr.exception.config.RuleSetParseException;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -33,6 +34,8 @@ class RuleSetParserTest {
                 ScanDynamodbTableIdleRuleConfig.builder().build());
         expectedRuleSet.setScanDynamodbTableWithoutBackupRuleConfig(
                 ScanDynamodbTableWithoutBackupRuleConfig.builder().build());
+        expectedRuleSet.setScanDynamodbTableWithoutDeletionProtectionRuleConfig(
+                ScanDynamodbTableWithoutDeletionProtectionRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithDisallowedArchitectureRuleConfig(
                 ScanLambdaFunctionWithDisallowedArchitectureRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithUnboundedConcurrencyRuleConfig(

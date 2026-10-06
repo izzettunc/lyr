@@ -7,6 +7,7 @@ import com.lyr.rule.RuleConfig;
 import com.lyr.rule.cloudwatch.config.ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
+import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
@@ -29,6 +30,9 @@ public class RuleSet {
 
     @VisibleForTesting
     ScanDynamodbTableWithoutBackupRuleConfig scanDynamodbTableWithoutBackupRuleConfig;
+
+    @VisibleForTesting
+    ScanDynamodbTableWithoutDeletionProtectionRuleConfig scanDynamodbTableWithoutDeletionProtectionRuleConfig;
     // endregion
     // region Glue
     @VisibleForTesting
@@ -68,6 +72,15 @@ public class RuleSet {
         this.scanDynamodbTableWithoutBackupRuleConfig = defaultIfNull(
                 ruleConfig,
                 () -> ScanDynamodbTableWithoutBackupRuleConfig.builder().build());
+    }
+
+    @JsonSetter(value = "scan.dynamodb.table.withoutDeletionProtection", nulls = Nulls.SET)
+    public void setScanDynamodbTableWithoutDeletionProtectionRuleConfig(
+            final ScanDynamodbTableWithoutDeletionProtectionRuleConfig ruleConfig) {
+        this.scanDynamodbTableWithoutDeletionProtectionRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanDynamodbTableWithoutDeletionProtectionRuleConfig.builder()
+                        .build());
     }
 
     @JsonSetter(value = "scan.glue.session.activeWithLongIdleTimeout", nulls = Nulls.SET)
@@ -127,6 +140,9 @@ public class RuleSet {
                     case SCAN_DYNAMODB_TABLE_IDLE -> scanDynamodbTableIdleRuleConfig;
 
                     case SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP -> scanDynamodbTableWithoutBackupRuleConfig;
+
+                    case SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION ->
+                        scanDynamodbTableWithoutDeletionProtectionRuleConfig;
 
                     case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                         scanLambdaFunctionWithDisallowedArchitectureRuleConfig;

@@ -36,13 +36,13 @@ Lyr is a CLI tool that analyzes cloud health and security across live environmen
 Lyr is being developed user in mind, if you have no preference you can simply run it with all default options like below:
 
 ```bash
-java -jar lyr-1.4.0.jar scan-env aws
+java -jar lyr-1.5.0.jar scan-env aws
 ```
 
 Or, if you are a power user and would like to configure the tool based on your needs you can provide all kinds of options
 
 ```bash
-java -jar lyr-1.4.0.jar scan-env aws \
+java -jar lyr-1.5.0.jar scan-env aws \
     --config "path/to/rule/set/config/file.yaml" \
     --profile "my-aws-profile" \
     --reportType "json" \
@@ -51,7 +51,7 @@ java -jar lyr-1.4.0.jar scan-env aws \
 
 All available options can be found by running help function
 ```console
-lyr@lyr:~$ java -jar lyr-1.4.0.jar scan-env aws --help
+lyr@lyr:~$ java -jar lyr-1.5.0.jar scan-env aws --help
 Usage: lyr scan-env aws [-hV] [-c=<arg0>] [-l=<arg3>] [-p=<arg2>] [-r=<arg1>]
 Scans you aws environment using relative rulest and credentials
   -c, --config=<arg0>       Path to user rule set config file that specifies
@@ -120,6 +120,7 @@ mvn clean install
 ### DynamoDB
 - Flag idle DynamoDB tables
 - Flag DynamoDB tables without a backup
+- Flag DynamoDB tables without a deletion protection
 
 ### Lambda
 - Flag lambda functions with unbounded concurrency
@@ -150,6 +151,8 @@ scan.dynamodb.table.withoutBackup:
   passIfPitrEnabled: true
   passIfBackupPlanEnabled: true
 
+scan.dynamodb.table.withoutDeletionProtection:
+  
 scan.lambda.function.withUnboundedConcurrency:
 
 scan.lambda.function.withXrayTracingNotEnabled:
