@@ -20,6 +20,8 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableIdleRuleConfig;
 import com.lyr.services.cloudwatch.CloudWatchConnector;
 import com.lyr.services.cloudwatch.CloudWatchUtil;
 import com.lyr.services.dynamodb.DynamoDbConnector;
+import java.time.Instant;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
@@ -290,8 +292,58 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .isEqualTo(expectedFindings);
     }
 
+    @Test
+    void testThatScanDynamodbTableIdleRuleExcludesTheTablesCreatedWithinTheIdlePeriod() {
+        // Given
+        final var config = ScanDynamodbTableIdleRuleConfig.builder()
+                .maxIdlePeriodInDays(VALID_MAX_IDLE_PERIOD_IN_DAYS)
+                .excludeEmptyTables(false)
+                .build();
+        final var timeWindow = 1;
+        final var listOfTables = List.of(TABLE_1, TABLE_2, TABLE_3, TABLE_4);
+        final var optOldTable = createOptionalTableDescription(
+                123L, Instant.now().minus(Period.ofDays(VALID_MAX_IDLE_PERIOD_IN_DAYS + 1)));
+        final var optNewTable = createOptionalTableDescription(
+                123L, Instant.now().minus(Period.ofDays(VALID_MAX_IDLE_PERIOD_IN_DAYS - 1)));
+        final var optJustCreatedTable = createOptionalTableDescription(123L, Instant.now());
+        final var expectedFindings = createImmutableListOfFindings(TABLE_1, TABLE_4);
+
+        // When
+        mockedCloudWatchUtil
+                .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
+                .thenReturn(timeWindow);
+        when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
+                        any(), any(), any(), anyInt()))
+                .thenReturn(0d);
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
+                        any(), any(), any(), anyInt()))
+                .thenReturn(0d);
+
+        when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_1), eq(TABLE_4))))
+                .thenReturn(optOldTable);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(TABLE_2)).thenReturn(optNewTable);
+        when(mockedDynamoDbConnectorInstance.getTableDescription(TABLE_3)).thenReturn(optJustCreatedTable);
+
+        final var actualFindings = testObject.execute(config);
+
+        // Then
+        assertThat(actualFindings)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expectedFindings);
+    }
+
     private static Optional<TableDescription> createOptionalTableDescription(final long tableSizeBytes) {
-        return Optional.of(
-                TableDescription.builder().tableSizeBytes(tableSizeBytes).build());
+        return createOptionalTableDescription(
+                tableSizeBytes, Instant.now().minus(Period.ofDays(VALID_MAX_IDLE_PERIOD_IN_DAYS + 1)));
+    }
+
+    private static Optional<TableDescription> createOptionalTableDescription(
+            final long tableSizeBytes, final Instant creationDateTime) {
+        return Optional.of(TableDescription.builder()
+                .tableSizeBytes(tableSizeBytes)
+                .creationDateTime(creationDateTime)
+                .build());
     }
 }

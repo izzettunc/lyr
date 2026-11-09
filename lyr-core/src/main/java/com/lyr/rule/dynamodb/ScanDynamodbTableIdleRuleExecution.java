@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.Period;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 @Slf4j
 public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy<ScanDynamodbTableIdleRuleConfig> {
@@ -31,6 +32,13 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
 
         final var findings = listOfTableNames.stream()
                 .filter(tableName -> {
+                    final var optTable = dynamoDbConnector.getTableDescription(tableName);
+                    return optTable.isPresent()
+                            && isCreatedBefore(optTable.get(), then)
+                            && (!parameters.getExcludeEmptyTables()
+                                    || optTable.get().tableSizeBytes() != 0);
+                })
+                .filter(tableName -> {
                     final var totalConsumedReadCapacity =
                             cloudWatchConnector.getTotalConsumedReadCapacityOfADynamoDbTable(
                                     tableName, then, now, periodInSeconds);
@@ -39,12 +47,6 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                                     tableName, then, now, periodInSeconds);
 
                     return totalConsumedReadCapacity == 0 && totalConsumedWriteCapacity == 0;
-                })
-                .filter(tableName -> {
-                    final var optTable = dynamoDbConnector.getTableDescription(tableName);
-                    return optTable.isPresent()
-                            && (!parameters.getExcludeEmptyTables()
-                                    || optTable.get().tableSizeBytes() != 0);
                 })
                 .map(Finding::byId)
                 .collect(ImmutableList.toImmutableList());
@@ -55,5 +57,10 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                 .log("Found {} table(s) with problems out of {} table(s).");
 
         return findings;
+    }
+
+    // Tables younger than the idle period can't have a full window of CloudWatch data, so they're never idle
+    private static boolean isCreatedBefore(final TableDescription table, final Instant threshold) {
+        return table.creationDateTime() == null || table.creationDateTime().isBefore(threshold);
     }
 }
