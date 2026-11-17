@@ -7,6 +7,7 @@ import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_P
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,7 @@ import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableWithoutBackupRuleF
 import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableWithoutDeletionProtectionRuleFindingStyler;
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithHighErrorRateRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler;
@@ -57,6 +59,9 @@ class StylerFactoryTest {
 
     public static Stream<Arguments> allRulesAndExceptedStylerClasses() {
         final var ruleDefinitionToStylerMap = Map.ofEntries(
+                Map.entry(
+                        SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE,
+                        ScanLambdaFunctionWithHighErrorRateRuleFindingStyler.class),
                 Map.entry(
                         SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                         ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler.class),

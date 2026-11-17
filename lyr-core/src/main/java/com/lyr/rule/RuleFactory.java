@@ -7,6 +7,7 @@ import com.lyr.rule.dynamodb.ScanDynamodbTableWithoutBackupRuleExecution;
 import com.lyr.rule.dynamodb.ScanDynamodbTableWithoutDeletionProtectionRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithHighErrorRateRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution;
@@ -27,6 +28,8 @@ public class RuleFactory {
                     case SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP -> new ScanDynamodbTableWithoutBackupRuleExecution();
                     case SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION ->
                         new ScanDynamodbTableWithoutDeletionProtectionRuleExecution();
+                    case SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE ->
+                        new ScanLambdaFunctionWithHighErrorRateRuleExecution();
                     case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                         new ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution();
                     case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->

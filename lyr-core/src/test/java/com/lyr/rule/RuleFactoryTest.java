@@ -7,6 +7,7 @@ import static com.lyr.util.RuleDefinition.SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_P
 import static com.lyr.util.RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE;
+import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY;
 import static com.lyr.util.RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +24,7 @@ import com.lyr.rule.dynamodb.ScanDynamodbTableWithoutBackupRuleExecution;
 import com.lyr.rule.dynamodb.ScanDynamodbTableWithoutDeletionProtectionRuleExecution;
 import com.lyr.rule.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleExecution;
+import com.lyr.rule.lambda.ScanLambdaFunctionWithHighErrorRateRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleExecution;
 import com.lyr.rule.lambda.ScanLambdaFunctionWithoutAnyActiveTriggerRuleExecution;
@@ -91,6 +93,9 @@ class RuleFactoryTest {
 
     public static Stream<Arguments> allRulesAndExceptedClasses() {
         final var ruleDefinitionToExecutionMap = Map.ofEntries(
+                Map.entry(
+                        SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE,
+                        ScanLambdaFunctionWithHighErrorRateRuleExecution.class),
                 Map.entry(
                         SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                         ScanGlueSessionActiveWithLongIdleTimeoutRuleExecution.class),

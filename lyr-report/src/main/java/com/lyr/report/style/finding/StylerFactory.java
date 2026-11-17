@@ -6,6 +6,7 @@ import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableWithoutBackupRuleF
 import com.lyr.report.style.finding.dynamodb.ScanDynamodbTableWithoutDeletionProtectionRuleFindingStyler;
 import com.lyr.report.style.finding.glue.ScanGlueSessionActiveWithLongIdleTimeoutRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithDisallowedArchitectureRuleFindingStyler;
+import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithHighErrorRateRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithXrayTracingNotEnabledRuleFindingStyler;
 import com.lyr.report.style.finding.lambda.ScanLambdaFunctionWithoutAnyActiveTriggerRuleFindingStyler;
@@ -23,6 +24,8 @@ public class StylerFactory {
             case SCAN_DYNAMODB_TABLE_WITHOUT_BACKUP -> new ScanDynamodbTableWithoutBackupRuleFindingStyler();
             case SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION ->
                 new ScanDynamodbTableWithoutDeletionProtectionRuleFindingStyler();
+            case SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE ->
+                new ScanLambdaFunctionWithHighErrorRateRuleFindingStyler();
             case SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY ->
                 new ScanLambdaFunctionWithUnboundedConcurrencyRuleFindingStyler();
             case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
