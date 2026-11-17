@@ -13,6 +13,7 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithHighErrorRateRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
@@ -44,6 +45,8 @@ class RuleSetParserTest {
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build());
         expectedRuleSet.setScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig(
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build());
+        expectedRuleSet.setScanLambdaFunctionWithHighErrorRateRuleConfig(
+                ScanLambdaFunctionWithHighErrorRateRuleConfig.builder().build());
         expectedRuleSet.setScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig(
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build());
 
@@ -202,6 +205,8 @@ class RuleSetParserTest {
                 "com/lyr/config/invalidRuleSetDueToAttributeTypeBooleanInteger.yaml",
                 "com/lyr/config/invalidRuleSetDueToAttributeTypeBooleanString.yaml",
                 "com/lyr/config/invalidRuleSetDueToAttributeTypeIntegerString.yaml",
+                "com/lyr/config/invalidRuleSetDueToAttributeTypeIntegerFloat.yaml",
+                "com/lyr/config/invalidRuleSetDueToAttributeTypeFloatString.yaml"
             })
     void
             testThatGivenRuleSetContainsWrongTypeForRuleConfigAttributeRuleSetParserThrowsRuleSetParseExceptionDueToInvalidFormat(

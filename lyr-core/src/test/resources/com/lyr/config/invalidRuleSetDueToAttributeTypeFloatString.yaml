@@ -1,0 +1,2 @@
+scan.lambda.function.withHighErrorRate:
+  errorRateThreshold: 50%

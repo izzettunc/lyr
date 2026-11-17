@@ -10,6 +10,7 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithHighErrorRateRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
@@ -24,6 +25,7 @@ public class RuleSet {
     @VisibleForTesting
     ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig scanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig;
     // endregion
+
     // region DynamoDB
     @VisibleForTesting
     ScanDynamodbTableIdleRuleConfig scanDynamodbTableIdleRuleConfig;
@@ -34,11 +36,16 @@ public class RuleSet {
     @VisibleForTesting
     ScanDynamodbTableWithoutDeletionProtectionRuleConfig scanDynamodbTableWithoutDeletionProtectionRuleConfig;
     // endregion
+
     // region Glue
     @VisibleForTesting
     ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig scanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
     // endregion
+
     // region Lambda
+    @VisibleForTesting
+    ScanLambdaFunctionWithHighErrorRateRuleConfig scanLambdaFunctionWithHighErrorRateRuleConfig;
+
     @VisibleForTesting
     ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig scanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 
@@ -128,6 +135,14 @@ public class RuleSet {
                         .build());
     }
 
+    @JsonSetter(value = "scan.lambda.function.withHighErrorRate", nulls = Nulls.SET)
+    public void setScanLambdaFunctionWithHighErrorRateRuleConfig(
+            final ScanLambdaFunctionWithHighErrorRateRuleConfig ruleConfig) {
+        this.scanLambdaFunctionWithHighErrorRateRuleConfig = defaultIfNull(
+                ruleConfig,
+                () -> ScanLambdaFunctionWithHighErrorRateRuleConfig.builder().build());
+    }
+
     public RuleConfig getRuleConfig(final RuleDefinition ruleDefinition) {
         final var ruleConfig =
                 switch (ruleDefinition) {
@@ -143,6 +158,8 @@ public class RuleSet {
 
                     case SCAN_DYNAMODB_TABLE_WITHOUT_DELETION_PROTECTION ->
                         scanDynamodbTableWithoutDeletionProtectionRuleConfig;
+
+                    case SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE -> scanLambdaFunctionWithHighErrorRateRuleConfig;
 
                     case SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE ->
                         scanLambdaFunctionWithDisallowedArchitectureRuleConfig;

@@ -22,6 +22,7 @@ public final class RuleSetParser {
     private static final String DEFAULT_RULESET_CONFIG_PATH = "defaultRuleSet.yaml";
     private static final YAMLMapper YAML_MAPPER = YAMLMapper.builder()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, false)
             .configure(MapperFeature.ALLOW_COERCION_OF_SCALARS, false)
             .build();
 

@@ -16,3 +16,6 @@ scan.lambda.function.withDisallowedArchitecture:
 scan.lambda.function.withoutAnyActiveTrigger:
   triggerStatesConsideredAsActive: ["creating", "enabling", "enabled", "updating"]
 scan.cloudwatch.logGroup.withoutRetentionPolicy:
+scan.lambda.function.withHighErrorRate:
+  timeSpanInDays: 30
+  errorRateThreshold: 50

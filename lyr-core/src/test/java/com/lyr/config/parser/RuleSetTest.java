@@ -9,6 +9,7 @@ import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutBackupRuleConfig;
 import com.lyr.rule.dynamodb.config.ScanDynamodbTableWithoutDeletionProtectionRuleConfig;
 import com.lyr.rule.glue.config.ScanGlueSessionActiveWithLongIdleTimeoutRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithDisallowedArchitectureRuleConfig;
+import com.lyr.rule.lambda.config.ScanLambdaFunctionWithHighErrorRateRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithUnboundedConcurrencyRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig;
 import com.lyr.rule.lambda.config.ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig;
@@ -248,6 +249,28 @@ class RuleSetTest {
                 .isSameAs(expectedRuleConfig);
     }
 
+    @Test
+    void testThatScanLambdaFunctionWithHighErrorRateRuleConfigSetterBuildsDefaultWhenNullAsInputProvided() {
+        // Given
+        final var expectedRuleConfig =
+                ScanLambdaFunctionWithHighErrorRateRuleConfig.builder().build();
+        // When
+        testObject.setScanLambdaFunctionWithHighErrorRateRuleConfig(null);
+        // Then
+        assertThat(testObject.scanLambdaFunctionWithHighErrorRateRuleConfig).isEqualTo(expectedRuleConfig);
+    }
+
+    @Test
+    void testThatScanLambdaFunctionWithHighErrorRateRuleConfigSetterUsesGivenValueWhenNonNullAsInputProvided() {
+        // Given
+        final var expectedRuleConfig =
+                ScanLambdaFunctionWithHighErrorRateRuleConfig.builder().build();
+        // When
+        testObject.setScanLambdaFunctionWithHighErrorRateRuleConfig(expectedRuleConfig);
+        // Then
+        assertThat(testObject.scanLambdaFunctionWithHighErrorRateRuleConfig).isSameAs(expectedRuleConfig);
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("allRuleDefinitionsWithRandomConfigDataAndSetters")
     <T extends RuleConfig> void testThatRuleSetGetRuleConfigReturnsCopyOfCorrectRuleConfig(
@@ -304,10 +327,20 @@ class RuleSetTest {
                 ScanLambdaFunctionWithXrayTracingNotEnabledRuleConfig.builder().build();
         final var expectedScanLambdaFunctionWithoutTriggerRuleConfig =
                 ScanLambdaFunctionWithoutAnyActiveTriggerRuleConfig.builder().build();
+        final var expectedScanLambdaFunctionWithHighErrorRateRuleConfig =
+                ScanLambdaFunctionWithHighErrorRateRuleConfig.builder()
+                        .timeSpanInDays(7)
+                        .errorRateThreshold(2.5)
+                        .build();
         final var expectedScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig =
                 ScanCloudwatchLogGroupWithoutRetentionPolicyRuleConfig.builder().build();
 
         return Stream.of(
+                Arguments.of(
+                        RuleDefinition.SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE,
+                        expectedScanLambdaFunctionWithHighErrorRateRuleConfig,
+                        (BiConsumer<RuleSet, ScanLambdaFunctionWithHighErrorRateRuleConfig>)
+                                RuleSet::setScanLambdaFunctionWithHighErrorRateRuleConfig),
                 Arguments.of(
                         RuleDefinition.SCAN_GLUE_SESSION_ACTIVE_WITH_LONG_IDLE_TIMEOUT,
                         expectedScanGlueSessionActiveWithLongIdleTimeoutRuleConfig,
