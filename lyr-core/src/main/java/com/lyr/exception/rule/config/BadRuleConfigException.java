@@ -22,8 +22,15 @@ public class BadRuleConfigException extends RuntimeException {
     }
 
     public static BadRuleConfigException forLessThanLimit(
-            final String configName, final String ruleName, final int limit) {
+            final String configName, final String ruleName, final Number limit) {
         final var message = configName + FOR + ruleName + " rule config must be equal or greater than " + limit;
+        return new BadRuleConfigException(message);
+    }
+
+    public static BadRuleConfigException forOutOfBounds(
+            final String configName, final String ruleName, final Number lowerBound, final Number upperBound) {
+        final var message =
+                configName + FOR + ruleName + " rule config must be between " + lowerBound + " and " + upperBound;
         return new BadRuleConfigException(message);
     }
 

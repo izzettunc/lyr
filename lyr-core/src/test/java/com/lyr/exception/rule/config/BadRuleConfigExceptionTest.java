@@ -42,6 +42,25 @@ class BadRuleConfigExceptionTest {
     }
 
     @Test
+    void testThatBadRuleConfigExceptionForOutOfBoundsIsFormedCorrectly() {
+        // Given
+        final var ruleName = "dummy";
+        final var configName = "dummy config";
+        final var lowerBound = 1;
+        final var upperBound = 455;
+        final var expectedMessage = "dummy config for dummy rule config must be between 1 and 455";
+
+        // When
+        final var actualBadRuleConfigException =
+                BadRuleConfigException.forOutOfBounds(configName, ruleName, lowerBound, upperBound);
+
+        // Then
+        assertThat(actualBadRuleConfigException)
+                .isInstanceOf(BadRuleConfigException.class)
+                .hasMessage(expectedMessage);
+    }
+
+    @Test
     void testThatBadRuleConfigExceptionForUnsupportedValueIsFormedCorrectly() {
         // Given
         final var ruleName = "dummy";
