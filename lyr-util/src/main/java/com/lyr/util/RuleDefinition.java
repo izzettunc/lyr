@@ -24,7 +24,8 @@ public enum RuleDefinition {
     SCAN_LAMBDA_FUNCTION_WITH_UNBOUNDED_CONCURRENCY("scan.lambda.function.withUnboundedConcurrency", "AWS-LMD-001"),
     SCAN_LAMBDA_FUNCTION_WITH_DISALLOWED_ARCHITECTURE("scan.lambda.function.withDisallowedArchitecture", "AWS-LMD-002"),
     SCAN_LAMBDA_FUNCTION_WITH_XRAY_TRACING_NOT_ENABLED("scan.lambda.function.withXrayTracingNotEnabled", "AWS-LMD-003"),
-    SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER("scan.lambda.function.withoutAnyActiveTrigger", "AWS-LMD-004");
+    SCAN_LAMBDA_FUNCTION_WITHOUT_ANY_ACTIVE_TRIGGER("scan.lambda.function.withoutAnyActiveTrigger", "AWS-LMD-004"),
+    SCAN_LAMBDA_FUNCTION_WITH_HIGH_ERROR_RATE("scan.lambda.function.withHighErrorRate", "AWS-LMD-005");
 
     private static final Map<String, RuleDefinition> NAME_TO_DEFINITION_MAP = new HashMap<>();
     private static final Map<String, RuleDefinition> CODE_TO_DEFINITION_MAP = new HashMap<>();
