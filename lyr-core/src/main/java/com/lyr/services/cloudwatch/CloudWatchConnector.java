@@ -32,7 +32,9 @@ public final class CloudWatchConnector {
     // region metrics
     private static final String CONSUMED_READ_CAPACITY_UNITS = "ConsumedReadCapacityUnits";
     private static final String CONSUMED_WRITE_CAPACITY_UNITS = "ConsumedWriteCapacityUnits";
-    private static final String TABLE_NAME = "TableName";
+    private static final String INVOCATIONS = "Invocations";
+    private static final String ERRORS = "Errors";
+    // endregion
 
     private final CloudWatchClient client;
     private final CloudWatchLogsClient logsClient;
@@ -54,10 +56,6 @@ public final class CloudWatchConnector {
                 .toList();
     }
 
-    public double getTotalConsumedReadCapacityOfADynamoDbTable(
-            final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
-        return getSummedDynamoDbTableMetric(
-                tableName, CONSUMED_READ_CAPACITY_UNITS, startTime, endTime, periodInSeconds);
     public double getTotalConsumedReadCapacityOfADynamoDbTable(final String tableName, final TimeRange timeRange) {
         return getSummedDynamoDbTableMetric(tableName, CONSUMED_READ_CAPACITY_UNITS, timeRange);
     }
@@ -65,12 +63,13 @@ public final class CloudWatchConnector {
     public double getTotalConsumedWriteCapacityOfADynamoDbTable(final String tableName, final TimeRange timeRange) {
         return getSummedDynamoDbTableMetric(tableName, CONSUMED_WRITE_CAPACITY_UNITS, timeRange);
     }
+
+    public double getTotalInvocationsOfALambdaFunction(final String functionName, final TimeRange timeRange) {
+        return getSummedLambdaFunctionMetric(functionName, INVOCATIONS, timeRange);
     }
 
-    public double getTotalConsumedWriteCapacityOfADynamoDbTable(
-            final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
-        return getSummedDynamoDbTableMetric(
-                tableName, CONSUMED_WRITE_CAPACITY_UNITS, startTime, endTime, periodInSeconds);
+    public double getTotalErrorsOfALambdaFunction(final String functionName, final TimeRange timeRange) {
+        return getSummedLambdaFunctionMetric(functionName, ERRORS, timeRange);
     }
 
     private double getSummedDynamoDbTableMetric(
@@ -84,6 +83,27 @@ public final class CloudWatchConnector {
                 .statistics(Statistic.SUM)
                 .dimensions(
                         Dimension.builder().name(TABLE_NAME).value(tableName).build())
+                .build());
+
+        return statistics.datapoints().stream()
+                .map(Datapoint::sum)
+                .reduce(Double::sum)
+                .orElse(0d);
+    }
+
+    private double getSummedLambdaFunctionMetric(
+            final String functionName, final String metricName, final TimeRange timeRange) {
+        final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
+                .metricName(metricName)
+                .startTime(timeRange.startTime)
+                .endTime(timeRange.endTime)
+                .period(timeRange.periodInSeconds)
+                .namespace(AWS_LAMBDA)
+                .statistics(Statistic.SUM)
+                .dimensions(Dimension.builder()
+                        .name(FUNCTION_NAME)
+                        .value(functionName)
+                        .build())
                 .build());
 
         return statistics.datapoints().stream()
