@@ -21,12 +21,7 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
         final var dynamoDbConnector = DynamoDbConnector.create();
         final var cloudWatchConnector = CloudWatchConnector.create();
 
-        final var now = Instant.now();
-        final var then = now.minus(Period.ofDays(parameters.getMaxIdlePeriodInDays()));
-
-        final var appropriateTimeWindow =
-                CloudWatchUtil.getAppropriateTimeWindowForPeriod(parameters.getMaxIdlePeriodInDays());
-        final var periodInSeconds = (int) Duration.ofDays(appropriateTimeWindow).getSeconds();
+        final var timeRange = calculateTimeRange(parameters);
 
         final var listOfTableNames = dynamoDbConnector.listTableNames();
 
@@ -34,17 +29,15 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
                 .filter(tableName -> {
                     final var optTable = dynamoDbConnector.getTableDescription(tableName);
                     return optTable.isPresent()
-                            && isCreatedBefore(optTable.get(), then)
+                            && isCreatedBefore(optTable.get(), timeRange.startTime())
                             && (!parameters.getExcludeEmptyTables()
                                     || optTable.get().tableSizeBytes() != 0);
                 })
                 .filter(tableName -> {
                     final var totalConsumedReadCapacity =
-                            cloudWatchConnector.getTotalConsumedReadCapacityOfADynamoDbTable(
-                                    tableName, then, now, periodInSeconds);
+                            cloudWatchConnector.getTotalConsumedReadCapacityOfADynamoDbTable(tableName, timeRange);
                     final var totalConsumedWriteCapacity =
-                            cloudWatchConnector.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                                    tableName, then, now, periodInSeconds);
+                            cloudWatchConnector.getTotalConsumedWriteCapacityOfADynamoDbTable(tableName, timeRange);
 
                     return totalConsumedReadCapacity == 0 && totalConsumedWriteCapacity == 0;
                 })
@@ -62,5 +55,20 @@ public class ScanDynamodbTableIdleRuleExecution implements RuleExecutionStrategy
     // Tables younger than the idle period can't have a full window of CloudWatch data, so they're never idle
     private static boolean isCreatedBefore(final TableDescription table, final Instant threshold) {
         return table.creationDateTime() == null || table.creationDateTime().isBefore(threshold);
+    }
+
+    private static CloudWatchConnector.TimeRange calculateTimeRange(final ScanDynamodbTableIdleRuleConfig config) {
+
+        final var now = Instant.now();
+        final var then = now.minus(Period.ofDays(config.getMaxIdlePeriodInDays()));
+        final var appropriateTimeWindow =
+                CloudWatchUtil.getAppropriateTimeWindowForPeriod(config.getMaxIdlePeriodInDays());
+        final var periodInSeconds = (int) Duration.ofDays(appropriateTimeWindow).getSeconds();
+
+        return CloudWatchConnector.TimeRange.builder()
+                .startTime(then)
+                .endTime(now)
+                .periodInSeconds(periodInSeconds)
+                .build();
     }
 }

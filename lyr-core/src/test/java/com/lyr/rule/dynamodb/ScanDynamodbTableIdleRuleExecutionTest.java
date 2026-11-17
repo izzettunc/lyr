@@ -83,11 +83,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedDynamoDbConnectorInstance.getTableDescription(any())).thenReturn(optTable);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
 
         final var actualFindings = testObject.execute(config);
@@ -149,16 +147,16 @@ class ScanDynamodbTableIdleRuleExecutionTest {
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
         when(mockedDynamoDbConnectorInstance.getTableDescription(any())).thenReturn(optTable);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
+                        or(eq(TABLE_1), eq(TABLE_4)), any()))
                 .thenReturn(0d);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        or(eq(tableNameWithReadCon), eq(tableNameWithBothCon)), any(), any(), anyInt()))
+                        or(eq(tableNameWithReadCon), eq(tableNameWithBothCon)), any()))
                 .thenReturn(dataSize);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        or(eq(TABLE_1), eq(TABLE_4)), any(), any(), anyInt()))
+                        or(eq(TABLE_1), eq(TABLE_4)), any()))
                 .thenReturn(0d);
         when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        or(eq(tableNameWithWriteCon), eq(tableNameWithBothCon)), any(), any(), anyInt()))
+                        or(eq(tableNameWithWriteCon), eq(tableNameWithBothCon)), any()))
                 .thenReturn(dataSize);
 
         final var actualFindings = testObject.execute(config);
@@ -190,11 +188,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
         when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
@@ -231,11 +227,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfListTableResponses);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
         when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(optTableWithData);
@@ -272,11 +266,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfListTableResponses);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
         when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_WITH_DATA), eq(TABLE_WITH_DATA_OTHER))))
                 .thenReturn(Optional.empty());
@@ -313,11 +305,9 @@ class ScanDynamodbTableIdleRuleExecutionTest {
                 .when(() -> CloudWatchUtil.getAppropriateTimeWindowForPeriod(anyInt()))
                 .thenReturn(timeWindow);
         when(mockedDynamoDbConnectorInstance.listTableNames()).thenReturn(listOfTables);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedReadCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
-        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                        any(), any(), any(), anyInt()))
+        when(mockedCloudWatchConnectorInstance.getTotalConsumedWriteCapacityOfADynamoDbTable(any(), any()))
                 .thenReturn(0d);
 
         when(mockedDynamoDbConnectorInstance.getTableDescription(or(eq(TABLE_1), eq(TABLE_4))))

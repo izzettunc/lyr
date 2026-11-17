@@ -28,10 +28,15 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.paginators.DescribeLogGroupsIterable;
 
 class CloudWatchConnectorTest {
-
     final CloudWatchClient mockedCloudWatchClient = mock(CloudWatchClient.class);
     final CloudWatchLogsClient mockedCloudWatchLogsClient = mock(CloudWatchLogsClient.class);
     CloudWatchConnector testObject;
+
+    static final CloudWatchConnector.TimeRange DUMMY_TIME_RANGE = CloudWatchConnector.TimeRange.builder()
+            .startTime(Instant.now())
+            .endTime(Instant.now())
+            .periodInSeconds(123)
+            .build();
 
     @BeforeEach
     void beforeEach() {
@@ -72,8 +77,8 @@ class CloudWatchConnectorTest {
         when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
                 .thenReturn(getMetricStatisticResponse);
 
-        final var actualResult = testObject.getTotalConsumedReadCapacityOfADynamoDbTable(
-                TestUtil.DUMMY_STRING, Instant.now(), Instant.now(), 123);
+        final var actualResult =
+                testObject.getTotalConsumedReadCapacityOfADynamoDbTable(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
 
         // Then
         assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
@@ -96,11 +101,39 @@ class CloudWatchConnectorTest {
         when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
                 .thenReturn(getMetricStatisticResponse);
 
-        final var actualResult = testObject.getTotalConsumedWriteCapacityOfADynamoDbTable(
-                TestUtil.DUMMY_STRING, Instant.now(), Instant.now(), 123);
+        final var actualResult =
+                testObject.getTotalConsumedWriteCapacityOfADynamoDbTable(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
 
         // Then
         assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
+    }
+
+    @Test
+    void testThatGetTotalConsumedWriteCapacityOfADynamoDbTableReturnsZeroWhenNoFunctionIsFound() {
+        // Given
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(GetMetricStatisticsResponse.builder().build());
+
+        final var actualResult =
+                testObject.getTotalConsumedWriteCapacityOfADynamoDbTable(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isZero();
+    }
+
+    @Test
+    void testThatGetTotalConsumedReadCapacityOfADynamoDbTableReturnsZeroWhenNoFunctionIsFound() {
+        // Given
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(GetMetricStatisticsResponse.builder().build());
+
+        final var actualResult =
+                testObject.getTotalConsumedReadCapacityOfADynamoDbTable(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isZero();
     }
 
     @Test
@@ -130,5 +163,79 @@ class CloudWatchConnectorTest {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
                 .isEqualTo(expectedListOfLogGroups);
+    }
+
+    @Test
+    void testThatGetTotalInvocationsOfALambdaFunctionReturnsSumOfAllDataPoints() {
+        // Given
+        final var metricStatisticDataPointValue = 3d;
+        final var summedMetricStatisticDataPointValue = 12d;
+        final var getMetricStatisticResponse = GetMetricStatisticsResponse.builder()
+                .datapoints(
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build())
+                .build();
+
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(getMetricStatisticResponse);
+
+        final var actualResult =
+                testObject.getTotalInvocationsOfALambdaFunction(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
+    }
+
+    @Test
+    void testThatGetTotalErrorsOfALambdaFunctionReturnsSumOfAllDataPoints() {
+        // Given
+        final var metricStatisticDataPointValue = 3d;
+        final var summedMetricStatisticDataPointValue = 12d;
+        final var getMetricStatisticResponse = GetMetricStatisticsResponse.builder()
+                .datapoints(
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build(),
+                        Datapoint.builder().sum(metricStatisticDataPointValue).build())
+                .build();
+
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(getMetricStatisticResponse);
+
+        final var actualResult = testObject.getTotalErrorsOfALambdaFunction(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isEqualTo(summedMetricStatisticDataPointValue);
+    }
+
+    @Test
+    void testThatGetTotalInvocationsOfALambdaFunctionReturnsZeroWhenNoFunctionIsFound() {
+        // Given
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(GetMetricStatisticsResponse.builder().build());
+
+        final var actualResult =
+                testObject.getTotalInvocationsOfALambdaFunction(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isZero();
+    }
+
+    @Test
+    void testThatGetTotalErrorsOfALambdaFunctionReturnsZeroWhenNoFunctionIsFound() {
+        // Given
+        // When
+        when(mockedCloudWatchClient.getMetricStatistics(any(GetMetricStatisticsRequest.class)))
+                .thenReturn(GetMetricStatisticsResponse.builder().build());
+
+        final var actualResult = testObject.getTotalErrorsOfALambdaFunction(TestUtil.DUMMY_STRING, DUMMY_TIME_RANGE);
+
+        // Then
+        assertThat(actualResult).isZero();
     }
 }

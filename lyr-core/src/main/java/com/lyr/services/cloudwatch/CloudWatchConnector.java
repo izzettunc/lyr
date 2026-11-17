@@ -4,6 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.lyr.services.ServiceProvider;
 import java.time.Instant;
 import java.util.List;
+import lombok.Builder;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
@@ -16,7 +18,18 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 
 @RequiredArgsConstructor
 public final class CloudWatchConnector {
+
+    // region namespaces
     private static final String AWS_DYNAMO_DB = "AWS/DynamoDB";
+    private static final String AWS_LAMBDA = "AWS/Lambda";
+    // endregion
+
+    // region dimensions
+    private static final String TABLE_NAME = "TableName";
+    private static final String FUNCTION_NAME = "FunctionName";
+    // endregion
+
+    // region metrics
     private static final String CONSUMED_READ_CAPACITY_UNITS = "ConsumedReadCapacityUnits";
     private static final String CONSUMED_WRITE_CAPACITY_UNITS = "ConsumedWriteCapacityUnits";
     private static final String TABLE_NAME = "TableName";
@@ -45,6 +58,13 @@ public final class CloudWatchConnector {
             final String tableName, final Instant startTime, final Instant endTime, final int periodInSeconds) {
         return getSummedDynamoDbTableMetric(
                 tableName, CONSUMED_READ_CAPACITY_UNITS, startTime, endTime, periodInSeconds);
+    public double getTotalConsumedReadCapacityOfADynamoDbTable(final String tableName, final TimeRange timeRange) {
+        return getSummedDynamoDbTableMetric(tableName, CONSUMED_READ_CAPACITY_UNITS, timeRange);
+    }
+
+    public double getTotalConsumedWriteCapacityOfADynamoDbTable(final String tableName, final TimeRange timeRange) {
+        return getSummedDynamoDbTableMetric(tableName, CONSUMED_WRITE_CAPACITY_UNITS, timeRange);
+    }
     }
 
     public double getTotalConsumedWriteCapacityOfADynamoDbTable(
@@ -54,16 +74,12 @@ public final class CloudWatchConnector {
     }
 
     private double getSummedDynamoDbTableMetric(
-            final String tableName,
-            final String metricName,
-            final Instant startTime,
-            final Instant endTime,
-            final int periodInSeconds) {
+            final String tableName, final String metricName, final TimeRange timeRange) {
         final var statistics = client.getMetricStatistics(GetMetricStatisticsRequest.builder()
                 .metricName(metricName)
-                .startTime(startTime)
-                .endTime(endTime)
-                .period(periodInSeconds)
+                .startTime(timeRange.startTime)
+                .endTime(timeRange.endTime)
+                .period(timeRange.periodInSeconds)
                 .namespace(AWS_DYNAMO_DB)
                 .statistics(Statistic.SUM)
                 .dimensions(
@@ -75,4 +91,8 @@ public final class CloudWatchConnector {
                 .reduce(Double::sum)
                 .orElse(0d);
     }
+
+    @Builder
+    public record TimeRange(
+            @NonNull Instant startTime, @NonNull Instant endTime, int periodInSeconds) {}
 }
